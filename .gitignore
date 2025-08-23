@@ -16,6 +16,11 @@ coverage/
 .env.test.local
 .env.production.local
 
+# Server environment files (specific patterns)
+server/.env
+!server/.env.staging
+!server/.env.production
+
 # Database
 *.db
 *.sqlite
