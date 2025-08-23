@@ -1,0 +1,7 @@
+# Git-crypt configuration
+# Only production environment file is encrypted
+server/.env.production filter=git-crypt diff=git-crypt
+
+# Ensure other env files remain plain text  
+server/.env.staging !filter !diff
+server/env.template !filter !diff
