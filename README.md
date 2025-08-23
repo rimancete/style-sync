@@ -20,39 +20,44 @@ style-sync/
 │   └── src/
 ├── server/           # NestJS app (TypeScript)
 │   └── src/
+├── docker/           # Database containers
+├── docs/             # Setup and documentation
 ├── package.json      # Root scripts
 └── README.md
 ```
 
-## Development Setup
+## Quick Start
+
 ```bash
-npm run install:all    # Install client and server deps
-npm run start:dev      # Start client and server in parallel
+# 1. Install dependencies
+npm run install:all
+
+# 2. Set up development environment
+# See docs/SETUP.md for detailed instructions
+
+# 3. Start development servers
+npm run start:dev
 ```
+
+**📚 For complete setup instructions, see [`docs/SETUP.md`](./docs/SETUP.md)**
 
 Access during development:
 - Frontend: http://localhost:3000
-- Backend: http://localhost:3000/api
+- Backend: http://localhost:3001
+- Database: localhost:5433
 
 ## Root Scripts
 - `install:all`: install dependencies for client and server
 - `start:dev`: run both apps concurrently
 - `build:all`: build both applications
 
-## Environment
-Create `server/.env` with your database settings (PostgreSQL). Example:
-```
-DATABASE_URL=postgresql://user:password@localhost:5432/stylesync
-NODE_ENV=development
-```
-
 ## Roadmap (Frontend-first)
+- ✅ Docker Compose for local PostgreSQL (project-scoped)
+- 🔄 Add Prisma schema and migrations in `server/`
 - Booking flow UI: service selection → availability → calendar → confirmation
 - Client portal with authentication placeholder
 - Admin dashboard pages (occupancy, revenue, clients, marketing)
 - Integrate reminders (email/SMS) and Stripe for payments
-- Add Prisma schema and migrations in `server/`
-- Docker Compose for local PostgreSQL
 
 ---
 Made with ❤️ for salon owners, stylists, and clients.

@@ -3,7 +3,7 @@
   "description": "Style Sync",
   "version": "0.0.0",
   "author": "Osvaldo Costa",
-  "email": "osvaldo.costa@gmail.com",
+  "email": "osvaldo.costajr@gmail.com",
   "license": "UNLICENSED",
   "scripts": {
     "install:all": "npm-run-all install:client install:server",
