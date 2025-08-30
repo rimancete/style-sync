@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Only run commitizen on interactive commits (not during rebases, merges, etc.)
+case "$2,$3" in
+  merge,*) exit 0 ;;
+  squash,*) exit 0 ;;
+esac
+
+# Check if this is an interactive commit (no message provided)
+if [ -z "$2" ]; then
+  echo "🎯 Starting interactive commit creation..."
+  exec < /dev/tty && npx cz --hook || true
+fi

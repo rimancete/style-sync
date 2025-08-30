@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Validating commit message format..."
+npx --no -- commitlint --edit "$1"
+
+if [ $? -eq 0 ]; then
+  echo "✅ Commit message format is valid!"
+else
+  echo "❌ Invalid commit message format!"
+  echo "💡 Use format: type(scope): description"
+  echo "   Example: feat(auth): add JWT token validation"
+  echo "   Run 'npm run commit' for interactive commit creation"
+  exit 1
+fi
