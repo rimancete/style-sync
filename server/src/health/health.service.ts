@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService } from '../database/database.service';
+import {
+  DatabaseService,
+  DatabaseConnectionInfo,
+} from '../database/database.service';
 import {
   HealthResponse,
   DatabaseHealthResponse,
@@ -36,7 +39,8 @@ export class HealthService {
       const isConnected = await this.databaseService.isHealthy();
 
       if (isConnected) {
-        const connectionInfo = await this.databaseService.getConnectionInfo();
+        const connectionInfo: DatabaseConnectionInfo[] =
+          await this.databaseService.getConnectionInfo();
 
         return {
           status: 'ok',

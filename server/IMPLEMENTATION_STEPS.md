@@ -1,7 +1,9 @@
 # StyleSync Backend Implementation Plan
 
 ## Project Overview
+
 StyleSync is a multi-location barbershop booking system with the following key requirements:
+
 - **Multi-tenant**: Multiple branch locations ("Unidade 1", "Unidade 2")
 - **Professional selection**: Clients can choose specific professionals or "any available"
 - **Single service booking**: One service per appointment (simplified business logic)
@@ -11,6 +13,7 @@ StyleSync is a multi-location barbershop booking system with the following key r
 ## Architecture Decisions
 
 ### Technology Stack
+
 - **Backend**: NestJS + TypeScript
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: JWT tokens
@@ -19,6 +22,7 @@ StyleSync is a multi-location barbershop booking system with the following key r
 - **Validation**: class-validator + class-transformer
 
 ### Business Logic Clarifications
+
 1. **Professional Preferences**: Clients can book "any available professional" (professionalId = null)
 2. **Service Combinations**: Single service per booking (no complex multi-service logic)
 3. **Pricing Strategy**: Location-specific pricing for services
@@ -27,13 +31,14 @@ StyleSync is a multi-location barbershop booking system with the following key r
 ## Database Schema Design
 
 ### Core Entities
+
 ```prisma
 model Tenant {
   id       String @id @default(cuid())
-  name     String // "Unidade 1", "Unidade 2"  
+  name     String // "Unidade 1", "Unidade 2"
   address  String
   phone    String
-  
+
   professionals Professional[]
   bookings     Booking[]
   servicePricing ServicePricing[]
@@ -43,11 +48,11 @@ model Tenant {
 
 model Professional {
   id       String  @id @default(cuid())
-  name     String  // "Michel", "Luiz", "Dario" 
+  name     String  // "Michel", "Luiz", "Dario"
   photoUrl String?
   isActive Boolean @default(true)
   tenantId String
-  
+
   tenant   Tenant    @relation(fields: [tenantId], references: [id])
   bookings Booking[]
   @@map("professionals")
@@ -58,7 +63,7 @@ model Service {
   name        String // "Social + Barba"
   description String?
   duration    Int    // minutes (single service only)
-  
+
   pricing ServicePricing[]
   bookings Booking[]
   @@map("services")
@@ -67,9 +72,9 @@ model Service {
 model ServicePricing {
   id        String  @id @default(cuid())
   serviceId String
-  tenantId  String  
+  tenantId  String
   price     Decimal @db.Decimal(10,2)
-  
+
   service Service @relation(fields: [serviceId], references: [id])
   tenant  Tenant  @relation(fields: [tenantId], references: [id])
   @@unique([serviceId, tenantId])
@@ -83,7 +88,7 @@ model User {
   name     String
   phone    String?
   role     UserRole @default(CLIENT)
-  
+
   bookings Booking[]
   createdAt DateTime @default(now())
   @@map("users")
@@ -98,12 +103,12 @@ model Booking {
   scheduledAt    DateTime
   status         BookingStatus @default(PENDING)
   totalPrice     Decimal       @db.Decimal(10,2)
-  
+
   user         User         @relation(fields: [userId], references: [id])
   tenant       Tenant       @relation(fields: [tenantId], references: [id])
   service      Service      @relation(fields: [serviceId], references: [id])
   professional Professional? @relation(fields: [professionalId], references: [id])
-  
+
   createdAt DateTime @default(now())
   @@map("bookings")
 }
@@ -232,23 +237,27 @@ server/
 ## Implementation Phases
 
 ### Phase 1: Database Foundation (Week 1)
+
 **Goal**: Get PostgreSQL + Prisma working with multi-tenant schema
 
 #### Step 1.1: Docker Setup
-- [X] Create `docker/docker-compose.yml` for PostgreSQL
-- [X] Test database connection
-- [X] Document connection process
+
+- [x] Create `docker/docker-compose.yml` for PostgreSQL
+- [x] Test database connection
+- [x] Document connection process
 
 > 📚 **For database setup instructions**, see [`docs/SETUP.md`](../docs/SETUP.md)
 
-#### Step 1.2: Prisma Initialization  
-- [X] Install Prisma dependencies
-- [X] Initialize Prisma configuration
-- [X] Create multi-tenant schema
-- [X] Run initial migration
-- [X] Create seed data for development
+#### Step 1.2: Prisma Initialization
+
+- [x] Install Prisma dependencies
+- [x] Initialize Prisma configuration
+- [x] Create multi-tenant schema
+- [x] Run initial migration
+- [x] Create seed data for development
 
 #### Step 1.3: Essential Dependencies
+
 ```bash
 npm install @nestjs/config @nestjs/jwt @nestjs/passport @nestjs/swagger @nestjs/terminus
 npm install passport passport-jwt bcrypt class-validator class-transformer
@@ -257,78 +266,104 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 ```
 
 #### Step 1.4: Environment Configuration
-- [X] Create `.env.example` template
-- [X] Set up `@nestjs/config` module
-- [X] Configure database connection (see `docs/SETUP.md` for details)
-- [X] Set up JWT secrets
-- [X] Configure health check settings
+
+- [x] Create `.env.example` template
+- [x] Set up `@nestjs/config` module
+- [x] Configure database connection (see `docs/SETUP.md` for details)
+- [x] Set up JWT secrets
+- [x] Configure health check settings
+
+#### Step 1.5: Code linting
+
+- [x] Configure base eslint, prettier and editorconfig if necessary
+- [x] Set up modern ESLint v9 with TypeScript support
+- [x] Configure Prettier integration with ESLint
+- [x] Add .editorconfig for consistent editor settings
+- [x] Fix TypeScript unsafe operations with proper typing
+- [x] Configure test-specific ESLint rules for Jest
+- [x] Set up pre-commit hooks with husky and lint-staged
+- [x] Add lint:check and format:check scripts for CI/CD
 
 ### Phase 2: Core Modules (Week 2)
+
 **Goal**: Implement essential business modules
 
 #### Step 2.1: Health Check Module
-- [X] Create `health/health.module.ts` with @nestjs/terminus
-- [X] Implement basic health endpoint (`GET /api/health`)
-- [X] Add database health check (`GET /api/health/database`)
-- [X] Add detailed system status endpoint
-- [X] Add to app module
+
+- [x] Create `health/health.module.ts` with @nestjs/terminus
+- [x] Implement basic health endpoint (`GET /api/health`)
+- [x] Add database health check (`GET /api/health/database`)
+- [x] Add detailed system status endpoint
+- [x] Add to app module
 
 #### Step 2.2: Database Module
-- [X] Create `database/database.module.ts`
-- [X] Implement Prisma service wrapper
-- [X] Add to app module
-- [X] Test database connection via health endpoint
+
+- [x] Create `database/database.module.ts`
+- [x] Implement Prisma service wrapper
+- [x] Add to app module
+- [x] Test database connection via health endpoint
 
 #### Step 2.3: Auth Module
+
 - [ ] JWT strategy implementation
 - [ ] Login/Register endpoints
 - [ ] Password hashing with bcrypt
 - [ ] Basic user registration
 
 #### Step 2.3: Tenants Module
+
 - [ ] CRUD operations for branches
 - [ ] Basic tenant management
 - [ ] Admin-only routes
 
 ### Phase 3: Business Logic (Week 3)
+
 **Goal**: Implement booking-specific functionality
 
 #### Step 3.1: Professionals Module
+
 - [ ] Professional CRUD with tenant association
 - [ ] Photo upload handling (basic)
 - [ ] Active/inactive status management
 
-#### Step 3.2: Services Module  
+#### Step 3.2: Services Module
+
 - [ ] Service catalog management
 - [ ] Location-based pricing implementation
 - [ ] Service duration configuration
 
 #### Step 3.3: Booking Module Foundation
+
 - [ ] Basic booking CRUD
 - [ ] Availability query structure
 - [ ] Simple time slot logic
 
 ### Phase 4: Advanced Features (Week 4)
+
 **Goal**: Complete booking flow
 
 #### Step 4.1: Availability Service
+
 - [ ] Professional availability calculation
 - [ ] "Any professional" slot aggregation
 - [ ] Service duration slot blocking
 
 #### Step 4.2: API Documentation
-- [X] Swagger/OpenAPI setup in main.ts
-- [X] DTO documentation
-- [X] API endpoint descriptions
+
+- [x] Swagger/OpenAPI setup in main.ts
+- [x] DTO documentation
+- [x] API endpoint descriptions
 
 #### Step 4.3: Validation & Error Handling
-- [X] Global validation pipes
+
+- [x] Global validation pipes
 - [ ] Error response standardization
-- [X] Input sanitization
+- [x] Input sanitization
 
 ## Development Guidelines
 
 ### Code Standards
+
 - Use NestJS conventions (feature modules)
 - Implement DTOs for all API inputs/outputs
 - Add Swagger decorators to controllers
@@ -336,12 +371,14 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - Keep business logic in services, not controllers
 
 ### Testing Strategy
+
 - Unit tests for services (business logic)
 - Integration tests for controllers
 - E2E tests for critical booking flows
 - Database seeding for consistent test data
 
 ### Security Considerations
+
 - JWT token expiration handling
 - Password hashing (bcrypt)
 - Input validation and sanitization
@@ -351,16 +388,19 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 ## API Endpoints Overview
 
 ### Health & Monitoring
+
 - `GET /api/health` - Application health check
 - `GET /api/health/database` - Database connection health
 - `GET /api/health/detailed` - Detailed system status
 
 ### Authentication
+
 - `POST /api/auth/login` - User login
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/refresh` - Token refresh
 
 ### Tenants (Admin only)
+
 - `GET /api/tenants` - List all branches
 - `POST /api/tenants` - Create branch
 - `GET /api/tenants/:id` - Get branch details
@@ -368,18 +408,21 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - `DELETE /api/tenants/:id` - Delete branch
 
 ### Professionals
+
 - `GET /api/tenants/:tenantId/professionals` - List professionals by branch
 - `POST /api/professionals` - Create professional (Admin)
 - `PUT /api/professionals/:id` - Update professional
 - `DELETE /api/professionals/:id` - Deactivate professional
 
 ### Services
+
 - `GET /api/services` - List all services
 - `GET /api/tenants/:tenantId/services` - Services with branch pricing
 - `POST /api/services` - Create service (Admin)
 - `POST /api/services/:id/pricing` - Set branch-specific pricing
 
 ### Bookings
+
 - `POST /api/bookings` - Create booking
 - `GET /api/bookings/my` - User's booking history
 - `GET /api/bookings/availability` - Query available time slots
@@ -389,6 +432,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 ## Future Considerations
 
 ### Not Implementing Initially
+
 - Advanced cancellation policies
 - Multi-service bookings
 - Professional working hours management
@@ -397,11 +441,13 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - Advanced reporting/analytics
 
 ### Multilingual Support
+
 - Frontend: i18next (React)
 - Backend: Simple translation service for API responses
 - Database: Store translatable content in JSON columns when needed
 
 ## Success Metrics
+
 - [ ] User can register and login
 - [ ] Admin can manage branches and services
 - [ ] Client can view available time slots
@@ -411,8 +457,9 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [ ] Database supports multiple branches with different pricing
 
 ## Notes
+
 - Start with Portuguese as primary language
-- Focus on core booking functionality first  
+- Focus on core booking functionality first
 - Keep business rules simple initially
 - Prioritize working software over perfect architecture
 - Document decisions and trade-offs as you go

@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+echo "🔍 Running pre-commit checks..."
+echo "📝 Linting and formatting staged files with STRICT rules..."
+
+# Change to server directory and run lint-staged
+cd server
+npx lint-staged
+
+if [ $? -eq 0 ]; then
+  echo "✅ Pre-commit checks passed! Commit proceeding..."
+else
+  echo "❌ Pre-commit checks failed. Fix the issues above before committing."
+  echo "💡 Tip: Run 'npm run lint:commit' to fix automatically"
+  exit 1
+fi

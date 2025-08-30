@@ -6,6 +6,13 @@ import {
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
+export interface DatabaseConnectionInfo {
+  database_name: string;
+  user_name: string;
+  version: string;
+  timestamp: Date;
+}
+
 @Injectable()
 export class DatabaseService
   extends PrismaClient
@@ -44,7 +51,7 @@ export class DatabaseService
     }
   }
 
-  async getConnectionInfo(): Promise<any[]> {
+  async getConnectionInfo(): Promise<DatabaseConnectionInfo[]> {
     try {
       const result = await this.$queryRaw`
         SELECT 
@@ -53,7 +60,7 @@ export class DatabaseService
           version() as version,
           current_timestamp as timestamp
       `;
-      return result as any[];
+      return result as DatabaseConnectionInfo[];
     } catch (error) {
       this.logger.error('Failed to get connection info:', error);
       throw error;

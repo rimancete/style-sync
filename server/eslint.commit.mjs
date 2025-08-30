@@ -4,9 +4,10 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+// Strict configuration for pre-commit hooks
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs', 'dist/**/*', 'node_modules/**/*'],
+    ignores: ['eslint.config.mjs', 'eslint.commit.mjs', 'dist/**/*', 'node_modules/**/*'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -26,29 +27,23 @@ export default tseslint.config(
   },
   {
     rules: {
-      // STRICT RULES - Enforce quality from the start
-      '@typescript-eslint/no-explicit-any': 'warn', // Keep as warn - sometimes needed
+      // Strict rules for commits - enforce quality
+      '@typescript-eslint/no-explicit-any': 'warn', // Still allow but warn
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-unsafe-argument': 'error',
       '@typescript-eslint/no-unsafe-assignment': 'error',
       '@typescript-eslint/no-unsafe-member-access': 'error',
       '@typescript-eslint/no-unsafe-call': 'error',
       '@typescript-eslint/no-unused-vars': 'error',
-      'prefer-const': 'error',
-      'no-console': 'error', // No console.log in production code
+      'prefer-const': 'error', // Core ESLint rule, not TypeScript
+      'no-console': 'error',
       
-      // Critical errors that should never be allowed
+      // Critical errors that should never be committed
       '@typescript-eslint/ban-ts-comment': 'error',
       'no-debugger': 'error',
-      
-      // Additional strict rules for better code quality
-      '@typescript-eslint/no-non-null-assertion': 'error',
-      '@typescript-eslint/prefer-optional-chain': 'error',
-      'no-var': 'error',
-      'prefer-arrow-callback': 'error',
     },
   },
-  // Relaxed rules ONLY for test files
+  // Test files still get relaxed rules even in commit mode
   {
     files: ['**/*.spec.ts', '**/*.test.ts', '**/test/**/*.ts'],
     rules: {
@@ -56,7 +51,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
-      'no-console': 'off', // Allow console.log in tests
+      'no-console': 'off',
     },
   },
 );

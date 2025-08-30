@@ -93,4 +93,3 @@ export class DetailedHealthResponse {
     freeMemory?: number;
   };
 }
-

@@ -1,0 +1,24 @@
+# Build outputs
+dist/
+build/
+out/
+
+# Dependencies
+node_modules/
+
+# Coverage reports
+coverage/
+
+# Logs
+*.log
+
+# Database
+prisma/migrations/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Generated files
+*.d.ts
