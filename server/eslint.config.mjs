@@ -26,8 +26,8 @@ export default tseslint.config(
   },
   {
     rules: {
-      // STRICT RULES - Enforce quality from the start
-      '@typescript-eslint/no-explicit-any': 'warn', // Keep as warn - sometimes needed
+      // STRICT RULES - Consistent quality everywhere
+      '@typescript-eslint/no-explicit-any': 'warn', // Still allow but warn
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-unsafe-argument': 'error',
       '@typescript-eslint/no-unsafe-assignment': 'error',

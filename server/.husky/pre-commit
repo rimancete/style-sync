@@ -11,6 +11,6 @@ if [ $? -eq 0 ]; then
   echo "✅ Pre-commit checks passed! Commit proceeding..."
 else
   echo "❌ Pre-commit checks failed. Fix the issues above before committing."
-  echo "💡 Tip: Run 'npm run lint:commit' to fix automatically"
+  echo "💡 Tip: Run 'npm run lint' to fix automatically"
   exit 1
 fi

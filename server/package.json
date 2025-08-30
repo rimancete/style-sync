@@ -15,8 +15,6 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "lint:check": "eslint \"{src,apps,libs,test}/**/*.ts\"",
-    "lint:commit": "eslint --config eslint.commit.mjs \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "lint:commit:check": "eslint --config eslint.commit.mjs \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest",
     "test:unit": "jest --testPathPattern=\".*\\.\\(test|spec\\)\\.ts$\" --testPathIgnorePatterns=\".*\\.integration\\.(test|spec)\\.ts$\" --testPathIgnorePatterns=\".*\\.e2e\\.(test|spec)\\.ts$\" --testPathIgnorePatterns=\".*\\.contract\\.(test|spec)\\.ts$\"",
     "test:integration": "jest --testPathPattern=\".*\\.integration\\.(test|spec)\\.ts$\"",
@@ -121,7 +119,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "eslint --config eslint.commit.mjs --fix",
+      "eslint --fix",
       "prettier --write"
     ],
     "*.{json,md,yml,yaml}": [
