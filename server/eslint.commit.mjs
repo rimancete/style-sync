@@ -45,7 +45,7 @@ export default tseslint.config(
   },
   // Test files still get relaxed rules even in commit mode
   {
-    files: ['**/*.spec.ts', '**/*.test.ts', '**/test/**/*.ts'],
+    files: ['**/*.spec.ts', '**/*.test.ts', '**/test/**/*.ts', '**/testing/**/*.ts'],
     rules: {
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',

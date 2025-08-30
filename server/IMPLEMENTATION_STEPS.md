@@ -216,6 +216,9 @@ server/
 │   │   └── types/
 │   │       ├── user-role.enum.ts
 │   │       └── booking-status.enum.ts
+│   ├── testing/                # Testing utilities
+│   │   └── helpers/
+│   │       └── contract-test.helper.ts  # Contract testing infrastructure
 │   ├── database/               # Database module
 │   │   ├── database.module.ts
 │   │   └── database.service.ts
@@ -295,6 +298,10 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] Add database health check (`GET /api/health/database`)
 - [x] Add detailed system status endpoint
 - [x] Add to app module
+- [x] **Tests**: Contract testing approach implemented
+  - [x] Created contract testing infrastructure (`src/testing/helpers/contract-test.helper.ts`)
+  - [x] Added contract-specific npm scripts (`test:contracts`, `test:watch:contracts`, `test:cov:contracts`)
+  - [x] Configured ESLint relaxed rules for testing utilities
 
 #### Step 2.2: Database Module
 
@@ -309,12 +316,14 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [ ] Login/Register endpoints
 - [ ] Password hashing with bcrypt
 - [ ] Basic user registration
+- [ ] **Tests**: Contract tests for auth endpoints (following Health module pattern)
 
 #### Step 2.3: Tenants Module
 
 - [ ] CRUD operations for branches
 - [ ] Basic tenant management
 - [ ] Admin-only routes
+- [ ] **Tests**: Contract tests for tenant management APIs
 
 ### Phase 3: Business Logic (Week 3)
 
@@ -325,18 +334,21 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [ ] Professional CRUD with tenant association
 - [ ] Photo upload handling (basic)
 - [ ] Active/inactive status management
+- [ ] **Tests**: Contract tests for professional management APIs
 
 #### Step 3.2: Services Module
 
 - [ ] Service catalog management
 - [ ] Location-based pricing implementation
 - [ ] Service duration configuration
+- [ ] **Tests**: Contract tests for service catalog and pricing APIs
 
 #### Step 3.3: Booking Module Foundation
 
 - [ ] Basic booking CRUD
 - [ ] Availability query structure
 - [ ] Simple time slot logic
+- [ ] **Tests**: Contract tests for booking APIs + property-based tests for availability logic
 
 ### Phase 4: Advanced Features (Week 4)
 
@@ -347,6 +359,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [ ] Professional availability calculation
 - [ ] "Any professional" slot aggregation
 - [ ] Service duration slot blocking
+- [ ] **Tests**: Property-based tests for complex availability algorithms
 
 #### Step 4.2: API Documentation
 
@@ -372,10 +385,40 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 
 ### Testing Strategy
 
-- Unit tests for services (business logic)
-- Integration tests for controllers
+**Contract Testing Approach** (Primary Strategy):
+
+- **Contract tests** for API validation and business rules
+- Focus on frontend-backend compatibility over implementation details
+- Deterministic test data for reliability
+- Reusable testing utilities in `src/testing/helpers/`
+
+**Supplementary Testing**:
+
+- Unit tests for complex business logic (future modules)
 - E2E tests for critical booking flows
-- Database seeding for consistent test data
+- Property-based tests for booking availability logic (when implemented)
+
+**Test File Naming Convention**:
+
+- `*.contract.test.ts` - API contract validation
+- `*.test.ts` - Unit tests
+- `*.integration.test.ts` - Integration tests
+- `*.e2e-spec.ts` - End-to-end tests
+
+**Available Scripts**:
+
+- `npm run test:contracts` - Run contract tests only
+- `npm run test:unit` - Run unit tests only
+- `npm run test:integration` - Run integration tests only
+- `npm test` - Run all tests
+
+**Testing Architecture Decisions**:
+
+- ✅ **Contract testing over verbose unit tests**
+- ✅ **Deterministic over random test data**- ✅ **Frontend-focused testing**: Prioritize API contract validation over implementation details
+- ✅ **Reusable test utilities**: Centralized helpers in `src/testing/helpers/` for scalability
+- 🔄 **Property-based testing**: Reserved for complex booking logic (future implementation)
+- 🔄 **Mutation testing**: Planned for CI/CD pipeline to validate test quality
 
 ### Security Considerations
 

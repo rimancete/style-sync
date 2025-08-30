@@ -50,7 +50,7 @@ export default tseslint.config(
   },
   // Relaxed rules ONLY for test files
   {
-    files: ['**/*.spec.ts', '**/*.test.ts', '**/test/**/*.ts'],
+    files: ['**/*.spec.ts', '**/*.test.ts', '**/test/**/*.ts', '**/testing/**/*.ts'],
     rules: {
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
