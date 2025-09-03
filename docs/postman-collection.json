@@ -1,8 +1,7 @@
 {
   "info": {
-    "name": "StyleSync API",
-    "description": "Multi-location barbershop booking system API collection for testing and development",
-    "version": "1.0.0",
+    "name": "StyleSync API - Clean",
+    "description": "Clean minimal collection for StyleSync API testing",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -14,20 +13,19 @@
     {
       "key": "authToken",
       "value": "",
-      "type": "string",
-      "description": "JWT token for authenticated requests"
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tenantId",
+      "value": "",
+      "type": "string"
     }
   ],
-  "auth": {
-    "type": "bearer",
-    "bearer": [
-      {
-        "key": "token",
-        "value": "{{authToken}}",
-        "type": "string"
-      }
-    ]
-  },
   "item": [
     {
       "name": "Health & Monitoring",
@@ -174,10 +172,24 @@
     },
     {
       "name": "Authentication",
-      "description": "User authentication and authorization endpoints (to be implemented)",
       "item": [
         {
           "name": "User Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('authToken', json.data.token);",
+                  "    pm.collectionVariables.set('refreshToken', json.data.refresh_token);",
+                  "    console.log('Tokens saved successfully');",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -194,12 +206,26 @@
               "raw": "{{baseUrl}}/auth/login",
               "host": ["{{baseUrl}}"],
               "path": ["auth", "login"]
-            },
-            "description": "Authenticate user with email and password to receive JWT token"
+            }
           }
         },
         {
-          "name": "User Registration",
+          "name": "User Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('authToken', json.data.token);",
+                  "    pm.collectionVariables.set('refreshToken', json.data.refresh_token);",
+                  "    console.log('Registration successful, tokens saved');",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -210,62 +236,92 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"securePassword123\",\n  \"name\": \"João Silva\",\n  \"phone\": \"(11) 99999-9999\"\n}"
+              "raw": "{\n  \"email\": \"newuser@test.com\",\n  \"password\": \"123456\",\n  \"name\": \"New User\",\n  \"phone\": \"+1234567890\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/register",
               "host": ["{{baseUrl}}"],
               "path": ["auth", "register"]
-            },
-            "description": "Register a new user account"
+            }
           }
         },
         {
           "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('authToken', json.data.token);",
+                  "    pm.collectionVariables.set('refreshToken', json.data.refresh_token);",
+                  "    console.log('Tokens refreshed successfully');",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{refreshToken}}"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"refreshToken\": \"your-refresh-token-here\"\n}"
-            },
             "url": {
               "raw": "{{baseUrl}}/auth/refresh",
               "host": ["{{baseUrl}}"],
               "path": ["auth", "refresh"]
-            },
-            "description": "Refresh JWT token using refresh token"
+            }
           }
         }
       ]
     },
     {
       "name": "Tenants (Branches)",
-      "description": "Branch/location management endpoints (to be implemented)",
       "item": [
         {
           "name": "List All Tenants",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/tenants",
               "host": ["{{baseUrl}}"],
               "path": ["tenants"]
-            },
-            "description": "Get list of all branches/locations (Admin only)"
+            }
           }
         },
         {
           "name": "Create Tenant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('tenantId', json.data.id);",
+                  "    console.log('Tenant created, ID saved:', json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -273,294 +329,16 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Unidade 3\",\n  \"address\": \"Rua Nova, 789 - Vila Nova\",\n  \"phone\": \"(11) 97777-7777\"\n}"
+              "raw": "{\n  \"name\": \"Unidade Centro\",\n  \"address\": \"Rua Principal, 123 - Centro\",\n  \"phone\": \"(11) 99999-9999\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/tenants",
               "host": ["{{baseUrl}}"],
               "path": ["tenants"]
-            },
-            "description": "Create a new branch/location (Admin only)"
-          }
-        },
-        {
-          "name": "Get Tenant Details",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tenants/:tenantId",
-              "host": ["{{baseUrl}}"],
-              "path": ["tenants", ":tenantId"],
-              "variable": [
-                {
-                  "key": "tenantId",
-                  "value": "tenant-id-here",
-                  "description": "ID of the tenant/branch"
-                }
-              ]
-            },
-            "description": "Get details of a specific branch/location"
+            }
           }
         }
       ]
-    },
-    {
-      "name": "Professionals (Staff)",
-      "description": "Staff management endpoints (to be implemented)",
-      "item": [
-        {
-          "name": "List Professionals by Branch",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tenants/:tenantId/professionals",
-              "host": ["{{baseUrl}}"],
-              "path": ["tenants", ":tenantId", "professionals"],
-              "variable": [
-                {
-                  "key": "tenantId",
-                  "value": "tenant-id-here",
-                  "description": "ID of the branch/tenant"
-                }
-              ]
-            },
-            "description": "Get list of professionals working at a specific branch"
-          }
-        },
-        {
-          "name": "Create Professional",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Roberto\",\n  \"tenantId\": \"tenant-id-here\",\n  \"photoUrl\": \"https://example.com/photo.jpg\",\n  \"isActive\": true\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/professionals",
-              "host": ["{{baseUrl}}"],
-              "path": ["professionals"]
-            },
-            "description": "Create a new professional (Admin only)"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Services & Pricing",
-      "description": "Service catalog and pricing endpoints (to be implemented)",
-      "item": [
-        {
-          "name": "List All Services",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/services",
-              "host": ["{{baseUrl}}"],
-              "path": ["services"]
-            },
-            "description": "Get list of all available services"
-          }
-        },
-        {
-          "name": "List Services with Branch Pricing",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tenants/:tenantId/services",
-              "host": ["{{baseUrl}}"],
-              "path": ["tenants", ":tenantId", "services"],
-              "variable": [
-                {
-                  "key": "tenantId",
-                  "value": "tenant-id-here",
-                  "description": "ID of the branch/tenant"
-                }
-              ]
-            },
-            "description": "Get services with pricing specific to a branch"
-          }
-        },
-        {
-          "name": "Create Service",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Corte + Sobrancelha\",\n  \"description\": \"Corte de cabelo com design de sobrancelha\",\n  \"duration\": 50\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/services",
-              "host": ["{{baseUrl}}"],
-              "path": ["services"]
-            },
-            "description": "Create a new service (Admin only)"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Bookings",
-      "description": "Appointment booking system endpoints (to be implemented)",
-      "item": [
-        {
-          "name": "Check Availability",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/bookings/availability?tenantId=:tenantId&serviceId=:serviceId&date=:date&professionalId=:professionalId",
-              "host": ["{{baseUrl}}"],
-              "path": ["bookings", "availability"],
-              "query": [
-                {
-                  "key": "tenantId",
-                  "value": ":tenantId",
-                  "description": "Branch ID"
-                },
-                {
-                  "key": "serviceId",
-                  "value": ":serviceId",
-                  "description": "Service ID"
-                },
-                {
-                  "key": "date",
-                  "value": ":date",
-                  "description": "Date in YYYY-MM-DD format"
-                },
-                {
-                  "key": "professionalId",
-                  "value": ":professionalId",
-                  "description": "Professional ID (optional - leave empty for any professional)"
-                }
-              ]
-            },
-            "description": "Query available time slots for booking"
-          }
-        },
-        {
-          "name": "Create Booking",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"tenantId\": \"tenant-id-here\",\n  \"serviceId\": \"service-id-here\",\n  \"professionalId\": \"professional-id-here\",\n  \"scheduledAt\": \"2024-01-16T10:00:00.000Z\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/bookings",
-              "host": ["{{baseUrl}}"],
-              "path": ["bookings"]
-            },
-            "description": "Create a new booking appointment"
-          }
-        },
-        {
-          "name": "My Bookings",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/bookings/my",
-              "host": ["{{baseUrl}}"],
-              "path": ["bookings", "my"]
-            },
-            "description": "Get current user's booking history"
-          }
-        },
-        {
-          "name": "Update Booking Status",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/bookings/:bookingId",
-              "host": ["{{baseUrl}}"],
-              "path": ["bookings", ":bookingId"],
-              "variable": [
-                {
-                  "key": "bookingId",
-                  "value": "booking-id-here",
-                  "description": "ID of the booking to update"
-                }
-              ]
-            },
-            "description": "Update booking status (Staff/Admin only)"
-          }
-        }
-      ]
-    }
-  ],
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          "// Pre-request script to set common headers",
-          "if (pm.request.method !== 'GET') {",
-          "  pm.request.headers.add({",
-          "    key: 'Content-Type',",
-          "    value: 'application/json'",
-          "  });",
-          "}"
-        ]
-      }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          "// Common test scripts",
-          "pm.test('Status code is successful', function () {",
-          "  pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
-          "});",
-          "",
-          "pm.test('Response time is less than 2000ms', function () {",
-          "  pm.expect(pm.response.responseTime).to.be.below(2000);",
-          "});",
-          "",
-          "// Auto-save auth token from login response",
-          "if (pm.request.url.toString().includes('/auth/login') && pm.response.code === 200) {",
-          "  const responseJson = pm.response.json();",
-          "  if (responseJson.accessToken) {",
-          "    pm.collectionVariables.set('authToken', responseJson.accessToken);",
-          "    console.log('Auth token saved to collection variables');",
-          "  }",
-          "}"
-        ]
-      }
     }
   ]
 }
-

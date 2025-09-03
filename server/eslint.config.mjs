@@ -28,12 +28,14 @@ export default tseslint.config(
     rules: {
       // STRICT RULES - Consistent quality everywhere
       '@typescript-eslint/no-explicit-any': 'warn', // Still allow but warn
+      '@typescript-eslint/no-unnecessary-type-assertion': 'warn',
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-unsafe-argument': 'error',
+      '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/no-unsafe-assignment': 'error',
       '@typescript-eslint/no-unsafe-member-access': 'error',
       '@typescript-eslint/no-unsafe-call': 'error',
-      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-unsafe-return': 'error',
       'prefer-const': 'error',
       'no-console': 'error', // No console.log in production code
       
@@ -46,7 +48,7 @@ export default tseslint.config(
       '@typescript-eslint/prefer-optional-chain': 'error',
       'no-var': 'error',
       'prefer-arrow-callback': 'error',
-    },
+},
   },
   // Relaxed rules ONLY for test files
   {

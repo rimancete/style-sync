@@ -239,7 +239,7 @@ server/
 
 ## Implementation Phases
 
-### Phase 1: Database Foundation (Week 1)
+### Phase 1: Database Foundation (Bi-week 1)
 
 **Goal**: Get PostgreSQL + Prisma working with multi-tenant schema
 
@@ -287,7 +287,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] Set up pre-commit hooks with husky and lint-staged
 - [x] Add lint:check and format:check scripts for CI/CD
 
-### Phase 2: Core Modules (Week 2)
+### Phase 2: Core Modules (Bi-week 2)
 
 **Goal**: Implement essential business modules
 
@@ -312,11 +312,11 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 
 #### Step 2.3: Auth Module
 
-- [ ] JWT strategy implementation
-- [ ] Login/Register endpoints
-- [ ] Password hashing with bcrypt
-- [ ] Basic user registration
-- [ ] **Tests**: Contract tests for auth endpoints (following Health module pattern)
+- [x] JWT strategy implementation
+- [x] Login/Register endpoints
+- [x] Password hashing with bcrypt
+- [x] Basic user registration
+- [x] **Tests**: Contract tests for auth endpoints (following Health module pattern)
 
 #### Step 2.3: Tenants Module
 

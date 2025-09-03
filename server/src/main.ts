@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { ResponseTransformInterceptor } from './common/interceptors/response-transform.interceptor';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -25,6 +27,12 @@ async function bootstrap() {
       errorHttpStatusCode: 422,
     }),
   );
+
+  // Global response transform interceptor (skips health endpoints)
+  app.useGlobalInterceptors(new ResponseTransformInterceptor());
+
+  // Global exception filter (skips health endpoints)
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Swagger documentation setup
   if (

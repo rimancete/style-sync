@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { DatabaseConnectionInfo } from '../../database/database.service';
 
 export class HealthResponse {
   @ApiProperty({
@@ -23,7 +24,7 @@ export class HealthResponse {
     description: 'Additional health information',
     required: false,
   })
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 export class DatabaseHealthResponse {
@@ -38,7 +39,7 @@ export class DatabaseHealthResponse {
   })
   database: {
     connected: boolean;
-    connectionInfo?: any;
+    connectionInfo?: DatabaseConnectionInfo;
     error?: string;
   };
 
@@ -78,7 +79,7 @@ export class DetailedHealthResponse {
   })
   database: {
     connected: boolean;
-    connectionInfo?: any;
+    connectionInfo?: DatabaseConnectionInfo;
     error?: string;
   };
 

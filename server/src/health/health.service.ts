@@ -50,7 +50,7 @@ export class HealthService {
             connectionInfo:
               Array.isArray(connectionInfo) && connectionInfo.length > 0
                 ? connectionInfo[0]
-                : null,
+                : undefined,
           },
         };
       } else {

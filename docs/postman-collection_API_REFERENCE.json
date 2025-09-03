@@ -1,0 +1,604 @@
+{
+  "info": {
+    "name": "StyleSync API",
+    "description": "Multi-location barbershop booking system API collection for testing and development",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001/api",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string",
+      "description": "JWT token for authenticated requests"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Health & Monitoring",
+      "description": "Application and system health check endpoints",
+      "item": [
+        {
+          "name": "Basic Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Returns basic health status of the StyleSync API application. This endpoint provides a quick way to verify the application is running and responsive."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"ok\",\n  \"timestamp\": \"2024-01-15T10:30:00.000Z\",\n  \"uptime\": 123456789,\n  \"details\": {\n    \"message\": \"StyleSync API is running\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Database Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health/database",
+              "host": ["{{baseUrl}}"],
+              "path": ["health", "database"]
+            },
+            "description": "Checks the database connection status and returns connection information. This endpoint verifies that the application can successfully connect to and query the PostgreSQL database."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/health/database",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["health", "database"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"ok\",\n  \"timestamp\": \"2024-01-15T10:30:00.000Z\",\n  \"database\": {\n    \"connected\": true,\n    \"connectionInfo\": {\n      \"database_name\": \"stylesync\",\n      \"user_name\": \"stylesync\",\n      \"version\": \"PostgreSQL 15.14\",\n      \"timestamp\": \"2024-01-15T10:30:00.000Z\"\n    }\n  }\n}"
+            },
+            {
+              "name": "Error Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/health/database",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["health", "database"]
+                }
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"error\",\n  \"timestamp\": \"2024-01-15T10:30:00.000Z\",\n  \"database\": {\n    \"connected\": false,\n    \"error\": \"Connection timeout\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Detailed Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health/detailed",
+              "host": ["{{baseUrl}}"],
+              "path": ["health", "detailed"]
+            },
+            "description": "Returns comprehensive health information including application details, database status, and system metrics. This endpoint provides detailed diagnostics for monitoring and troubleshooting."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/health/detailed",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["health", "detailed"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"ok\",\n  \"timestamp\": \"2024-01-15T10:30:00.000Z\",\n  \"application\": {\n    \"name\": \"StyleSync API\",\n    \"version\": \"1.0.0\",\n    \"environment\": \"development\",\n    \"uptime\": 123456789,\n    \"memoryUsage\": {\n      \"rss\": 45678912,\n      \"heapTotal\": 34567890,\n      \"heapUsed\": 23456789,\n      \"external\": 1234567\n    }\n  },\n  \"database\": {\n    \"connected\": true,\n    \"connectionInfo\": {\n      \"database_name\": \"stylesync\",\n      \"user_name\": \"stylesync\",\n      \"version\": \"PostgreSQL 15.14\"\n    }\n  },\n  \"system\": {\n    \"platform\": \"linux\",\n    \"nodeVersion\": \"v18.17.0\",\n    \"cpuArch\": \"x64\",\n    \"totalMemory\": 8589934592,\n    \"freeMemory\": 2147483648\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "description": "User authentication and authorization endpoints",
+      "item": [
+        {
+          "name": "User Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  ",
+                  "  // Basic validation",
+                  "  pm.test('Login successful', function () {",
+                  "    pm.expect(json.data.token).to.be.a('string');",
+                  "    pm.expect(json.data.refresh_token).to.be.a('string');",
+                  "    pm.expect(json.data.user_name).to.be.a('string');",
+                  "    pm.expect(json.data.user_id).to.be.a('string');",
+                  "  });",
+                  "  ",
+                  "  // Save tokens to collection variables",
+                  "  pm.collectionVariables.set('authToken', json.data.token);",
+                  "  pm.collectionVariables.set('refreshToken', json.data.refresh_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"client@test.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticate user with email and password to receive JWT token. Automatically saves tokens to collection variables."
+          }
+        },
+        {
+          "name": "User Registration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"securePassword123\",\n  \"name\": \"João Silva\",\n  \"phone\": \"(11) 99999-9999\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new user account"
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  ",
+                  "  pm.test('Refresh successful', function () {",
+                  "    pm.expect(json.data.token).to.be.a('string');",
+                  "    pm.expect(json.data.refresh_token).to.be.a('string');",
+                  "  });",
+                  "  ",
+                  "  // Update tokens with new ones",
+                  "  pm.collectionVariables.set('authToken', json.data.token);",
+                  "  pm.collectionVariables.set('refreshToken', json.data.refresh_token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{refreshToken}}",
+                "description": "Refresh token from login response"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Refresh JWT token using refresh token in Authorization header. Uses {{refreshToken}} variable set by login request."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenants (Branches)",
+      "description": "Branch/location management endpoints (to be implemented)",
+      "item": [
+        {
+          "name": "List All Tenants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tenants",
+              "host": ["{{baseUrl}}"],
+              "path": ["tenants"]
+            },
+            "description": "Get list of all branches/locations (Admin only)"
+          }
+        },
+        {
+          "name": "Create Tenant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unidade 3\",\n  \"address\": \"Rua Nova, 789 - Vila Nova\",\n  \"phone\": \"(11) 97777-7777\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tenants",
+              "host": ["{{baseUrl}}"],
+              "path": ["tenants"]
+            },
+            "description": "Create a new branch/location (Admin only)"
+          }
+        },
+        {
+          "name": "Get Tenant Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tenants/:tenantId",
+              "host": ["{{baseUrl}}"],
+              "path": ["tenants", ":tenantId"],
+              "variable": [
+                {
+                  "key": "tenantId",
+                  "value": "tenant-id-here",
+                  "description": "ID of the tenant/branch"
+                }
+              ]
+            },
+            "description": "Get details of a specific branch/location"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Professionals (Staff)",
+      "description": "Staff management endpoints (to be implemented)",
+      "item": [
+        {
+          "name": "List Professionals by Branch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tenants/:tenantId/professionals",
+              "host": ["{{baseUrl}}"],
+              "path": ["tenants", ":tenantId", "professionals"],
+              "variable": [
+                {
+                  "key": "tenantId",
+                  "value": "tenant-id-here",
+                  "description": "ID of the branch/tenant"
+                }
+              ]
+            },
+            "description": "Get list of professionals working at a specific branch"
+          }
+        },
+        {
+          "name": "Create Professional",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Roberto\",\n  \"tenantId\": \"tenant-id-here\",\n  \"photoUrl\": \"https://example.com/photo.jpg\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/professionals",
+              "host": ["{{baseUrl}}"],
+              "path": ["professionals"]
+            },
+            "description": "Create a new professional (Admin only)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Services & Pricing",
+      "description": "Service catalog and pricing endpoints (to be implemented)",
+      "item": [
+        {
+          "name": "List All Services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["services"]
+            },
+            "description": "Get list of all available services"
+          }
+        },
+        {
+          "name": "List Services with Branch Pricing",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tenants/:tenantId/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["tenants", ":tenantId", "services"],
+              "variable": [
+                {
+                  "key": "tenantId",
+                  "value": "tenant-id-here",
+                  "description": "ID of the branch/tenant"
+                }
+              ]
+            },
+            "description": "Get services with pricing specific to a branch"
+          }
+        },
+        {
+          "name": "Create Service",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Corte + Sobrancelha\",\n  \"description\": \"Corte de cabelo com design de sobrancelha\",\n  \"duration\": 50\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["services"]
+            },
+            "description": "Create a new service (Admin only)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "description": "Appointment booking system endpoints (to be implemented)",
+      "item": [
+        {
+          "name": "Check Availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/availability?tenantId=:tenantId&serviceId=:serviceId&date=:date&professionalId=:professionalId",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "availability"],
+              "query": [
+                {
+                  "key": "tenantId",
+                  "value": ":tenantId",
+                  "description": "Branch ID"
+                },
+                {
+                  "key": "serviceId",
+                  "value": ":serviceId",
+                  "description": "Service ID"
+                },
+                {
+                  "key": "date",
+                  "value": ":date",
+                  "description": "Date in YYYY-MM-DD format"
+                },
+                {
+                  "key": "professionalId",
+                  "value": ":professionalId",
+                  "description": "Professional ID (optional - leave empty for any professional)"
+                }
+              ]
+            },
+            "description": "Query available time slots for booking"
+          }
+        },
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantId\": \"tenant-id-here\",\n  \"serviceId\": \"service-id-here\",\n  \"professionalId\": \"professional-id-here\",\n  \"scheduledAt\": \"2024-01-16T10:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            },
+            "description": "Create a new booking appointment"
+          }
+        },
+        {
+          "name": "My Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/my",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "my"]
+            },
+            "description": "Get current user's booking history"
+          }
+        },
+        {
+          "name": "Update Booking Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/:bookingId",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", ":bookingId"],
+              "variable": [
+                {
+                  "key": "bookingId",
+                  "value": "booking-id-here",
+                  "description": "ID of the booking to update"
+                }
+              ]
+            },
+            "description": "Update booking status (Staff/Admin only)"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Pre-request script to set common headers",
+          "if (pm.request.method !== 'GET') {",
+          "  pm.request.headers.add({",
+          "    key: 'Content-Type',",
+          "    value: 'application/json'",
+          "  });",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Common test scripts",
+          "pm.test('Status code is successful', function () {",
+          "  pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+          "});",
+          "",
+          "pm.test('Response time is less than 2000ms', function () {",
+          "  pm.expect(pm.response.responseTime).to.be.below(2000);",
+          "});",
+          "",
+          "// NOTE: Token saving is handled by individual request scripts to avoid conflicts",
+          "// Global token saving disabled to prevent race conditions"
+        ]
+      }
+    }
+  ]
+}
+
