@@ -7,8 +7,8 @@ import {
 import { PrismaClient } from '@prisma/client';
 
 export interface DatabaseConnectionInfo {
-  database_name: string;
-  user_name: string;
+  databaseName: string;
+  userName: string;
   version: string;
   timestamp: Date;
 }
@@ -55,8 +55,8 @@ export class DatabaseService
     try {
       const result = await this.$queryRaw`
         SELECT 
-          current_database() as database_name,
-          current_user as user_name,
+          current_database() as "databaseName",
+          current_user as "userName",
           version() as version,
           current_timestamp as timestamp
       `;

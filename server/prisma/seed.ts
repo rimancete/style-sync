@@ -18,7 +18,15 @@ async function main() {
   const tenant1 = await prisma.tenant.create({
     data: {
       name: 'Unidade 1',
-      address: 'Rua das Flores, 123 - Centro',
+      countryCode: 'BR',
+      street: 'Rua das Flores',
+      unit: '123',
+      district: 'Centro',
+      city: 'São Paulo',
+      stateProvince: 'SP',
+      postalCode: '01234-567',
+      formattedAddress:
+        'Rua das Flores, 123, Centro, São Paulo, SP 01234-567, BR',
       phone: '(11) 98765-4321',
     },
   });
@@ -26,7 +34,15 @@ async function main() {
   const tenant2 = await prisma.tenant.create({
     data: {
       name: 'Unidade 2',
-      address: 'Av. Paulista, 456 - Bela Vista',
+      countryCode: 'BR',
+      street: 'Av. Paulista',
+      unit: '456',
+      district: 'Bela Vista',
+      city: 'São Paulo',
+      stateProvince: 'SP',
+      postalCode: '01310-100',
+      formattedAddress:
+        'Av. Paulista, 456, Bela Vista, São Paulo, SP 01310-100, BR',
       phone: '(11) 99876-5432',
     },
   });
@@ -83,9 +99,7 @@ async function main() {
   ];
 
   await Promise.all(
-    pricingData.map((pricing) =>
-      prisma.servicePricing.create({ data: pricing }),
-    ),
+    pricingData.map(pricing => prisma.servicePricing.create({ data: pricing })),
   );
 
   console.log('✅ Created service pricing');
@@ -216,7 +230,7 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error('❌ Error seeding database:', e);
     process.exit(1);
   })

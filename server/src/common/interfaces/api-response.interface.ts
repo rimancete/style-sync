@@ -10,8 +10,8 @@ export interface ApiError {
 
 export interface AuthResponseData {
   token: string;
-  user_name: string;
-  user_id: string;
-  refresh_token: string;
+  userName: string;
+  userId: string;
+  refreshToken: string;
   phone: string | null;
 }

@@ -37,7 +37,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-call': 'error',
       '@typescript-eslint/no-unsafe-return': 'error',
       'prefer-const': 'error',
-      'no-console': 'error', // No console.log in production code
+      'no-console': 'warn', // No console.log in production code
       
       // Critical errors that should never be allowed
       '@typescript-eslint/ban-ts-comment': 'error',

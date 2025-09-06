@@ -39,9 +39,9 @@ export class AuthService {
     const tokens = this.generateTokens(user.id, user.email, user.role);
     return {
       token: tokens.accessToken,
-      refresh_token: tokens.refreshToken,
-      user_id: user.id,
-      user_name: user.name,
+      refreshToken: tokens.refreshToken,
+      userId: user.id,
+      userName: user.name,
       phone: user.phone,
     };
   }
@@ -61,9 +61,9 @@ export class AuthService {
     const tokens = this.generateTokens(user.id, user.email, user.role);
     return {
       token: tokens.accessToken,
-      refresh_token: tokens.refreshToken,
-      user_id: user.id,
-      user_name: user.name,
+      refreshToken: tokens.refreshToken,
+      userId: user.id,
+      userName: user.name,
       phone: user.phone,
     };
   }
@@ -88,9 +88,9 @@ export class AuthService {
       const tokens = this.generateTokens(user.id, user.email, user.role);
       return {
         token: tokens.accessToken,
-        refresh_token: tokens.refreshToken,
-        user_id: user.id,
-        user_name: user.name,
+        refreshToken: tokens.refreshToken,
+        userId: user.id,
+        userName: user.name,
         phone: user.phone,
       };
     } catch (error) {

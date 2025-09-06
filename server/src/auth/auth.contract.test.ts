@@ -81,9 +81,9 @@ describe('Auth API Contracts', () => {
     expect(res.body).toEqual({
       data: expect.objectContaining({
         token: expect.any(String),
-        refresh_token: expect.any(String),
-        user_id: expect.any(String),
-        user_name: 'Client',
+        refreshToken: expect.any(String),
+        userId: expect.any(String),
+        userName: 'Client',
         phone: null,
       }),
     });
@@ -100,9 +100,9 @@ describe('Auth API Contracts', () => {
     expect(res.body).toEqual({
       data: expect.objectContaining({
         token: expect.any(String),
-        refresh_token: expect.any(String),
-        user_id: expect.any(String),
-        user_name: 'Client',
+        refreshToken: expect.any(String),
+        userId: expect.any(String),
+        userName: 'Client',
         phone: null,
       }),
     });
@@ -122,15 +122,15 @@ describe('Auth API Contracts', () => {
       app.getHttpServer() as Parameters<typeof request>[0],
     )
       .post('/auth/refresh')
-      .set('Authorization', `Bearer ${login.body.data.refresh_token}`)
+      .set('Authorization', `Bearer ${login.body.data.refreshToken}`)
       .expect(200);
 
     expect(refresh.body).toEqual({
       data: expect.objectContaining({
         token: expect.any(String),
-        refresh_token: expect.any(String),
-        user_id: expect.any(String),
-        user_name: 'Client',
+        refreshToken: expect.any(String),
+        userId: expect.any(String),
+        userName: 'Client',
         phone: null,
       }),
     });

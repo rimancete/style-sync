@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,71 +8,78 @@ datasource db {
 }
 
 model Tenant {
-  id       String @id @default(cuid())
-  name     String // "Unidade 1", "Unidade 2"  
-  address  String
-  phone    String
-  
-  professionals Professional[]
-  bookings     Booking[]
-  servicePricing ServicePricing[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id               String           @id @default(cuid())
+  name             String
+  phone            String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  countryCode      String
+  street           String
+  unit             String?
+  district         String?
+  city             String
+  stateProvince    String
+  postalCode       String
+  formattedAddress String
+  bookings         Booking[]
+  professionals    Professional[]
+  servicePricing   ServicePricing[]
+
   @@map("tenants")
 }
 
 model Professional {
-  id       String  @id @default(cuid())
-  name     String  // "Michel", "Luiz", "Dario" 
-  photoUrl String?
-  isActive Boolean @default(true)
-  tenantId String
-  
-  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  bookings Booking[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(cuid())
+  name      String
+  photoUrl  String?
+  isActive  Boolean   @default(true)
+  tenantId  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
   @@map("professionals")
 }
 
 model Service {
-  id          String @id @default(cuid())
-  name        String // "Social + Barba"
+  id          String           @id @default(cuid())
+  name        String
   description String?
-  duration    Int    // minutes (single service only)
-  
-  pricing ServicePricing[]
-  bookings Booking[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  duration    Int
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  bookings    Booking[]
+  pricing     ServicePricing[]
+
   @@map("services")
 }
 
 model ServicePricing {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   serviceId String
-  tenantId  String  
-  price     Decimal @db.Decimal(10,2)
-  
-  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId  String
+  price     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
   @@unique([serviceId, tenantId])
   @@map("service_pricing")
 }
 
 model User {
-  id       String   @id @default(cuid())
-  email    String   @unique
-  password String
-  name     String
-  phone    String?
-  role     UserRole @default(CLIENT)
-  
-  bookings Booking[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String
+  phone     String?
+  role      UserRole  @default(CLIENT)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+
   @@map("users")
 }
 
@@ -84,18 +88,17 @@ model Booking {
   userId         String
   tenantId       String
   serviceId      String
-  professionalId String?       // NULL = "Any professional"
+  professionalId String?
   scheduledAt    DateTime
   status         BookingStatus @default(PENDING)
-  totalPrice     Decimal       @db.Decimal(10,2)
-  
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  service      Service      @relation(fields: [serviceId], references: [id], onDelete: Restrict)
-  professional Professional? @relation(fields: [professionalId], references: [id], onDelete: SetNull)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  totalPrice     Decimal       @db.Decimal(10, 2)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  professional   Professional? @relation(fields: [professionalId], references: [id])
+  service        Service       @relation(fields: [serviceId], references: [id])
+  tenant         Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("bookings")
 }
 

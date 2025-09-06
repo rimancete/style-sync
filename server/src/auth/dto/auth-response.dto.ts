@@ -6,13 +6,13 @@ export class AuthResponseDto implements AuthResponseData {
   token!: string;
 
   @ApiProperty()
-  user_name!: string;
+  userName!: string;
 
   @ApiProperty()
-  user_id!: string;
+  userId!: string;
 
   @ApiProperty()
-  refresh_token!: string;
+  refreshToken!: string;
 
   @ApiProperty({ nullable: true })
   phone!: string | null;
