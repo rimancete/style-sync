@@ -74,4 +74,11 @@ export class Tenant {
     example: '2024-01-15T10:30:00.000Z',
   })
   createdAt: Date;
+
+  @ApiProperty({
+    description: 'Timestamp when the tenant was soft-deleted (null if active)',
+    example: null,
+    nullable: true,
+  })
+  deletedAt: Date | null;
 }

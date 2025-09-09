@@ -1,0 +1,8 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+- Always refers to the 'IMPLEMENTATION-STEPS.md' document to familiarise yourself with the complete set of development guidelines. This includes validation and errors handling, project and code standards, testing structure and strategy, and all the relevant notations within this guide.
+- After any implementation you need to test build and running to certify if everything is working.
+- After implementation, update the 'IMPLEMENTATION-STEPS.md' to keep track the steps done.

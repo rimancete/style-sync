@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   HttpStatus,
+  HttpCode,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -251,6 +252,7 @@ export class TenantsController {
     status: HttpStatus.FORBIDDEN,
     description: 'Admin role required',
   })
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<void> {
     return this.tenantsService.remove(id);
   }

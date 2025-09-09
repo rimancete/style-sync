@@ -36,7 +36,7 @@ StyleSync is a multi-location barbershop booking system with the following key r
 model Tenant {
   id       String @id @default(cuid())
   name     String // "Unidade 1", "Unidade 2"
-  address  String
+  address  Object // address structure base on the regions
   phone    String
 
   professionals Professional[]
@@ -127,7 +127,7 @@ enum BookingStatus {
 }
 ```
 
-## Directory Structure
+## Core directory Structure
 
 ```
 server/
@@ -320,10 +320,11 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 
 #### Step 2.3: Tenants Module
 
-- [ ] CRUD operations for branches
-- [ ] Basic tenant management
-- [ ] Admin-only routes
-- [ ] **Tests**: Contract tests for tenant management APIs
+- [x] CRUD operations for branches: Implement soft-delete registry
+- [x] Basic tenant management
+- [x] Address & Countries management
+- [x] Admin-only routes
+- [x] **Tests**: Contract tests for tenant management APIs
 
 ### Phase 3: Business Logic (Week 3)
 
@@ -428,7 +429,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - Role-based access control
 - Rate limiting (future consideration)
 
-## API Endpoints Overview
+## Core API Endpoints Overview
 
 ### Health & Monitoring
 
@@ -449,6 +450,12 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - `GET /api/tenants/:id` - Get branch details
 - `PUT /api/tenants/:id` - Update branch
 - `DELETE /api/tenants/:id` - Delete branch
+
+### Countries (Admin only)
+
+- `GET /api/countries` - List all countries
+- `POST /api/countries` - Create country
+- `GET /api/countries/:code` - Get Country details
 
 ### Professionals
 

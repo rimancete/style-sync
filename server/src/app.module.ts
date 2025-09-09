@@ -7,6 +7,7 @@ import { HealthModule } from './health/health.module';
 import configuration from './config/configuration';
 import { AuthModule } from './auth/auth.module';
 import { TenantsModule } from './tenants/tenants.module';
+import { CountriesModule } from './countries/countries.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { TenantsModule } from './tenants/tenants.module';
     DatabaseModule,
     HealthModule,
     AuthModule,
+    CountriesModule,
     TenantsModule,
   ],
   controllers: [AppController],

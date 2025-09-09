@@ -13,6 +13,142 @@ async function main() {
   await prisma.service.deleteMany({});
   await prisma.user.deleteMany({});
   await prisma.tenant.deleteMany({});
+  await prisma.country.deleteMany({});
+
+  // Create countries
+  const countries = await Promise.all([
+    prisma.country.create({
+      data: {
+        code: 'BR',
+        name: 'Brazil',
+        addressFormat: {
+          fields: [
+            'street',
+            'unit',
+            'district',
+            'city',
+            'stateProvince',
+            'postalCode',
+          ],
+          required: ['street', 'city', 'stateProvince', 'postalCode'],
+          validation: {
+            postalCode: '^[0-9]{5}-?[0-9]{3}$',
+            stateProvince: [
+              'AC',
+              'AL',
+              'AP',
+              'AM',
+              'BA',
+              'CE',
+              'DF',
+              'ES',
+              'GO',
+              'MA',
+              'MT',
+              'MS',
+              'MG',
+              'PA',
+              'PB',
+              'PR',
+              'PE',
+              'PI',
+              'RJ',
+              'RN',
+              'RS',
+              'RO',
+              'RR',
+              'SC',
+              'SP',
+              'SE',
+              'TO',
+            ],
+          },
+          labels: {
+            street: 'Logradouro',
+            unit: 'Número/Apartamento',
+            district: 'Bairro',
+            city: 'Cidade',
+            stateProvince: 'Estado',
+            postalCode: 'CEP',
+          },
+        },
+      },
+    }),
+    prisma.country.create({
+      data: {
+        code: 'US',
+        name: 'United States',
+        addressFormat: {
+          fields: ['street', 'unit', 'city', 'stateProvince', 'postalCode'],
+          required: ['street', 'city', 'stateProvince', 'postalCode'],
+          validation: {
+            postalCode: '^\\d{5}(-\\d{4})?$',
+            stateProvince: [
+              'AL',
+              'AK',
+              'AZ',
+              'AR',
+              'CA',
+              'CO',
+              'CT',
+              'DE',
+              'FL',
+              'GA',
+              'HI',
+              'ID',
+              'IL',
+              'IN',
+              'IA',
+              'KS',
+              'KY',
+              'LA',
+              'ME',
+              'MD',
+              'MA',
+              'MI',
+              'MN',
+              'MS',
+              'MO',
+              'MT',
+              'NE',
+              'NV',
+              'NH',
+              'NJ',
+              'NM',
+              'NY',
+              'NC',
+              'ND',
+              'OH',
+              'OK',
+              'OR',
+              'PA',
+              'RI',
+              'SC',
+              'SD',
+              'TN',
+              'TX',
+              'UT',
+              'VT',
+              'VA',
+              'WA',
+              'WV',
+              'WI',
+              'WY',
+            ],
+          },
+          labels: {
+            street: 'Street Address',
+            unit: 'Apt/Suite',
+            city: 'City',
+            stateProvince: 'State',
+            postalCode: 'ZIP Code',
+          },
+        },
+      },
+    }),
+  ]);
+
+  console.log('✅ Created countries');
 
   // Create tenants (branches)
   const tenant1 = await prisma.tenant.create({
@@ -28,6 +164,7 @@ async function main() {
       formattedAddress:
         'Rua das Flores, 123, Centro, São Paulo, SP 01234-567, BR',
       phone: '(11) 98765-4321',
+      countryId: countries[0].id, // Brazil
     },
   });
 
@@ -44,6 +181,7 @@ async function main() {
       formattedAddress:
         'Av. Paulista, 456, Bela Vista, São Paulo, SP 01310-100, BR',
       phone: '(11) 99876-5432',
+      countryId: countries[0].id, // Brazil
     },
   });
 

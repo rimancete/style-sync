@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { Tenant } from '@prisma/client';
 import { DatabaseService } from '../database/database.service';
+import { CountriesService } from '../countries/countries.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import {
@@ -14,17 +15,31 @@ import {
 
 @Injectable()
 export class TenantsService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly countriesService: CountriesService,
+  ) {}
 
   async create(createTenantDto: CreateTenantDto): Promise<TenantResponseDto> {
-    // Check if tenant with same name already exists
+    // Check if tenant with same name already exists (excluding soft-deleted)
     const existing = await this.db.tenant.findFirst({
-      where: { name: createTenantDto.name },
+      where: { name: createTenantDto.name, deletedAt: null },
     });
 
     if (existing) {
       throw new ConflictException('Tenant with this name already exists');
     }
+
+    // Validate address format against country rules
+    await this.countriesService.validateAddressFormat(
+      createTenantDto.countryCode,
+      createTenantDto,
+    );
+
+    // Get country to establish relationship
+    const country = await this.countriesService.findByCode(
+      createTenantDto.countryCode,
+    );
 
     // Generate formatted address
     const formattedAddress = this.formatAddress(createTenantDto);
@@ -41,6 +56,10 @@ export class TenantsService {
         postalCode: createTenantDto.postalCode,
         formattedAddress,
         phone: createTenantDto.phone,
+        countryId: country.id,
+      },
+      include: {
+        country: true,
       },
     });
 
@@ -49,7 +68,9 @@ export class TenantsService {
 
   async findAll(): Promise<TenantsListResponseDto> {
     const tenants = await this.db.tenant.findMany({
+      where: { deletedAt: null },
       orderBy: { createdAt: 'asc' },
+      include: { country: true },
     });
 
     return {
@@ -60,7 +81,8 @@ export class TenantsService {
 
   async findOne(id: string): Promise<TenantResponseDto> {
     const tenant = await this.db.tenant.findUnique({
-      where: { id },
+      where: { id, deletedAt: null },
+      include: { country: true },
     });
 
     if (!tenant) {
@@ -74,9 +96,10 @@ export class TenantsService {
     id: string,
     updateTenantDto: UpdateTenantDto,
   ): Promise<TenantResponseDto> {
-    // Check if tenant exists
+    // Check if tenant exists and is not soft-deleted
     const existingTenant = await this.db.tenant.findUnique({
-      where: { id },
+      where: { id, deletedAt: null },
+      include: { country: true },
     });
 
     if (!existingTenant) {
@@ -89,6 +112,7 @@ export class TenantsService {
         where: {
           name: updateTenantDto.name,
           id: { not: id },
+          deletedAt: null,
         },
       });
 
@@ -115,7 +139,7 @@ export class TenantsService {
     );
 
     if (hasAddressUpdate) {
-      // Merge existing data with updates for formatting
+      // Merge existing data with updates for formatting and validation
       const mergedData = {
         countryCode: updateTenantDto.countryCode || existingTenant.countryCode,
         street: updateTenantDto.street || existingTenant.street,
@@ -132,7 +156,25 @@ export class TenantsService {
           updateTenantDto.stateProvince || existingTenant.stateProvince,
         postalCode: updateTenantDto.postalCode || existingTenant.postalCode,
       };
+
+      // Validate address format if country is being changed or address is being updated
+      await this.countriesService.validateAddressFormat(
+        mergedData.countryCode,
+        mergedData,
+      );
+
       updateData.formattedAddress = this.formatAddress(mergedData);
+
+      // Update country relationship if country code changed
+      if (
+        updateTenantDto.countryCode &&
+        updateTenantDto.countryCode !== existingTenant.countryCode
+      ) {
+        const country = await this.countriesService.findByCode(
+          updateTenantDto.countryCode,
+        );
+        updateData.countryId = country.id;
+      }
     }
 
     const updatedTenant = await this.db.tenant.update({
@@ -144,11 +186,13 @@ export class TenantsService {
   }
 
   async remove(id: string): Promise<void> {
-    // Check if tenant exists
+    // Check if tenant exists and is not soft-deleted
     const existingTenant = await this.db.tenant.findUnique({
-      where: { id },
+      where: { id, deletedAt: null },
       include: {
-        professionals: true,
+        professionals: {
+          where: { isActive: true },
+        },
         bookings: true,
         servicePricing: true,
       },
@@ -177,8 +221,10 @@ export class TenantsService {
       );
     }
 
-    await this.db.tenant.delete({
+    // Soft delete the tenant
+    await this.db.tenant.update({
       where: { id },
+      data: { deletedAt: new Date() },
     });
   }
 
@@ -196,6 +242,7 @@ export class TenantsService {
       formattedAddress: tenant.formattedAddress,
       phone: tenant.phone,
       createdAt: tenant.createdAt,
+      deletedAt: tenant.deletedAt,
     };
   }
 
