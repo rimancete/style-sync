@@ -21,7 +21,7 @@ export class BranchesService {
   ) {}
 
   async create(createBranchDto: CreateBranchDto): Promise<BranchResponseDto> {
-    // Check if tenant with same name already exists (excluding soft-deleted)
+    // Check if branch with same name already exists (excluding soft-deleted)
     const existing = await this.db.branch.findFirst({
       where: { name: createBranchDto.name, deletedAt: null },
     });

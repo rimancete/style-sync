@@ -206,7 +206,7 @@ export class CountriesController {
   @ApiOperation({
     summary: 'Delete country',
     description:
-      'Deletes a country from the system. Only possible if the country has no associated tenants. Only accessible by admin users.',
+      'Deletes a country from the system. Only possible if the country has no associated branches. Only accessible by admin users.',
   })
   @ApiParam({
     name: 'id',
@@ -233,14 +233,14 @@ export class CountriesController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Cannot delete country with associated tenants',
+    description: 'Cannot delete country with associated branches',
     schema: {
       type: 'object',
       properties: {
         status: { type: 'number', example: 409 },
         message: {
           type: 'string',
-          example: 'Cannot delete country with associated tenants',
+          example: 'Cannot delete country with associated branches',
         },
       },
     },

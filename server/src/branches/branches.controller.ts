@@ -58,7 +58,7 @@ export class BranchesController {
         status: { type: 'number', example: 409 },
         message: {
           type: 'string',
-          example: 'Tenant with this name already exists',
+          example: 'Branch with this name already exists',
         },
       },
     },
@@ -125,7 +125,7 @@ export class BranchesController {
         status: { type: 'number', example: 404 },
         message: {
           type: 'string',
-          example: 'Tenant with ID clm1234567890abcdef not found',
+          example: 'Branch with ID clm1234567890abcdef not found',
         },
       },
     },
@@ -167,21 +167,21 @@ export class BranchesController {
         status: { type: 'number', example: 404 },
         message: {
           type: 'string',
-          example: 'Tenant with ID clm1234567890abcdef not found',
+          example: 'Branch with ID clm1234567890abcdef not found',
         },
       },
     },
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Tenant with this name already exists',
+    description: 'Branch with this name already exists',
     schema: {
       type: 'object',
       properties: {
         status: { type: 'number', example: 409 },
         message: {
           type: 'string',
-          example: 'Tenant with this name already exists',
+          example: 'Branch with this name already exists',
         },
       },
     },
@@ -214,7 +214,7 @@ export class BranchesController {
   })
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
-    description: 'Tenant deleted successfully',
+    description: 'Branch deleted successfully',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -225,7 +225,7 @@ export class BranchesController {
         status: { type: 'number', example: 404 },
         message: {
           type: 'string',
-          example: 'Tenant with ID clm1234567890abcdef not found',
+          example: 'Branch with ID clm1234567890abcdef not found',
         },
       },
     },

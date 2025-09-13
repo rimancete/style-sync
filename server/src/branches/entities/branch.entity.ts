@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class Tenant {
+export class Branch {
   @ApiProperty({
-    description: 'Unique identifier for the tenant',
+    description: 'Unique identifier for the branch',
     example: 'clm1234567890abcdef',
   })
   id: string;
 
   @ApiProperty({
-    description: 'Name of the tenant/branch location',
+    description: 'Name of the branch location',
     example: 'Unidade 1',
   })
   name: string;
@@ -70,13 +70,13 @@ export class Tenant {
   phone: string;
 
   @ApiProperty({
-    description: 'Timestamp when the tenant was created',
+    description: 'Timestamp when the branch was created',
     example: '2024-01-15T10:30:00.000Z',
   })
   createdAt: Date;
 
   @ApiProperty({
-    description: 'Timestamp when the tenant was soft-deleted (null if active)',
+    description: 'Timestamp when the branch was soft-deleted (null if active)',
     example: null,
     nullable: true,
   })

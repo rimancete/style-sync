@@ -23,8 +23,9 @@ module.exports = {
       'deps',     // Dependencies
       'docs',     // Documentation
       'prisma',   // Database schema/migrations
+      'customer',  // Customer system
       'booking',  // Booking system
-      'tenant',   // Multi-tenant features
+      'branch',   // Multi-branch features
       'service',  // Services
       'user',     // User management
       'core',     // Core functionality

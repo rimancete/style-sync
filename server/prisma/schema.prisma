@@ -83,7 +83,7 @@ model Branch {
   professionals    Professional[]
   servicePricing   ServicePricing[]
 
-  @@map("tenants")
+  @@map("branches")
 }
 
 model Professional {

@@ -490,14 +490,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/tenants/:tenantId/professionals",
+              "raw": "{{baseUrl}}/branches/:branchId/professionals",
               "host": ["{{baseUrl}}"],
-              "path": ["tenants", ":tenantId", "professionals"],
+              "path": ["branches", ":branchId", "professionals"],
               "variable": [
                 {
-                  "key": "tenantId",
-                  "value": "tenant-id-here",
-                  "description": "ID of the branch/tenant"
+                  "key": "branchId",
+                  "value": "branch-id-here",
+                  "description": "ID of the branch"
                 }
               ]
             },
@@ -516,7 +516,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Roberto\",\n  \"tenantId\": \"tenant-id-here\",\n  \"photoUrl\": \"https://example.com/photo.jpg\",\n  \"isActive\": true\n}"
+              "raw": "{\n  \"name\": \"Roberto\",\n  \"branchId\": \"branch-id-here\",\n  \"photoUrl\": \"https://example.com/photo.jpg\",\n  \"isActive\": true\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/professionals",
@@ -551,14 +551,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/tenants/:tenantId/services",
+              "raw": "{{baseUrl}}/branches/:branchId/services",
               "host": ["{{baseUrl}}"],
-              "path": ["tenants", ":tenantId", "services"],
+              "path": ["branches", ":branchId", "services"],
               "variable": [
                 {
-                  "key": "tenantId",
-                  "value": "tenant-id-here",
-                  "description": "ID of the branch/tenant"
+                  "key": "branchId",
+                  "value": "branch-id-here",
+                  "description": "ID of the branch"
                 }
               ]
             },
@@ -599,13 +599,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/bookings/availability?tenantId=:tenantId&serviceId=:serviceId&date=:date&professionalId=:professionalId",
+              "raw": "{{baseUrl}}/bookings/availability?branchId=:branchId&serviceId=:serviceId&date=:date&professionalId=:professionalId",
               "host": ["{{baseUrl}}"],
               "path": ["bookings", "availability"],
               "query": [
                 {
-                  "key": "tenantId",
-                  "value": ":tenantId",
+                  "key": "branchId",
+                  "value": ":branchId",
                   "description": "Branch ID"
                 },
                 {
@@ -640,7 +640,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"tenantId\": \"tenant-id-here\",\n  \"serviceId\": \"service-id-here\",\n  \"professionalId\": \"professional-id-here\",\n  \"scheduledAt\": \"2024-01-16T10:00:00.000Z\"\n}"
+              "raw": "{\n  \"branchId\": \"branch-id-here\",\n  \"serviceId\": \"service-id-here\",\n  \"professionalId\": \"professional-id-here\",\n  \"scheduledAt\": \"2024-01-16T10:00:00.000Z\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/bookings",

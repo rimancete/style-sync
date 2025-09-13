@@ -284,7 +284,7 @@ npm run test:e2e        # End-to-end tests
 ```
 
 **Sample Data:**
-- 2 Tenants (Unidade 1, Unidade 2)
+- 2 Branches (Unidade 1, Unidade 2)
 - 4 Services with location-based pricing
 - 4 Professionals across branches
 - Sample bookings for testing
@@ -399,14 +399,14 @@ Monitor these endpoints for production health:
 - [x] Swagger documentation setup
 - [x] Development environment configured
 - [ ] Authentication module
-- [ ] Tenant management
+- [ ] Branch management
 - [ ] Professional management
 - [ ] Service catalog
 - [ ] Booking system
 
 ### Upcoming Features
 - User authentication (JWT)
-- Tenant CRUD operations
+- Branch CRUD operations
 - Professional management
 - Service catalog with pricing
 - Booking availability logic

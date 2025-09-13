@@ -44,7 +44,7 @@ describe('Countries API Contracts', () => {
       name: string;
       addressFormat: Record<string, unknown>;
       createdAt: Date;
-      tenants: unknown[];
+      branches: unknown[];
     }> = [];
 
     const mockDb: Partial<DatabaseService> = {
@@ -83,7 +83,7 @@ describe('Countries API Contracts', () => {
             name: data.name,
             addressFormat: data.addressFormat,
             createdAt: new Date(),
-            tenants: [],
+            branches: [],
           };
           countries.push(created);
           return {

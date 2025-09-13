@@ -48,7 +48,7 @@ async function bootstrap() {
       .setVersion(process.env.SWAGGER_VERSION || '1.0')
       .addTag('Health & Monitoring', 'Application and system health endpoints')
       .addTag('Authentication', 'User authentication and authorization')
-      .addTag('Tenants', 'Branch/location management')
+      .addTag('Branches', 'Branch/location management')
       .addTag('Professionals', 'Staff management')
       .addTag('Services', 'Service catalog and pricing')
       .addTag('Bookings', 'Appointment booking system')

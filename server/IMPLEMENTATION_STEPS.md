@@ -4,7 +4,7 @@
 
 StyleSync is a multi-location barbershop booking system with the following key requirements:
 
-- **Multi-tenant**: Multiple branch locations ("Unidade 1", "Unidade 2")
+- **Multi-branch**: Multiple branch locations ("Unidade 1", "Unidade 2")
 - **Professional selection**: Clients can choose specific professionals or "any available"
 - **Single service booking**: One service per appointment (simplified business logic)
 - **Location-based pricing**: Same services can have different prices per branch
@@ -33,7 +33,7 @@ StyleSync is a multi-location barbershop booking system with the following key r
 ### Core Entities
 
 ```prisma
-model Tenant {
+model Branch {
   id       String @id @default(cuid())
   name     String // "Unidade 1", "Unidade 2"
   address  Object // address structure base on the regions
@@ -43,7 +43,7 @@ model Tenant {
   bookings     Booking[]
   servicePricing ServicePricing[]
   createdAt    DateTime @default(now())
-  @@map("tenants")
+  @@map("branches")
 }
 
 model Professional {
@@ -51,9 +51,9 @@ model Professional {
   name     String  // "Michel", "Luiz", "Dario"
   photoUrl String?
   isActive Boolean @default(true)
-  tenantId String
+  branchId String
 
-  tenant   Tenant    @relation(fields: [tenantId], references: [id])
+  branch   Branch    @relation(fields: [branchId], references: [id])
   bookings Booking[]
   @@map("professionals")
 }
@@ -72,12 +72,12 @@ model Service {
 model ServicePricing {
   id        String  @id @default(cuid())
   serviceId String
-  tenantId  String
+  branchId  String
   price     Decimal @db.Decimal(10,2)
 
   service Service @relation(fields: [serviceId], references: [id])
-  tenant  Tenant  @relation(fields: [tenantId], references: [id])
-  @@unique([serviceId, tenantId])
+  branch  Branch  @relation(fields: [branchId], references: [id])
+  @@unique([serviceId, branchId])
   @@map("service_pricing")
 }
 
@@ -97,7 +97,7 @@ model User {
 model Booking {
   id             String        @id @default(cuid())
   userId         String
-  tenantId       String
+  branchId       String
   serviceId      String
   professionalId String?       // NULL = "Any professional"
   scheduledAt    DateTime
@@ -105,7 +105,7 @@ model Booking {
   totalPrice     Decimal       @db.Decimal(10,2)
 
   user         User         @relation(fields: [userId], references: [id])
-  tenant       Tenant       @relation(fields: [tenantId], references: [id])
+  branch       Branch       @relation(fields: [branchId], references: [id])
   service      Service      @relation(fields: [serviceId], references: [id])
   professional Professional? @relation(fields: [professionalId], references: [id])
 
@@ -153,15 +153,15 @@ server/
 │   │   ├── auth.controller.ts
 │   │   ├── auth.service.ts
 │   │   └── auth.module.ts
-│   ├── tenants/                # Branch/Location management
+│   ├── branches/                # Branch/Location management
 │   │   ├── dto/
-│   │   │   ├── create-tenant.dto.ts
-│   │   │   └── update-tenant.dto.ts
+│   │   │   ├── create-branch.dto.ts
+│   │   │   └── update-branch.dto.ts
 │   │   ├── entities/
-│   │   │   └── tenant.entity.ts
-│   │   ├── tenants.controller.ts
-│   │   ├── tenants.service.ts
-│   │   └── tenants.module.ts
+│   │   │   └── branch.entity.ts
+│   │   ├── branches.controller.ts
+│   │   ├── branches.service.ts
+│   │   └── branches.module.ts
 │   ├── professionals/          # Staff with branch assignments
 │   │   ├── dto/
 │   │   │   ├── create-professional.dto.ts
@@ -241,7 +241,7 @@ server/
 
 ### Phase 1: Database Foundation (Bi-week 1)
 
-**Goal**: Get PostgreSQL + Prisma working with multi-tenant schema
+**Goal**: Get PostgreSQL + Prisma working with multi-branch schema
 
 #### Step 1.1: Docker Setup
 
@@ -255,7 +255,7 @@ server/
 
 - [x] Install Prisma dependencies
 - [x] Initialize Prisma configuration
-- [x] Create multi-tenant schema
+- [x] Create multi-branch schema
 - [x] Run initial migration
 - [x] Create seed data for development
 
@@ -592,7 +592,7 @@ curl /api/customers/branding/acme
 
 #### Step 3.1: Professionals Module
 
-- [ ] Professional CRUD with tenant association
+- [ ] Professional CRUD with branch association
 - [ ] Photo upload handling (basic)
 - [ ] Active/inactive status management
 - [ ] **Tests**: Contract tests for professional management APIs
@@ -703,13 +703,13 @@ curl /api/customers/branding/acme
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/refresh` - Token refresh
 
-### Tenants (Admin only)
+### Branches (Admin only)
 
-- `GET /api/tenants` - List all branches
-- `POST /api/tenants` - Create branch
-- `GET /api/tenants/:id` - Get branch details
-- `PUT /api/tenants/:id` - Update branch
-- `DELETE /api/tenants/:id` - Delete branch
+- `GET /api/branches` - List all branches
+- `POST /api/branches` - Create branch
+- `GET /api/branches/:id` - Get branch details
+- `PUT /api/branches/:id` - Update branch
+- `DELETE /api/branches/:id` - Delete branch
 
 ### Countries (Admin only)
 
@@ -719,7 +719,7 @@ curl /api/customers/branding/acme
 
 ### Professionals
 
-- `GET /api/tenants/:tenantId/professionals` - List professionals by branch
+- `GET /api/branches/:branchId/professionals` - List professionals by branch
 - `POST /api/professionals` - Create professional (Admin)
 - `PUT /api/professionals/:id` - Update professional
 - `DELETE /api/professionals/:id` - Deactivate professional
@@ -727,7 +727,7 @@ curl /api/customers/branding/acme
 ### Services
 
 - `GET /api/services` - List all services
-- `GET /api/tenants/:tenantId/services` - Services with branch pricing
+- `GET /api/branches/:branchId/services` - Services with branch pricing
 - `POST /api/services` - Create service (Admin)
 - `POST /api/services/:id/pricing` - Set branch-specific pricing
 
