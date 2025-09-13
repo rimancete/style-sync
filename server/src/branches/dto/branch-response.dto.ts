@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class TenantResponseDto {
+export class BranchResponseDto {
   @ApiProperty({
-    description: 'Unique identifier for the tenant',
+    description: 'Unique identifier for the branch',
     example: 'clm1234567890abcdef',
   })
   id: string;
 
   @ApiProperty({
-    description: 'Name of the tenant/branch location',
+    description: 'Name of the branch location',
     example: 'Unidade 1',
   })
   name: string;
@@ -70,28 +70,40 @@ export class TenantResponseDto {
   phone: string;
 
   @ApiProperty({
-    description: 'Timestamp when the tenant was created',
+    description: 'Customer ID that owns this branch',
+    example: 'clm1234567890abcdef',
+  })
+  customerId: string;
+
+  @ApiProperty({
+    description: 'Customer name that owns this branch',
+    example: 'Acme Beauty Salon',
+  })
+  customerName: string;
+
+  @ApiProperty({
+    description: 'Timestamp when the branch was created',
     example: '2024-01-15T10:30:00.000Z',
   })
   createdAt: Date;
 
   @ApiProperty({
-    description: 'Timestamp when the tenant was soft-deleted (null if active)',
+    description: 'Timestamp when the branch was soft-deleted (null if active)',
     example: null,
     nullable: true,
   })
   deletedAt: Date | null;
 }
 
-export class TenantsListResponseDto {
+export class BranchesListResponseDto {
   @ApiProperty({
-    description: 'List of tenants',
-    type: [TenantResponseDto],
+    description: 'List of branches',
+    type: [BranchResponseDto],
   })
-  tenants: TenantResponseDto[];
+  branches: BranchResponseDto[];
 
   @ApiProperty({
-    description: 'Total number of tenants',
+    description: 'Total number of branches',
     example: 2,
   })
   total: number;

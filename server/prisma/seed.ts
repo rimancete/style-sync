@@ -12,7 +12,9 @@ async function main() {
   await prisma.professional.deleteMany({});
   await prisma.service.deleteMany({});
   await prisma.user.deleteMany({});
-  await prisma.tenant.deleteMany({});
+  await prisma.userCustomer.deleteMany({});
+  await prisma.branch.deleteMany({});
+  await prisma.customer.deleteMany({});
   await prisma.country.deleteMany({});
 
   // Create countries
@@ -150,8 +152,21 @@ async function main() {
 
   console.log('✅ Created countries');
 
-  // Create tenants (branches)
-  const tenant1 = await prisma.tenant.create({
+  // Create customers
+  const customer1 = await prisma.customer.create({
+    data: {
+      name: 'Acme Barbershop',
+      urlSlug: 'acme',
+      documentTitle: 'Acme Barbershop - Professional Haircuts',
+      logoAlt: 'Acme Barbershop Logo',
+      isActive: true,
+    },
+  });
+
+  console.log('✅ Created customer');
+
+  // Create branches
+  const branch1 = await prisma.branch.create({
     data: {
       name: 'Unidade 1',
       countryCode: 'BR',
@@ -165,10 +180,11 @@ async function main() {
         'Rua das Flores, 123, Centro, São Paulo, SP 01234-567, BR',
       phone: '(11) 98765-4321',
       countryId: countries[0].id, // Brazil
+      customerId: customer1.id,
     },
   });
 
-  const tenant2 = await prisma.tenant.create({
+  const branch2 = await prisma.branch.create({
     data: {
       name: 'Unidade 2',
       countryCode: 'BR',
@@ -182,10 +198,11 @@ async function main() {
         'Av. Paulista, 456, Bela Vista, São Paulo, SP 01310-100, BR',
       phone: '(11) 99876-5432',
       countryId: countries[0].id, // Brazil
+      customerId: customer1.id,
     },
   });
 
-  console.log('✅ Created tenants');
+  console.log('✅ Created branches');
 
   // Create services
   const services = await Promise.all([
@@ -194,6 +211,7 @@ async function main() {
         name: 'Social + Barba',
         description: 'Corte social masculino com acabamento de barba',
         duration: 45,
+        customerId: customer1.id,
       },
     }),
     prisma.service.create({
@@ -201,6 +219,7 @@ async function main() {
         name: 'Corte Social',
         description: 'Corte social masculino',
         duration: 30,
+        customerId: customer1.id,
       },
     }),
     prisma.service.create({
@@ -208,6 +227,7 @@ async function main() {
         name: 'Barba Completa',
         description: 'Aparar e modelar barba completa',
         duration: 20,
+        customerId: customer1.id,
       },
     }),
     prisma.service.create({
@@ -215,25 +235,26 @@ async function main() {
         name: 'Degradê',
         description: 'Corte degradê masculino',
         duration: 40,
+        customerId: customer1.id,
       },
     }),
   ]);
 
   console.log('✅ Created services');
 
-  // Create service pricing for each tenant
+  // Create service pricing for each branch
   const pricingData = [
     // Unidade 1 prices
-    { serviceId: services[0].id, tenantId: tenant1.id, price: 35.0 },
-    { serviceId: services[1].id, tenantId: tenant1.id, price: 25.0 },
-    { serviceId: services[2].id, tenantId: tenant1.id, price: 15.0 },
-    { serviceId: services[3].id, tenantId: tenant1.id, price: 30.0 },
+    { serviceId: services[0].id, branchId: branch1.id, price: 35.0 },
+    { serviceId: services[1].id, branchId: branch1.id, price: 25.0 },
+    { serviceId: services[2].id, branchId: branch1.id, price: 15.0 },
+    { serviceId: services[3].id, branchId: branch1.id, price: 30.0 },
 
     // Unidade 2 prices (slightly higher)
-    { serviceId: services[0].id, tenantId: tenant2.id, price: 40.0 },
-    { serviceId: services[1].id, tenantId: tenant2.id, price: 28.0 },
-    { serviceId: services[2].id, tenantId: tenant2.id, price: 18.0 },
-    { serviceId: services[3].id, tenantId: tenant2.id, price: 35.0 },
+    { serviceId: services[0].id, branchId: branch2.id, price: 40.0 },
+    { serviceId: services[1].id, branchId: branch2.id, price: 28.0 },
+    { serviceId: services[2].id, branchId: branch2.id, price: 18.0 },
+    { serviceId: services[3].id, branchId: branch2.id, price: 35.0 },
   ];
 
   await Promise.all(
@@ -248,7 +269,8 @@ async function main() {
     prisma.professional.create({
       data: {
         name: 'Michel',
-        tenantId: tenant1.id,
+        branchId: branch1.id,
+        customerId: customer1.id,
         photoUrl: 'https://via.placeholder.com/150/0000FF/808080?text=Michel',
         isActive: true,
       },
@@ -256,7 +278,8 @@ async function main() {
     prisma.professional.create({
       data: {
         name: 'Luiz',
-        tenantId: tenant1.id,
+        branchId: branch1.id,
+        customerId: customer1.id,
         photoUrl: 'https://via.placeholder.com/150/FF0000/FFFFFF?text=Luiz',
         isActive: true,
       },
@@ -266,7 +289,8 @@ async function main() {
     prisma.professional.create({
       data: {
         name: 'Dario',
-        tenantId: tenant2.id,
+        branchId: branch2.id,
+        customerId: customer1.id,
         photoUrl: 'https://via.placeholder.com/150/00FF00/000000?text=Dario',
         isActive: true,
       },
@@ -274,7 +298,8 @@ async function main() {
     prisma.professional.create({
       data: {
         name: 'Carlos',
-        tenantId: tenant2.id,
+        branchId: branch2.id,
+        customerId: customer1.id,
         photoUrl: 'https://via.placeholder.com/150/FFFF00/000000?text=Carlos',
         isActive: true,
       },
@@ -327,7 +352,7 @@ async function main() {
     prisma.booking.create({
       data: {
         userId: users[1].id, // client user
-        tenantId: tenant1.id,
+        branchId: branch1.id,
         serviceId: services[0].id, // Social + Barba
         professionalId: professionals[0].id, // Michel
         scheduledAt: tomorrow,
@@ -338,7 +363,7 @@ async function main() {
     prisma.booking.create({
       data: {
         userId: users[1].id, // client user
-        tenantId: tenant2.id,
+        branchId: branch2.id,
         serviceId: services[1].id, // Corte Social
         professionalId: null, // Any professional
         scheduledAt: new Date(tomorrow.getTime() + 2 * 60 * 60 * 1000), // +2 hours
@@ -353,7 +378,8 @@ async function main() {
   console.log('🎉 Database seeding completed successfully!');
   console.log(`
 📊 Seeded data summary:
-- Tenants: ${[tenant1, tenant2].length}
+- Customers: 1
+- Branches: ${[branch1, branch2].length}
 - Services: ${services.length}
 - Service Pricing: ${pricingData.length}
 - Professionals: ${professionals.length}

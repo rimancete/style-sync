@@ -1,9 +1,9 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { CreateTenantDto } from './create-tenant.dto';
+import { CreateBranchDto } from './create-branch.dto';
 
-export class UpdateTenantDto extends PartialType(CreateTenantDto) {
+export class UpdateBranchDto extends PartialType(CreateBranchDto) {
   @ApiProperty({
-    description: 'Name of the tenant/branch location',
+    description: 'Name of the branch location',
     example: 'Unidade 1 - Centro',
     minLength: 2,
     maxLength: 100,

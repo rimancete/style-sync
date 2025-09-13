@@ -7,9 +7,9 @@ import {
   IsOptional,
 } from 'class-validator';
 
-export class CreateTenantDto {
+export class CreateBranchDto {
   @ApiProperty({
-    description: 'Name of the tenant/branch location',
+    description: 'Name of the branch location',
     example: 'Unidade 1',
     minLength: 2,
     maxLength: 100,
@@ -113,4 +113,12 @@ export class CreateTenantDto {
   @MinLength(10)
   @MaxLength(20)
   phone: string;
+
+  @ApiProperty({
+    description: 'Customer ID this branch belongs to',
+    example: 'customer-id-123',
+  })
+  @IsString()
+  @IsNotEmpty()
+  customerId: string;
 }

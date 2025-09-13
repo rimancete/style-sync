@@ -6,8 +6,9 @@ import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import configuration from './config/configuration';
 import { AuthModule } from './auth/auth.module';
-import { TenantsModule } from './tenants/tenants.module';
+import { BranchesModule } from './branches/branches.module';
 import { CountriesModule } from './countries/countries.module';
+import { CustomersModule } from './customers/customers.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { CountriesModule } from './countries/countries.module';
     HealthModule,
     AuthModule,
     CountriesModule,
-    TenantsModule,
+    BranchesModule,
+    CustomersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

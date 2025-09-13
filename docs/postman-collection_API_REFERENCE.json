@@ -289,27 +289,38 @@
       ]
     },
     {
-      "name": "Tenants (Branches)",
-      "description": "Branch/location management endpoints (to be implemented)",
+      "name": "Customer Branding",
+      "description": "Customer branding and theme configuration endpoints",
       "item": [
         {
-          "name": "List All Tenants",
+          "name": "Get Customer Branding",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/tenants",
+              "raw": "{{baseUrl}}/customers/branding/:urlSlug",
               "host": ["{{baseUrl}}"],
-              "path": ["tenants"]
+              "path": ["customers", "branding", ":urlSlug"],
+              "variable": [
+                {
+                  "key": "urlSlug",
+                  "value": "acme",
+                  "description": "Customer URL slug (e.g., acme, elite-cuts)"
+                }
+              ]
             },
-            "description": "Get list of all branches/locations (Admin only)"
+            "description": "Get customer branding configuration by URL slug. Public endpoint - no authentication required."
           }
         },
         {
-          "name": "Create Tenant",
+          "name": "Update Customer Branding",
           "request": {
-            "method": "POST",
+            "method": "PUT",
             "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
               {
                 "key": "Content-Type",
                 "value": "application/json"
@@ -317,34 +328,154 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Unidade 3\",\n  \"address\": \"Rua Nova, 789 - Vila Nova\",\n  \"phone\": \"(11) 97777-7777\"\n}"
+              "raw": "{\n  \"pageTitle\": \"Acme Barbershop - Premium Haircuts & Styling\",\n  \"logoAlt\": \"Acme Premium Barbershop\",\n  \"theme\": {\n    \"light\": {\n      \"primary\": {\n        \"main\": \"#1E40AF\",\n        \"light\": \"#3B82F6\",\n        \"dark\": \"#1E3A8A\",\n        \"contrast\": \"#FFFFFF\"\n      },\n      \"background\": \"#F8FAFC\"\n    }\n  }\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/tenants",
+              "raw": "{{baseUrl}}/customers/:customerId/branding/config",
               "host": ["{{baseUrl}}"],
-              "path": ["tenants"]
-            },
-            "description": "Create a new branch/location (Admin only)"
-          }
-        },
-        {
-          "name": "Get Tenant Details",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/tenants/:tenantId",
-              "host": ["{{baseUrl}}"],
-              "path": ["tenants", ":tenantId"],
+              "path": ["customers", ":customerId", "branding", "config"],
               "variable": [
                 {
-                  "key": "tenantId",
-                  "value": "tenant-id-here",
-                  "description": "ID of the tenant/branch"
+                  "key": "customerId",
+                  "value": "customer-id-here",
+                  "description": "Customer ID (UUID format)"
                 }
               ]
             },
-            "description": "Get details of a specific branch/location"
+            "description": "Update customer branding configuration. Admin only - requires authentication."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Branches",
+      "description": "Branch/location management endpoints",
+      "item": [
+        {
+          "name": "List All Branches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/branches",
+              "host": ["{{baseUrl}}"],
+              "path": ["branches"]
+            },
+            "description": "Get list of all active branches with their customer relationships (Admin only)"
+          }
+        },
+        {
+          "name": "Create Branch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unidade Centro\",\n  \"countryCode\": \"BR\",\n  \"street\": \"Rua Principal, 123\",\n  \"district\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"postalCode\": \"01234-567\",\n  \"phone\": \"(11) 99999-9999\",\n  \"customerId\": \"customer-id-here\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/branches",
+              "host": ["{{baseUrl}}"],
+              "path": ["branches"]
+            },
+            "description": "Create a new branch location associated with a customer (Admin only)"
+          }
+        },
+        {
+          "name": "Get Branch Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/branches/:branchId",
+              "host": ["{{baseUrl}}"],
+              "path": ["branches", ":branchId"],
+              "variable": [
+                {
+                  "key": "branchId",
+                  "value": "branch-id-here",
+                  "description": "ID of the branch"
+                }
+              ]
+            },
+            "description": "Get details of a specific branch by its ID (Admin only)"
+          }
+        },
+        {
+          "name": "Update Branch",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unidade Centro - Atualizada\",\n  \"city\": \"Rio de Janeiro\",\n  \"stateProvince\": \"RJ\",\n  \"phone\": \"(21) 99999-9999\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/branches/:branchId",
+              "host": ["{{baseUrl}}"],
+              "path": ["branches", ":branchId"],
+              "variable": [
+                {
+                  "key": "branchId",
+                  "value": "branch-id-here",
+                  "description": "ID of the branch to update"
+                }
+              ]
+            },
+            "description": "Update branch information (Admin only)"
+          }
+        },
+        {
+          "name": "Delete Branch",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/branches/:branchId",
+              "host": ["{{baseUrl}}"],
+              "path": ["branches", ":branchId"],
+              "variable": [
+                {
+                  "key": "branchId",
+                  "value": "branch-id-here",
+                  "description": "ID of the branch to delete"
+                }
+              ]
+            },
+            "description": "Soft delete a branch (Admin only)"
           }
         }
       ]

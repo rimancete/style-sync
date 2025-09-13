@@ -14,12 +14,53 @@ model Country {
   addressFormat Json
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  tenants       Tenant[]
+  branches      Branch[]
 
   @@map("countries")
 }
 
-model Tenant {
+model Customer {
+  id          String @id @default(cuid())
+  name        String
+  urlSlug     String @unique
+
+  // Branding Configuration
+  documentTitle   String @default("")
+  logoUrl     String?
+  logoAlt     String @default("")
+
+  // Favicons
+  favicon32x32  String?
+  favicon16x16  String?
+  appleTouch    String?
+
+  // Theme Colors (Light theme)
+  primaryMain     String @default("#272726FF")
+  primaryLight    String @default("#706E6DFF")
+  primaryDark     String @default("#1B1B1BFF")
+  primaryContrast String @default("#ECE8E6FF")
+
+  secondaryMain     String @default("#8D8C8BFF")
+  secondaryLight    String @default("#E7E7E6FF")
+  secondaryDark     String @default("#3B3B3BFF")
+  secondaryContrast String @default("#1B1B1BFF")
+
+  backgroundColor String @default("#F7F7F7FF")
+
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  branches      Branch[]
+  services      Service[]
+  users         UserCustomer[]
+  professionals Professional[]
+
+  @@map("customers")
+}
+
+model Branch {
   id               String           @id @default(cuid())
   name             String
   phone            String
@@ -35,7 +76,9 @@ model Tenant {
   postalCode       String
   formattedAddress String
   countryId        String
+  customerId       String
   country          Country          @relation(fields: [countryId], references: [id])
+  customer         Customer         @relation(fields: [customerId], references: [id])
   bookings         Booking[]
   professionals    Professional[]
   servicePricing   ServicePricing[]
@@ -48,11 +91,13 @@ model Professional {
   name      String
   photoUrl  String?
   isActive  Boolean   @default(true)
-  tenantId  String
+  branchId  String
+  customerId String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   bookings  Booking[]
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  branch    Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   @@map("professionals")
 }
@@ -62,8 +107,10 @@ model Service {
   name        String
   description String?
   duration    Int
+  customerId  String
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
+  customer    Customer         @relation(fields: [customerId], references: [id], onDelete: Cascade)
   bookings    Booking[]
   pricing     ServicePricing[]
 
@@ -73,14 +120,14 @@ model Service {
 model ServicePricing {
   id        String   @id @default(cuid())
   serviceId String
-  tenantId  String
+  branchId  String
   price     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  branch    Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
-  @@unique([serviceId, tenantId])
+  @@unique([serviceId, branchId])
   @@map("service_pricing")
 }
 
@@ -94,14 +141,29 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   bookings  Booking[]
+  customers UserCustomer[]
 
   @@map("users")
+}
+
+model UserCustomer {
+  id         String   @id @default(cuid())
+  userId     String
+  customerId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, customerId])
+  @@map("user_customers")
 }
 
 model Booking {
   id             String        @id @default(cuid())
   userId         String
-  tenantId       String
+  branchId       String
   serviceId      String
   professionalId String?
   scheduledAt    DateTime
@@ -111,7 +173,7 @@ model Booking {
   updatedAt      DateTime      @updatedAt
   professional   Professional? @relation(fields: [professionalId], references: [id])
   service        Service       @relation(fields: [serviceId], references: [id])
-  tenant         Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  branch         Branch        @relation(fields: [branchId], references: [id], onDelete: Cascade)
   user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("bookings")

@@ -153,7 +153,7 @@ export class CountriesService {
     const existingCountry = await this.db.country.findUnique({
       where: { id },
       include: {
-        tenants: true,
+        branches: true,
       },
     });
 
@@ -161,10 +161,10 @@ export class CountriesService {
       throw new NotFoundException(`Country with ID ${id} not found`);
     }
 
-    // Check if country has associated tenants
-    if (existingCountry.tenants.length > 0) {
+    // Check if country has associated branches
+    if (existingCountry.branches.length > 0) {
       throw new ConflictException(
-        'Cannot delete country with associated tenants',
+        'Cannot delete country with associated branches',
       );
     }
 

@@ -2,7 +2,7 @@
 import * as request from 'supertest';
 import { INestApplication, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TenantsModule } from './tenants.module';
+import { BranchesModule } from './branches.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from '../config/configuration';
 import { DatabaseService } from '../database/database.service';
@@ -15,11 +15,11 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 
 // Contract tests - types are validated through API responses
 
-describe('Tenants API Contracts', () => {
+describe('Branches API Contracts', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const tenants: Array<{
+    const branches: Array<{
       id: string;
       name: string;
       countryCode: string;
@@ -34,10 +34,11 @@ describe('Tenants API Contracts', () => {
       createdAt: Date;
       deletedAt: Date | null;
       countryId: string;
+      customerId: string;
     }> = [
       {
-        id: 'tenant-1',
-        name: 'Active Tenant 1',
+        id: 'branch-1',
+        name: 'Active Branch 1',
         countryCode: 'BR',
         street: 'Rua Teste 123',
         unit: null,
@@ -50,10 +51,11 @@ describe('Tenants API Contracts', () => {
         createdAt: new Date(),
         deletedAt: null,
         countryId: 'mock-country-br',
+        customerId: 'customer-1',
       },
       {
-        id: 'tenant-2',
-        name: 'Active Tenant 2',
+        id: 'branch-2',
+        name: 'Active Branch 2',
         countryCode: 'US',
         street: '123 Main St',
         unit: 'Apt 4B',
@@ -66,10 +68,11 @@ describe('Tenants API Contracts', () => {
         createdAt: new Date(),
         deletedAt: null,
         countryId: 'mock-country-us',
+        customerId: 'customer-1',
       },
       {
-        id: 'tenant-3',
-        name: 'Deleted Tenant',
+        id: 'branch-3',
+        name: 'Deleted Branch',
         countryCode: 'BR',
         street: 'Rua Antiga 456',
         unit: null,
@@ -81,8 +84,9 @@ describe('Tenants API Contracts', () => {
           'Rua Antiga 456, Old District, Rio de Janeiro, RJ 20000-000, BR',
         phone: '(21) 88888-8888',
         createdAt: new Date(),
-        deletedAt: new Date(), // This tenant should not appear in active list
+        deletedAt: new Date(), // This branch should not appear in active list
         countryId: 'mock-country-br',
+        customerId: 'customer-1',
       },
     ];
 
@@ -158,75 +162,84 @@ describe('Tenants API Contracts', () => {
     };
 
     const mockDb: Partial<DatabaseService> = {
-      tenant: {
+      branch: {
         findFirst: jest.fn(({ where }: any) => {
           if (where.name && where.deletedAt === null) {
             return (
-              tenants.find(
-                t => t.name === where.name && t.deletedAt === null,
+              branches.find(
+                b => b.name === where.name && b.deletedAt === null,
               ) || null
             );
           }
           if (where.name) {
-            return tenants.find(t => t.name === where.name) || null;
+            return branches.find(b => b.name === where.name) || null;
           }
           return null;
         }),
         findMany: jest.fn(({ where }: any = {}) => {
-          let filteredTenants = tenants;
+          let filteredBranches = branches;
           if (where.deletedAt === null) {
-            filteredTenants = tenants.filter(t => t.deletedAt === null);
+            filteredBranches = branches.filter(b => b.deletedAt === null);
           }
-          return filteredTenants.map(t => ({
-            id: t.id,
-            name: t.name,
-            countryCode: t.countryCode,
-            street: t.street,
-            unit: t.unit,
-            district: t.district,
-            city: t.city,
-            stateProvince: t.stateProvince,
-            postalCode: t.postalCode,
-            formattedAddress: t.formattedAddress,
-            phone: t.phone,
-            createdAt: t.createdAt,
-            deletedAt: t.deletedAt,
+          return filteredBranches.map(b => ({
+            id: b.id,
+            name: b.name,
+            countryCode: b.countryCode,
+            street: b.street,
+            unit: b.unit,
+            district: b.district,
+            city: b.city,
+            stateProvince: b.stateProvince,
+            postalCode: b.postalCode,
+            formattedAddress: b.formattedAddress,
+            phone: b.phone,
+            createdAt: b.createdAt,
+            deletedAt: b.deletedAt,
+            customerId: b.customerId,
             country: {
-              id: t.countryId,
-              code: t.countryCode,
+              id: b.countryId,
+              code: b.countryCode,
               name: 'Mock Country',
             },
           }));
         }),
         findUnique: jest.fn(({ where, include }: any) => {
-          const tenant = tenants.find(t => t.id === where.id);
-          if (!tenant) return null;
+          const branch = branches.find(b => b.id === where.id);
+          if (!branch) return null;
 
-          if (where.deletedAt === null && tenant.deletedAt !== null) {
+          if (where.deletedAt === null && branch.deletedAt !== null) {
             return null; // Exclude soft-deleted if filtering for active only
           }
 
           const result: any = {
-            id: tenant.id,
-            name: tenant.name,
-            countryCode: tenant.countryCode,
-            street: tenant.street,
-            unit: tenant.unit,
-            district: tenant.district,
-            city: tenant.city,
-            stateProvince: tenant.stateProvince,
-            postalCode: tenant.postalCode,
-            formattedAddress: tenant.formattedAddress,
-            phone: tenant.phone,
-            createdAt: tenant.createdAt,
-            deletedAt: tenant.deletedAt,
+            id: branch.id,
+            name: branch.name,
+            countryCode: branch.countryCode,
+            street: branch.street,
+            unit: branch.unit,
+            district: branch.district,
+            city: branch.city,
+            stateProvince: branch.stateProvince,
+            postalCode: branch.postalCode,
+            formattedAddress: branch.formattedAddress,
+            phone: branch.phone,
+            createdAt: branch.createdAt,
+            deletedAt: branch.deletedAt,
+            customerId: branch.customerId,
           };
 
           if (include?.country) {
             result.country = {
-              id: tenant.countryId,
-              code: tenant.countryCode,
+              id: branch.countryId,
+              code: branch.countryCode,
               name: 'Mock Country',
+            };
+          }
+
+          if (include?.customer) {
+            result.customer = {
+              id: branch.customerId,
+              name: 'Mock Customer',
             };
           }
 
@@ -246,7 +259,7 @@ describe('Tenants API Contracts', () => {
         }),
         create: jest.fn(({ data }: any) => {
           const created = {
-            id: `tenant_${tenants.length + 1}`,
+            id: `branch_${branches.length + 1}`,
             name: data.name,
             countryCode: data.countryCode,
             street: data.street,
@@ -260,8 +273,9 @@ describe('Tenants API Contracts', () => {
             createdAt: new Date(),
             deletedAt: null,
             countryId: 'country_1',
+            customerId: data.customerId,
           };
-          tenants.push(created);
+          branches.push(created);
           return {
             id: created.id,
             name: created.name,
@@ -276,6 +290,7 @@ describe('Tenants API Contracts', () => {
             phone: created.phone,
             createdAt: created.createdAt,
             deletedAt: created.deletedAt,
+            customerId: created.customerId,
             country: {
               id: created.countryId,
               code: created.countryCode,
@@ -284,27 +299,28 @@ describe('Tenants API Contracts', () => {
           };
         }),
         update: jest.fn(({ where, data }: any) => {
-          const tenant = tenants.find(t => t.id === where.id);
-          if (!tenant) return null;
+          const branch = branches.find(b => b.id === where.id);
+          if (!branch) return null;
 
-          Object.assign(tenant, data);
+          Object.assign(branch, data);
           return {
-            id: tenant.id,
-            name: tenant.name,
-            countryCode: tenant.countryCode,
-            street: tenant.street,
-            unit: tenant.unit,
-            district: tenant.district,
-            city: tenant.city,
-            stateProvince: tenant.stateProvince,
-            postalCode: tenant.postalCode,
-            formattedAddress: tenant.formattedAddress,
-            phone: tenant.phone,
-            createdAt: tenant.createdAt,
-            deletedAt: tenant.deletedAt,
+            id: branch.id,
+            name: branch.name,
+            countryCode: branch.countryCode,
+            street: branch.street,
+            unit: branch.unit,
+            district: branch.district,
+            city: branch.city,
+            stateProvince: branch.stateProvince,
+            postalCode: branch.postalCode,
+            formattedAddress: branch.formattedAddress,
+            phone: branch.phone,
+            createdAt: branch.createdAt,
+            deletedAt: branch.deletedAt,
+            customerId: branch.customerId,
             country: {
-              id: tenant.countryId,
-              code: tenant.countryCode,
+              id: branch.countryId,
+              code: branch.countryCode,
               name: 'Mock Country',
             },
           };
@@ -318,7 +334,7 @@ describe('Tenants API Contracts', () => {
           isGlobal: true,
           load: [configuration],
         }),
-        TenantsModule,
+        BranchesModule,
         CountriesModule,
       ],
     })
@@ -344,60 +360,61 @@ describe('Tenants API Contracts', () => {
     await app.close();
   });
 
-  describe('GET /api/tenants', () => {
-    it('should return list of active tenants only', async () => {
+  describe('GET /api/branches', () => {
+    it('should return list of active branches only', async () => {
       const response = await request(app.getHttpServer())
-        .get('/api/tenants')
+        .get('/api/branches')
 
         .expect(200);
 
-      expect(response.body.data.tenants).toHaveLength(2);
+      expect(response.body.data.branches).toHaveLength(2);
       expect(response.body.data.total).toBe(2);
 
-      // Verify first tenant structure
-      const firstTenant = response.body.data.tenants[0];
-      expect(firstTenant).toHaveProperty('id');
-      expect(firstTenant).toHaveProperty('name');
-      expect(firstTenant).toHaveProperty('countryCode');
-      expect(firstTenant).toHaveProperty('street');
-      expect(firstTenant).toHaveProperty('city');
-      expect(firstTenant).toHaveProperty('stateProvince');
-      expect(firstTenant).toHaveProperty('postalCode');
-      expect(firstTenant).toHaveProperty('formattedAddress');
-      expect(firstTenant).toHaveProperty('phone');
-      expect(firstTenant).toHaveProperty('createdAt');
-      expect(firstTenant).toHaveProperty('deletedAt', null);
+      // Verify first branch structure
+      const firstBranch = response.body.data.branches[0];
+      expect(firstBranch).toHaveProperty('id');
+      expect(firstBranch).toHaveProperty('name');
+      expect(firstBranch).toHaveProperty('countryCode');
+      expect(firstBranch).toHaveProperty('street');
+      expect(firstBranch).toHaveProperty('city');
+      expect(firstBranch).toHaveProperty('stateProvince');
+      expect(firstBranch).toHaveProperty('postalCode');
+      expect(firstBranch).toHaveProperty('formattedAddress');
+      expect(firstBranch).toHaveProperty('phone');
+      expect(firstBranch).toHaveProperty('createdAt');
+      expect(firstBranch).toHaveProperty('deletedAt', null);
     });
   });
 
-  describe('GET /api/tenants/:id', () => {
-    it('should return tenant details by ID', async () => {
-      // First create a tenant
+  describe('GET /api/branches/:id', () => {
+    it('should return branch details by ID', async () => {
+      // First create a branch
       const createResponse = await request(app.getHttpServer())
-        .post('/api/tenants')
+        .post('/api/branches')
 
         .send({
-          name: 'Test Tenant',
+          name: 'Test Branch',
           countryCode: 'BR',
           street: 'Test Street',
           city: 'Test City',
           stateProvince: 'TS',
           postalCode: '12345-678',
           phone: '(11) 99999-9999',
+          customerId: 'customer-1',
         })
         .expect(201);
 
-      const tenantId = createResponse.body.data.id;
+      const branchId = createResponse.body.data.id;
 
       const response = await request(app.getHttpServer())
-        .get(`/api/tenants/${tenantId}`)
+        .get(`/api/branches/${branchId}`)
 
         .expect(200);
 
       expect(response.body).toEqual({
         data: expect.objectContaining({
-          id: tenantId,
-          name: 'Test Tenant',
+          id: branchId,
+          name: 'Test Branch',
           countryCode: 'BR',
           street: 'Test Street',
           city: 'Test City',
@@ -409,65 +426,66 @@ describe('Tenants API Contracts', () => {
       });
     });
 
-    it('should return 404 for non-existent tenant', async () => {
+    it('should return 404 for non-existent branch', async () => {
       const response = await request(app.getHttpServer())
-        .get('/api/tenants/non_existent_id')
+        .get('/api/branches/non_existent_id')
 
         .expect(404);
 
       expect(response.body).toEqual({
         status: 404,
-        message: 'Tenant with ID non_existent_id not found',
+        message: 'Branch with ID non_existent_id not found',
       });
     });
   });
 
-  describe('DELETE /api/tenants/:id', () => {
-    it('should soft delete tenant successfully', async () => {
-      // First create a tenant
+  describe('DELETE /api/branches/:id', () => {
+    it('should soft delete branch successfully', async () => {
+      // First create a branch
       const createResponse = await request(app.getHttpServer())
-        .post('/api/tenants')
+        .post('/api/branches')
 
         .send({
-          name: 'Tenant to Delete',
+          name: 'Branch to Delete',
           countryCode: 'BR',
           street: 'Delete Street',
           city: 'Delete City',
           stateProvince: 'DC',
           postalCode: '12345-678',
           phone: '(11) 99999-9999',
+          customerId: 'customer-1',
         })
         .expect(201);
 
-      const tenantId = createResponse.body.data.id;
+      const branchId = createResponse.body.data.id;
 
-      // Soft delete the tenant
+      // Soft delete the branch
       await request(app.getHttpServer())
-        .delete(`/api/tenants/${tenantId}`)
+        .delete(`/api/branches/${branchId}`)
 
         .expect(HttpStatus.NO_CONTENT);
 
-      // Verify tenant is no longer returned in list
+      // Verify branch is no longer returned in list
       const listResponse = await request(app.getHttpServer())
-        .get('/api/tenants')
+        .get('/api/branches')
 
         .expect(200);
 
-      const deletedTenant = listResponse.body.data.tenants.find(
-        (t: any) => t.id === tenantId,
+      const deletedBranch = listResponse.body.data.branches.find(
+        (b: any) => b.id === branchId,
       );
-      expect(deletedTenant).toBeUndefined();
+      expect(deletedBranch).toBeUndefined();
     });
 
-    it('should return 404 for non-existent tenant', async () => {
+    it('should return 404 for non-existent branch', async () => {
       const response = await request(app.getHttpServer())
-        .delete('/api/tenants/non_existent_id')
+        .delete('/api/branches/non_existent_id')
 
         .expect(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual({
         status: 404,
-        message: 'Tenant with ID non_existent_id not found',
+        message: 'Branch with ID non_existent_id not found',
       });
     });
   });

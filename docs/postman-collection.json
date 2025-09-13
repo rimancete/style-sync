@@ -21,7 +21,7 @@
       "type": "string"
     },
     {
-      "key": "tenantId",
+      "key": "branchId",
       "value": "",
       "type": "string"
     }
@@ -438,16 +438,192 @@
               "host": ["{{baseUrl}}"],
               "path": ["countries", "clm1234567890abcdef"]
             },
-            "description": "Admin endpoint. Deletes a country from the system. Only possible if the country has no associated tenants."
+            "description": "Admin endpoint. Deletes a country from the system. Only possible if the country has no associated branches."
           }
         }
       ]
     },
     {
-      "name": "Tenants (Branches)",
+      "name": "Customer Branding",
       "item": [
         {
-          "name": "List All Tenants",
+          "name": "Get Customer Branding",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/customers/branding/:urlSlug",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "branding", ":urlSlug"],
+              "variable": [
+                {
+                  "key": "urlSlug",
+                  "value": "acme",
+                  "description": "Customer URL slug (e.g., acme, elite-cuts)"
+                }
+              ]
+            },
+            "description": "Get customer branding configuration by URL slug. Public endpoint - no authentication required."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/customers/branding/:urlSlug",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["customers", "branding", ":urlSlug"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"data\": {\n    \"id\": \"customer-id\",\n    \"name\": \"Acme Barbershop\",\n    \"urlSlug\": \"acme\",\n    \"branding\": {\n      \"documentTitle\": \"Acme Barbershop - Premium Haircuts\",\n      \"theme\": {\n        \"light\": {\n          \"logoAlt\": \"Acme Barbershop\",\n          \"primary\": {\n            \"main\": \"#1E40AF\",\n            \"light\": \"#3B82F6\",\n            \"dark\": \"#1E3A8A\",\n            \"contrast\": \"#FFFFFF\"\n          },\n          \"secondary\": {\n            \"main\": \"#8D8C8BFF\",\n            \"light\": \"#E7E7E6FF\",\n            \"dark\": \"#3B3B3BFF\",\n            \"contrast\": \"#1B1B1BFF\"\n          },\n          \"background\": \"#F8FAFC\"\n        }\n      }\n    },\n    \"isActive\": true\n  }\n}"
+            },
+            {
+              "name": "Not Found Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/customers/branding/:urlSlug",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["customers", "branding", ":urlSlug"]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": 404,\n  \"message\": \"Customer with URL slug 'nonexistent' not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Customer Branding",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pageTitle\": \"Acme Barbershop - Premium Haircuts & Styling\",\n  \"logoAlt\": \"Acme Premium Barbershop\",\n  \"theme\": {\n    \"light\": {\n      \"primary\": {\n        \"main\": \"#1E40AF\",\n        \"light\": \"#3B82F6\",\n        \"dark\": \"#1E3A8A\",\n        \"contrast\": \"#FFFFFF\"\n      },\n      \"background\": \"#F8FAFC\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customers/:customerId/branding/config",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", ":customerId", "branding", "config"],
+              "variable": [
+                {
+                  "key": "customerId",
+                  "value": "customer-id-here",
+                  "description": "Customer ID (UUID format)"
+                }
+              ]
+            },
+            "description": "Update customer branding configuration. Admin only - requires authentication."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pageTitle\": \"Acme Barbershop - Premium Haircuts & Styling\",\n  \"logoAlt\": \"Acme Premium Barbershop\",\n  \"theme\": {\n    \"light\": {\n      \"primary\": {\n        \"main\": \"#1E40AF\",\n        \"light\": \"#3B82F6\",\n        \"dark\": \"#1E3A8A\",\n        \"contrast\": \"#FFFFFF\"\n      },\n      \"background\": \"#F8FAFC\"\n    }\n  }\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers/:customerId/branding/config",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["customers", ":customerId", "branding", "config"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"data\": {\n    \"id\": \"customer-id\",\n    \"name\": \"Acme Barbershop\",\n    \"urlSlug\": \"acme\",\n    \"branding\": {\n      \"documentTitle\": \"Acme Barbershop - Premium Haircuts & Styling\",\n      \"theme\": {\n        \"light\": {\n          \"logoAlt\": \"Acme Premium Barbershop\",\n          \"primary\": {\n            \"main\": \"#1E40AF\",\n            \"light\": \"#3B82F6\",\n            \"dark\": \"#1E3A8A\",\n            \"contrast\": \"#FFFFFF\"\n          },\n          \"secondary\": {\n            \"main\": \"#8D8C8BFF\",\n            \"light\": \"#E7E7E6FF\",\n            \"dark\": \"#3B3B3BFF\",\n            \"contrast\": \"#1B1B1BFF\"\n          },\n          \"background\": \"#F8FAFC\"\n        }\n      }\n    },\n    \"isActive\": true\n  }\n}"
+            },
+            {
+              "name": "Unauthorized Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pageTitle\": \"Test\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers/:customerId/branding/config",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["customers", ":customerId", "branding", "config"]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": 401,\n  \"message\": \"Unauthorized\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Branches",
+      "item": [
+        {
+          "name": "List All Branches",
           "request": {
             "method": "GET",
             "header": [
@@ -457,14 +633,45 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/tenants",
+              "raw": "{{baseUrl}}/branches",
               "host": ["{{baseUrl}}"],
-              "path": ["tenants"]
+              "path": ["branches"]
+            },
+            "description": "Admin endpoint. Retrieves a list of all active branches with their customer relationships."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/branches",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["branches"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"data\": {\n    \"branches\": [\n      {\n        \"id\": \"branch-id\",\n        \"name\": \"Unidade 1\",\n        \"countryCode\": \"BR\",\n        \"street\": \"Rua das Flores\",\n        \"unit\": \"123\",\n        \"district\": \"Centro\",\n        \"city\": \"São Paulo\",\n        \"stateProvince\": \"SP\",\n        \"postalCode\": \"01234-567\",\n        \"formattedAddress\": \"Rua das Flores, 123, Centro, São Paulo, SP 01234-567, BR\",\n        \"phone\": \"(11) 98765-4321\",\n        \"createdAt\": \"2025-09-13T14:05:22.068Z\",\n        \"deletedAt\": null\n      }\n    ],\n    \"total\": 1\n  }\n}"
             }
-          }
+          ]
         },
         {
-          "name": "Create Tenant",
+          "name": "Create Branch",
           "event": [
             {
               "listen": "test",
@@ -472,8 +679,8 @@
                 "exec": [
                   "if (pm.response.code === 201) {",
                   "    const json = pm.response.json();",
-                  "    pm.collectionVariables.set('tenantId', json.data.id);",
-                  "    console.log('Tenant created, ID saved:', json.data.id);",
+                  "    pm.collectionVariables.set('branchId', json.data.id);",
+                  "    console.log('Branch created, ID saved:', json.data.id);",
                   "}"
                 ]
               }
@@ -493,17 +700,56 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Unidade Centro\",\n  \"countryCode\": \"BR\",\n  \"street\": \"Rua Principal, 123\",\n  \"district\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"postalCode\": \"01234-567\",\n  \"phone\": \"(11) 99999-9999\"\n}"
+              "raw": "{\n  \"name\": \"Unidade Centro\",\n  \"countryCode\": \"BR\",\n  \"street\": \"Rua Principal, 123\",\n  \"district\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"postalCode\": \"01234-567\",\n  \"phone\": \"(11) 99999-9999\",\n  \"customerId\": \"customer-id-here\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/tenants",
+              "raw": "{{baseUrl}}/branches",
               "host": ["{{baseUrl}}"],
-              "path": ["tenants"]
+              "path": ["branches"]
+            },
+            "description": "Admin endpoint. Creates a new branch location associated with a customer."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Unidade Centro\",\n  \"countryCode\": \"BR\",\n  \"street\": \"Rua Principal, 123\",\n  \"district\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"postalCode\": \"01234-567\",\n  \"phone\": \"(11) 99999-9999\",\n  \"customerId\": \"customer-id-here\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/branches",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["branches"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"data\": {\n    \"id\": \"branch-id\",\n    \"name\": \"Unidade Centro\",\n    \"countryCode\": \"BR\",\n    \"street\": \"Rua Principal, 123\",\n    \"district\": \"Centro\",\n    \"city\": \"São Paulo\",\n    \"stateProvince\": \"SP\",\n    \"postalCode\": \"01234-567\",\n    \"formattedAddress\": \"Rua Principal, 123, Centro, São Paulo, SP 01234-567, BR\",\n    \"phone\": \"(11) 99999-9999\",\n    \"createdAt\": \"2025-09-13T15:00:00.000Z\",\n    \"deletedAt\": null\n  }\n}"
             }
-          }
+          ]
         },
         {
-          "name": "Get Tenant by ID",
+          "name": "Get Branch by ID",
           "request": {
             "method": "GET",
             "header": [
@@ -513,14 +759,45 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/tenants/{{tenantId}}",
+              "raw": "{{baseUrl}}/branches/{{branchId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["tenants", "{{tenantId}}"]
+              "path": ["branches", "{{branchId}}"]
+            },
+            "description": "Admin endpoint. Retrieves detailed information about a specific branch by its ID."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/branches/{{branchId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["branches", "{{branchId}}"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"data\": {\n    \"id\": \"branch-id\",\n    \"name\": \"Unidade Centro\",\n    \"countryCode\": \"BR\",\n    \"street\": \"Rua Principal, 123\",\n    \"district\": \"Centro\",\n    \"city\": \"São Paulo\",\n    \"stateProvince\": \"SP\",\n    \"postalCode\": \"01234-567\",\n    \"formattedAddress\": \"Rua Principal, 123, Centro, São Paulo, SP 01234-567, BR\",\n    \"phone\": \"(11) 99999-9999\",\n    \"createdAt\": \"2025-09-13T15:00:00.000Z\",\n    \"deletedAt\": null\n  }\n}"
             }
-          }
+          ]
         },
         {
-          "name": "Update Tenant",
+          "name": "Update Branch",
           "request": {
             "method": "PATCH",
             "header": [
@@ -538,14 +815,53 @@
               "raw": "{\n  \"name\": \"Unidade Centro - Atualizada\",\n  \"city\": \"Rio de Janeiro\",\n  \"stateProvince\": \"RJ\",\n  \"phone\": \"(21) 99999-9999\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/tenants/{{tenantId}}",
+              "raw": "{{baseUrl}}/branches/{{branchId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["tenants", "{{tenantId}}"]
+              "path": ["branches", "{{branchId}}"]
+            },
+            "description": "Admin endpoint. Updates branch information. Only address fields can be modified."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Unidade Centro - Atualizada\",\n  \"city\": \"Rio de Janeiro\",\n  \"stateProvince\": \"RJ\",\n  \"phone\": \"(21) 99999-9999\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/branches/{{branchId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["branches", "{{branchId}}"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"data\": {\n    \"id\": \"branch-id\",\n    \"name\": \"Unidade Centro - Atualizada\",\n    \"countryCode\": \"BR\",\n    \"street\": \"Rua Principal, 123\",\n    \"district\": \"Centro\",\n    \"city\": \"Rio de Janeiro\",\n    \"stateProvince\": \"RJ\",\n    \"postalCode\": \"01234-567\",\n    \"formattedAddress\": \"Rua Principal, 123, Centro, Rio de Janeiro, RJ 01234-567, BR\",\n    \"phone\": \"(21) 99999-9999\",\n    \"createdAt\": \"2025-09-13T15:00:00.000Z\",\n    \"deletedAt\": null\n  }\n}"
             }
-          }
+          ]
         },
         {
-          "name": "Delete Tenant",
+          "name": "Delete Branch",
           "request": {
             "method": "DELETE",
             "header": [
@@ -555,11 +871,65 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/tenants/{{tenantId}}",
+              "raw": "{{baseUrl}}/branches/{{branchId}}",
               "host": ["{{baseUrl}}"],
-              "path": ["tenants", "{{tenantId}}"]
+              "path": ["branches", "{{branchId}}"]
+            },
+            "description": "Admin endpoint. Soft deletes a branch. Only possible if the branch has no associated professionals, bookings, or service pricing."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/branches/{{branchId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["branches", "{{branchId}}"]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Conflict Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/branches/{{branchId}}",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["branches", "{{branchId}}"]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": 409,\n  \"message\": \"Cannot delete branch with associated professionals\"\n}"
             }
-          }
+          ]
         }
       ]
     }
