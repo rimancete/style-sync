@@ -318,7 +318,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] Basic user registration
 - [x] **Tests**: Contract tests for auth endpoints (following Health module pattern)
 
-#### Step 2.3: Customers Module
+#### Step 2.4: Customers Module
 
 ##### Backend Implementation (Priority)
 
@@ -336,7 +336,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - ✅ Professionals can work across multiple branches of same customer
 - ✅ Branch-specific pricing maintained
 
-##### Step 2.3.1: Customer Database Schema & Entities
+##### Step 2.4.1: Customer Database Schema & Entities
 
 - [x] Add Customer model to Prisma schema
   - Basic fields: id, name, urlSlug (unique), isActive, createdAt, updatedAt
@@ -348,7 +348,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] Update seed data with sample customers (Acme, Elite Cuts, etc.)
 - [x] Create Customer entity and interfaces
 
-##### Step 2.3.2: Customer Module Structure
+##### Step 2.4.2: Customer Module Structure
 
 - [x] Create `src/customers/` directory structure
   - customers.module.ts, customers.controller.ts, customers.service.ts
@@ -357,7 +357,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] Add customer module to app module
 - [x] Implement basic CRUD operations (focus on read for now)
 
-##### Step 2.3.3: Customer Branding API(protected)
+##### Step 2.4.3: Customer Branding API (DDoS Protected)
 
 - [x] Create `GET /api/customers/branding/:urlSlug` endpoint
 - [x] Implement URL slug validation and customer lookup
@@ -365,8 +365,17 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] Add caching for customer configurations (<100ms target)
 - [x] Handle inactive/non-existent customers gracefully
 - [x] Add contract tests for the branding endpoint
+- [x] **DDoS Protection Implementation**:
+  - ✅ Rate limiting with @nestjs/throttler (20 requests/minute for branding)
+  - ✅ IP-based throttling with custom tracking per URL slug
+  - ✅ Global rate limiting (60 requests/minute default)
+  - ✅ Custom rate limits for admin operations (5 requests/minute)
+  - ✅ Proper HTTP 429 responses with clear error messages
+  - ✅ Rate limit headers in responses (X-RateLimit-\* headers)
+  - ✅ Manual testing confirmed: blocks after limit exceeded
+  - ✅ Configurable via environment variables
 
-##### Step 2.3.4: Branding Management API(protected)
+##### Step 2.4.4: Branding Management API(protected)
 
 - [x] **Config Update Endpoint**: `PUT /api/customers/:customerId/branding/config`
   - Update branding data without touching files
@@ -384,7 +393,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
   - Local storage with CDN-ready structure
   - URL generation for stored files
 
-##### Step 2.3.5: Backend Testing & Validation
+##### Step 2.4.5: Backend Testing & Validation
 
 - [x] Contract tests for customer branding API (basic functionality tested)
 - [x] Performance tests for customer lookup (<100ms) - tested manually
@@ -398,32 +407,73 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - **Error Handling**: ✅ Proper 404s and 401s for invalid requests
 - **Data Persistence**: ✅ Branding changes saved and retrieved correctly
 - **Business Logic**: ✅ Customer-specific branding with theme customization
+- **Security & DDoS Protection**: ✅ Rate limiting implemented and tested
+  - ✅ 20 requests/minute limit for public branding endpoint
+  - ✅ 5 requests/minute limit for admin operations
+  - ✅ IP-based tracking with URL slug consideration
+  - ✅ Proper error responses and monitoring headers
+  - ✅ Configurable limits via environment variables
+
+##### 🔒 **DDoS Protection Configuration**
+
+**Environment Variables for Rate Limiting:**
+
+```bash
+# Global rate limiting (default: 60 requests/minute)
+RATE_LIMIT_TTL=60000
+RATE_LIMIT_DEFAULT=60
+
+# Branding endpoint specific (default: 20 requests/minute)
+RATE_LIMIT_BRANDING_TTL=60000
+RATE_LIMIT_BRANDING=20
+
+# Admin operations (default: 5 requests/minute)
+RATE_LIMIT_ADMIN_TTL=60000
+RATE_LIMIT_ADMIN=5
+```
+
+**Rate Limiting Features:**
+
+- ✅ IP-based throttling with fallback to connection address
+- ✅ Support for X-Forwarded-For and X-Real-IP headers (proxy-aware)
+- ✅ Per-endpoint custom limits using @Throttle decorator
+- ✅ Automatic HTTP 429 responses with clear error messages
+- ✅ Rate limit headers in all responses for client awareness
+- ✅ Custom tracking for branding endpoints (IP + URL slug)
+- ✅ Comprehensive logging for monitoring suspicious activity
+
+**Manual Testing Results:**
+
+- ✅ Branding endpoint allows 9-10 rapid requests, then blocks with 429
+- ✅ Rate limit headers correctly show remaining requests
+- ✅ Different endpoints have independent rate limiting
+- ✅ Server handles burst requests gracefully without crashing
 
 ##### Frontend Implementation (After Backend)
 
 **Goal**: Integrate customer branding into React application
 
-##### Step 2.3.6: Customer Context Provider
+##### Step 2.4.6: Customer Context Provider
 
 - [ ] Create React context for customer state management
 - [ ] Implement customer config fetching from backend
 - [ ] Add loading states and error boundaries
 - [ ] URL parsing logic to extract customer slug
 
-##### Step 2.3.7: Dynamic Branding Application
+##### Step 2.4.7: Dynamic Branding Application
 
 - [ ] Update document title based on customer config
 - [ ] Apply CSS variables for theme colors
 - [ ] Dynamic logo loading and display
 - [ ] Fallback handling for missing assets
 
-##### Step 2.3.8: Customer URL Integration
+##### Step 2.4.8: Customer URL Integration
 
 - [ ] URL change detection and customer context updates
 - [ ] Default customer fallback for missing URL slugs
 - [ ] Route protection based on customer context
 
-##### Step 2.3.9: Frontend Testing & Validation
+##### Step 2.4.9: Frontend Testing & Validation
 
 - [ ] Unit tests for customer context logic
 - [ ] Integration tests for branding application
@@ -574,7 +624,7 @@ curl -X POST /api/customers/acme-id/branding \
 curl /api/customers/branding/acme
 ```
 
-#### Step 2.4: Branches Module
+#### Step 2.5: Branches Module
 
 - [x] CRUD operations for branches: Implement soft-delete registry
 - [x] Basic branch management with customer relationships

@@ -51,6 +51,9 @@ Access during development:
 - `start:dev`: run both apps concurrently
 - `build:all`: build both applications
 
+## Highlight (Backend)
+- Rate limit protection
+
 ## Roadmap (Frontend-first)
 - ✅ Docker Compose for local PostgreSQL (project-scoped)
 - 🔄 Add Prisma schema and migrations in `server/`

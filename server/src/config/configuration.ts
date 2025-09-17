@@ -32,4 +32,18 @@ export default () => ({
       'Multi-location barbershop booking system API',
     version: process.env.SWAGGER_VERSION || '1.0',
   },
+
+  rateLimit: {
+    // Global default rate limiting
+    defaultTtl: parseInt(process.env.RATE_LIMIT_TTL || '60000', 10), // 1 minute
+    defaultLimit: parseInt(process.env.RATE_LIMIT_DEFAULT || '60', 10), // 60 requests per minute
+
+    // Branding endpoint specific limits
+    brandingTtl: parseInt(process.env.RATE_LIMIT_BRANDING_TTL || '60000', 10), // 1 minute
+    brandingLimit: parseInt(process.env.RATE_LIMIT_BRANDING || '20', 10), // 20 requests per minute
+
+    // Admin operations limits
+    adminTtl: parseInt(process.env.RATE_LIMIT_ADMIN_TTL || '60000', 10), // 1 minute
+    adminLimit: parseInt(process.env.RATE_LIMIT_ADMIN || '5', 10), // 5 requests per minute
+  },
 });
