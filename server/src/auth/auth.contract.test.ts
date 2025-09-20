@@ -45,6 +45,12 @@ describe('Auth API Contracts', () => {
           return created;
         }),
       } as any,
+      userCustomer: {
+        findMany: jest.fn(() => {
+          // Return empty array for now - users have no customer associations in tests
+          return [];
+        }),
+      } as any,
     };
 
     const moduleRef: TestingModule = await Test.createTestingModule({

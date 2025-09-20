@@ -3,11 +3,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import * as request from 'supertest';
 import { CustomersController } from './customers.controller';
 import { CustomersService } from './customers.service';
 import { DatabaseService } from '../database/database.service';
+import configuration from '../config/configuration';
 
 describe('Customers Rate Limiting', () => {
   let app: INestApplication;
@@ -52,6 +54,7 @@ describe('Customers Rate Limiting', () => {
             limit: 3, // 3 requests per 2 seconds for testing (vs 20 per minute in production)
           },
         ]),
+        ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
       ],
       controllers: [CustomersController],
       providers: [

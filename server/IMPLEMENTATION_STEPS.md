@@ -4,6 +4,7 @@
 
 StyleSync is a multi-location barbershop booking system with the following key requirements:
 
+- **Customer-Scoped**: Complete customer-scoped management. One single code base, multiple clients.
 - **Multi-branch**: Multiple branch locations ("Unidade 1", "Unidade 2")
 - **Professional selection**: Clients can choose specific professionals or "any available"
 - **Single service booking**: One service per appointment (simplified business logic)
@@ -18,7 +19,7 @@ StyleSync is a multi-location barbershop booking system with the following key r
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: JWT tokens
 - **Development Database**: Docker Compose
-- **API Documentation**: Swagger/OpenAPI
+- **API Documentation**: Swagger/OpenAPI + Postman collection
 - **Validation**: class-validator + class-transformer
 
 ### Business Logic Clarifications
@@ -33,65 +34,157 @@ StyleSync is a multi-location barbershop booking system with the following key r
 ### Core Entities
 
 ```prisma
-model Branch {
-  id       String @id @default(cuid())
-  name     String // "Unidade 1", "Unidade 2"
-  address  Object // address structure base on the regions
-  phone    String
+model Country {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  name          String
+  addressFormat Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  branches      Branch[]
 
+  @@map("countries")
+}
+
+model Customer {
+  id          String @id @default(cuid())
+  name        String
+  urlSlug     String @unique
+
+  // Branding Configuration
+  documentTitle   String @default("")
+  logoUrl     String?
+  logoAlt     String @default("")
+
+  // Favicons
+  favicon32x32  String?
+  favicon16x16  String?
+  appleTouch    String?
+
+  // Theme Colors (Light theme)
+  primaryMain     String @default("#272726FF")
+  primaryLight    String @default("#706E6DFF")
+  primaryDark     String @default("#1B1B1BFF")
+  primaryContrast String @default("#ECE8E6FF")
+
+  secondaryMain     String @default("#8D8C8BFF")
+  secondaryLight    String @default("#E7E7E6FF")
+  secondaryDark     String @default("#3B3B3BFF")
+  secondaryContrast String @default("#1B1B1BFF")
+
+  backgroundColor String @default("#F7F7F7FF")
+
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  branches      Branch[]
+  services      Service[]
+  users         UserCustomer[]
   professionals Professional[]
-  bookings     Booking[]
-  servicePricing ServicePricing[]
-  createdAt    DateTime @default(now())
+
+  @@map("customers")
+}
+
+model Branch {
+  id               String           @id @default(cuid())
+  name             String
+  phone            String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+  countryCode      String
+  street           String
+  unit             String?
+  district         String?
+  city             String
+  stateProvince    String
+  postalCode       String
+  formattedAddress String
+  countryId        String
+  customerId       String
+  country          Country          @relation(fields: [countryId], references: [id])
+  customer         Customer         @relation(fields: [customerId], references: [id])
+  bookings         Booking[]
+  professionals    Professional[]
+  servicePricing   ServicePricing[]
+
   @@map("branches")
 }
 
 model Professional {
-  id       String  @id @default(cuid())
-  name     String  // "Michel", "Luiz", "Dario"
-  photoUrl String?
-  isActive Boolean @default(true)
-  branchId String
+  id        String    @id @default(cuid())
+  name      String
+  photoUrl  String?
+  isActive  Boolean   @default(true)
+  branchId  String
+  customerId String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+  branch    Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  branch   Branch    @relation(fields: [branchId], references: [id])
-  bookings Booking[]
   @@map("professionals")
 }
 
 model Service {
-  id          String @id @default(cuid())
-  name        String // "Social + Barba"
+  id          String           @id @default(cuid())
+  name        String
   description String?
-  duration    Int    // minutes (single service only)
+  duration    Int
+  customerId  String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  customer    Customer         @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+  pricing     ServicePricing[]
 
-  pricing ServicePricing[]
-  bookings Booking[]
   @@map("services")
 }
 
 model ServicePricing {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   serviceId String
   branchId  String
-  price     Decimal @db.Decimal(10,2)
+  price     Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  branch    Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
 
-  service Service @relation(fields: [serviceId], references: [id])
-  branch  Branch  @relation(fields: [branchId], references: [id])
   @@unique([serviceId, branchId])
   @@map("service_pricing")
 }
 
 model User {
-  id       String   @id @default(cuid())
-  email    String   @unique
-  password String
-  name     String
-  phone    String?
-  role     UserRole @default(CLIENT)
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String
+  phone     String?
+  role      UserRole  @default(CLIENT)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+  customers UserCustomer[]
 
-  bookings Booking[]
-  createdAt DateTime @default(now())
   @@map("users")
+}
+
+model UserCustomer {
+  id         String   @id @default(cuid())
+  userId     String
+  customerId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, customerId])
+  @@map("user_customers")
 }
 
 model Booking {
@@ -99,17 +192,17 @@ model Booking {
   userId         String
   branchId       String
   serviceId      String
-  professionalId String?       // NULL = "Any professional"
+  professionalId String?
   scheduledAt    DateTime
   status         BookingStatus @default(PENDING)
-  totalPrice     Decimal       @db.Decimal(10,2)
+  totalPrice     Decimal       @db.Decimal(10, 2)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  professional   Professional? @relation(fields: [professionalId], references: [id])
+  service        Service       @relation(fields: [serviceId], references: [id])
+  branch         Branch        @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user         User         @relation(fields: [userId], references: [id])
-  branch       Branch       @relation(fields: [branchId], references: [id])
-  service      Service      @relation(fields: [serviceId], references: [id])
-  professional Professional? @relation(fields: [professionalId], references: [id])
-
-  createdAt DateTime @default(now())
   @@map("bookings")
 }
 
@@ -130,111 +223,118 @@ enum BookingStatus {
 ## Core directory Structure
 
 ```
-server/
-├── prisma/
-│   ├── migrations/
-│   ├── schema.prisma
-│   └── seed.ts
-├── src/
-│   ├── health/                 # Health check endpoints
-│   │   ├── health.controller.ts
-│   │   ├── health.service.ts
-│   │   └── health.module.ts
-│   ├── auth/                   # JWT authentication
-│   │   ├── dto/
-│   │   │   ├── login.dto.ts
-│   │   │   ├── register.dto.ts
-│   │   │   └── token.dto.ts
-│   │   ├── guards/
-│   │   │   ├── jwt-auth.guard.ts
-│   │   │   └── roles.guard.ts
-│   │   ├── strategies/
-│   │   │   └── jwt.strategy.ts
-│   │   ├── auth.controller.ts
-│   │   ├── auth.service.ts
-│   │   └── auth.module.ts
-│   ├── branches/                # Branch/Location management
-│   │   ├── dto/
-│   │   │   ├── create-branch.dto.ts
-│   │   │   └── update-branch.dto.ts
-│   │   ├── entities/
-│   │   │   └── branch.entity.ts
-│   │   ├── branches.controller.ts
-│   │   ├── branches.service.ts
-│   │   └── branches.module.ts
-│   ├── professionals/          # Staff with branch assignments
-│   │   ├── dto/
-│   │   │   ├── create-professional.dto.ts
-│   │   │   └── update-professional.dto.ts
-│   │   ├── entities/
-│   │   │   └── professional.entity.ts
-│   │   ├── professionals.controller.ts
-│   │   ├── professionals.service.ts
-│   │   └── professionals.module.ts
-│   ├── services/               # Service catalog with pricing
-│   │   ├── dto/
-│   │   │   ├── create-service.dto.ts
-│   │   │   └── service-pricing.dto.ts
-│   │   ├── entities/
-│   │   │   ├── service.entity.ts
-│   │   │   └── service-pricing.entity.ts
-│   │   ├── services.controller.ts
-│   │   ├── services.service.ts
-│   │   └── services.module.ts
-│   ├── booking/                # Multi-location booking logic
-│   │   ├── dto/
-│   │   │   ├── create-booking.dto.ts
-│   │   │   ├── update-booking.dto.ts
-│   │   │   └── availability-query.dto.ts
-│   │   ├── availability/
-│   │   │   ├── availability.service.ts
-│   │   │   └── time-slot.interface.ts
-│   │   ├── entities/
-│   │   │   └── booking.entity.ts
-│   │   ├── booking.controller.ts
-│   │   ├── booking.service.ts
-│   │   └── booking.module.ts
-│   ├── users/                  # User management
-│   │   ├── dto/
-│   │   │   ├── create-user.dto.ts
-│   │   │   └── update-user.dto.ts
-│   │   ├── entities/
-│   │   │   └── user.entity.ts
-│   │   ├── users.controller.ts
-│   │   ├── users.service.ts
-│   │   └── users.module.ts
-│   ├── common/                 # Shared utilities
-│   │   ├── decorators/
-│   │   │   ├── roles.decorator.ts
-│   │   │   └── public.decorator.ts
-│   │   ├── filters/
-│   │   │   └── http-exception.filter.ts
-│   │   ├── interceptors/
-│   │   │   └── transform.interceptor.ts
-│   │   ├── pipes/
-│   │   │   └── validation.pipe.ts
-│   │   └── types/
-│   │       ├── user-role.enum.ts
-│   │       └── booking-status.enum.ts
-│   ├── testing/                # Testing utilities
-│   │   └── helpers/
-│   │       └── contract-test.helper.ts  # Contract testing infrastructure
-│   ├── database/               # Database module
-│   │   ├── database.module.ts
-│   │   └── database.service.ts
-│   ├── app.controller.ts
-│   ├── app.module.ts
-│   ├── app.service.ts
-│   └── main.ts                 # Swagger setup
 ├── docker/
-│   └── docker-compose.yml      # PostgreSQL container
-├── docs/
-│   └── SETUP.md               # Development environment setup guide
-├── .env.example
-├── .env
-├── Dockerfile                  # Optional for deployment
-├── package.json
-└── README.md
+│   ├── docker-compose.yml 🚫 (auto-hidden)
+│   └── init.sql 🚫 (auto-hidden)
+├── server/
+│   ├── .husky/ 🚫 (auto-hidden)
+│   ├── coverage/ 🚫 (auto-hidden)
+│   ├── dist/ 🚫 (auto-hidden)
+│   ├── docs/
+│   │   └── ENVIRONMENT_SETUP.md 🚫 (auto-hidden)
+│   ├── prisma/
+│   │   ├── migrations/
+│   │   ├── schema.prisma 🚫 (auto-hidden)
+│   │   └── seed.ts 🚫 (auto-hidden)
+│   ├── src/
+│   │   ├── auth/
+│   │   │   ├── dto/
+│   │   │   │   ├── auth-response.dto.ts 🚫 (auto-hidden)
+│   │   │   │   ├── login.dto.ts 🚫 (auto-hidden)
+│   │   │   │   ├── register.dto.ts 🚫 (auto-hidden)
+│   │   │   │   └── token.dto.ts 🚫 (auto-hidden)
+│   │   │   ├── guards/
+│   │   │   │   ├── jwt-auth.guard.ts 🚫 (auto-hidden)
+│   │   │   │   └── roles.guard.ts 🚫 (auto-hidden)
+│   │   │   ├── strategies/
+│   │   │   │   └── jwt.strategy.ts 🚫 (auto-hidden)
+│   │   │   ├── auth.contract.test.ts 🚫 (auto-hidden)
+│   │   │   ├── auth.controller.ts 🚫 (auto-hidden)
+│   │   │   ├── auth.module.ts 🚫 (auto-hidden)
+│   │   │   └── auth.service.ts 🚫 (auto-hidden)
+│   │   ├── branches/
+│   │   │   ├── dto/
+│   │   │   │   ├── branch-response.dto.ts 🚫 (auto-hidden)
+│   │   │   │   ├── create-branch.dto.ts 🚫 (auto-hidden)
+│   │   │   │   ├── create-customer-branch.dto.ts 🚫 (auto-hidden)
+│   │   │   │   └── update-branch.dto.ts 🚫 (auto-hidden)
+│   │   │   ├── entities/
+│   │   │   │   └── branch.entity.ts 🚫 (auto-hidden)
+│   │   │   ├── branches.contract.test.ts 🚫 (auto-hidden)
+│   │   │   ├── branches.controller.ts 🚫 (auto-hidden)
+│   │   │   ├── branches.module.ts 🚫 (auto-hidden)
+│   │   │   └── branches.service.ts 🚫 (auto-hidden)
+│   │   ├── common/
+│   │   │   ├── decorators/
+│   │   │   │   ├── public.decorator.ts 🚫 (auto-hidden)
+│   │   │   │   ├── rate-limit.decorator.ts 🚫 (auto-hidden)
+│   │   │   │   ├── roles.decorator.ts 🚫 (auto-hidden)
+│   │   │   │   └── user.decorator.ts 🚫 (auto-hidden)
+│   │   │   ├── filters/
+│   │   │   │   └── http-exception.filter.ts 🚫 (auto-hidden)
+│   │   │   ├── guards/
+│   │   │   │   ├── customer-context.guard.ts 🚫 (auto-hidden)
+│   │   │   │   └── rate-limit.guard.ts 🚫 (auto-hidden)
+│   │   │   ├── interceptors/
+│   │   │   │   └── response-transform.interceptor.ts 🚫 (auto-hidden)
+│   │   │   ├── interfaces/
+│   │   │   │   └── api-response.interface.ts 🚫 (auto-hidden)
+│   │   │   ├── pipes/
+│   │   │   ├── types/
+│   │   │   │   └── auth.types.ts 🚫 (auto-hidden)
+│   │   │   └── utils/
+│   │   │       └── url-customer.util.ts 🚫 (auto-hidden)
+│   │   ├── config/
+│   │   │   └── configuration.ts 🚫 (auto-hidden)
+│   │   ├── countries/
+│   │   │   ├── dto/
+│   │   │   │   ├── country-response.dto.ts 🚫 (auto-hidden)
+│   │   │   │   ├── create-country.dto.ts 🚫 (auto-hidden)
+│   │   │   │   └── update-country.dto.ts 🚫 (auto-hidden)
+│   │   │   ├── entities/
+│   │   │   │   └── country.entity.ts 🚫 (auto-hidden)
+│   │   │   ├── countries.contract.test.ts 🚫 (auto-hidden)
+│   │   │   ├── countries.controller.ts 🚫 (auto-hidden)
+│   │   │   ├── countries.module.ts 🚫 (auto-hidden)
+│   │   │   └── countries.service.ts 🚫 (auto-hidden)
+│   │   ├── customers/
+│   │   │   ├── dto/
+│   │   │   │   ├── customer-branding.response.dto.ts 🚫 (auto-hidden)
+│   │   │   │   └── update-customer-branding.dto.ts 🚫 (auto-hidden)
+│   │   │   ├── entities/
+│   │   │   │   └── customer.entity.ts 🚫 (auto-hidden)
+│   │   │   ├── customers.contract.test.ts 🚫 (auto-hidden)
+│   │   │   ├── customers.controller.ts 🚫 (auto-hidden)
+│   │   │   ├── customers.module.ts 🚫 (auto-hidden)
+│   │   │   ├── customers.rate-limit.test.ts 🚫 (auto-hidden)
+│   │   │   └── customers.service.ts 🚫 (auto-hidden)
+│   │   ├── database/
+│   │   │   ├── database.module.ts 🚫 (auto-hidden)
+│   │   │   └── database.service.ts 🚫 (auto-hidden)
+│   │   ├── health/
+│   │   │   ├── dto/
+│   │   │   │   └── health-response.dto.ts 🚫 (auto-hidden)
+│   │   │   ├── health.contract.test.ts 🚫 (auto-hidden)
+│   │   │   ├── health.controller.ts 🚫 (auto-hidden)
+│   │   │   ├── health.module.ts 🚫 (auto-hidden)
+│   │   │   └── health.service.ts 🚫 (auto-hidden)
+│   │   ├── testing/
+│   │   │   └── helpers/
+│   │   │       └── contract-test.helper.ts 🚫 (auto-hidden)
+│   │   ├── app.controller.test.ts 🚫 (auto-hidden)
+│   │   ├── app.controller.ts 🚫 (auto-hidden)
+│   │   ├── app.module.ts 🚫 (auto-hidden)
+│   │   ├── app.service.ts 🚫 (auto-hidden)
+│   │   └── main.ts 🚫 (auto-hidden)
+│   ├── test/
+│   │   ├── app.e2e-spec.ts 🚫 (auto-hidden)
+│   │   └── jest-e2e.json 🚫 (auto-hidden)
+│   ├── .env 🚫 (auto-hidden)
+│   ├── .env.production 🚫 (auto-hidden)
+│   ├── .env.staging 🚫 (auto-hidden)
+│   ├── README.md 🚫 (auto-hidden)
+│   ├── env.template 🚫 (auto-hidden)
+│   ├── package.json 🚫 (auto-hidden)
 ```
 
 ## Implementation Phases
@@ -324,38 +424,30 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 
 **Goal**: Implement customer identification and branding data management:
 
-✅ Database Schema Updated
+- [x] Database Schema Updated
 
-- Add Customer entity as top-level entity
-- Rename Tenant to Branch for clarity
-- Add customerId relationships to relevant entities
-- Maintain customer-specific services and user associations
-  ✅ Business Rules Implemented
-- ✅ Users can belong to multiple customers
-- ✅ Services are customer-specific
-- ✅ Professionals can work across multiple branches of same customer
-- ✅ Branch-specific pricing maintained
+- [x] Add Customer entity as top-level entity
+- [x] Rename Tenant to Branch for clarity
+- [x] Add customerId relationships to relevant entities
+- [x] Maintain customer-specific services and user associations
+  - [x] Business Rules Implemented
+  - [x] Users can belong to multiple customers
+  - [x] Services are customer-specific
+  - [x] Professionals can work across multiple branches of same customer
+  - [x] Branch-specific pricing maintained
 
 ##### Step 2.4.1: Customer Database Schema & Entities
 
 - [x] Add Customer model to Prisma schema
-  - Basic fields: id, name, urlSlug (unique), isActive, createdAt, updatedAt
-  - Branding fields: pageTitle, logoUrl, logoAlt, favicon32x32, favicon16x16, appleTouch
-  - Theme colors: primaryMain, primaryLight, primaryDark, primaryContrast,
-    secondaryMain, secondaryLight, secondaryDark, secondaryContrast, backgroundColor
+  - [x] Basic fields: id, name, urlSlug (unique), isActive, createdAt, updatedAt
+  - [x] Branding fields: pageTitle, logoUrl, logoAlt, favicon32x32, favicon16x16, appleTouch
+  - [x] Theme colors: primaryMain, primaryLight, primaryDark, primaryContrast, secondaryMain, secondaryLight, secondaryDark, secondaryContrast, backgroundColor
 - [x] Update the relevant entities with 'customerId' field and its relationships.
 - [x] Create database migration
 - [x] Update seed data with sample customers (Acme, Elite Cuts, etc.)
 - [x] Create Customer entity and interfaces
 
 ##### Step 2.4.2: Customer Module Structure
-
-- [x] Create `src/customers/` directory structure
-  - customers.module.ts, customers.controller.ts, customers.service.ts
-  - dto/ folder with request/response DTOs
-  - entities/ folder with customer entity
-- [x] Add customer module to app module
-- [x] Implement basic CRUD operations (focus on read for now)
 
 ##### Step 2.4.3: Customer Branding API (DDoS Protected)
 
@@ -441,13 +533,6 @@ RATE_LIMIT_ADMIN=5
 - ✅ Rate limit headers in all responses for client awareness
 - ✅ Custom tracking for branding endpoints (IP + URL slug)
 - ✅ Comprehensive logging for monitoring suspicious activity
-
-**Manual Testing Results:**
-
-- ✅ Branding endpoint allows 9-10 rapid requests, then blocks with 429
-- ✅ Rate limit headers correctly show remaining requests
-- ✅ Different endpoints have independent rate limiting
-- ✅ Server handles burst requests gracefully without crashing
 
 ##### Frontend Implementation (After Backend)
 
@@ -588,11 +673,11 @@ model Customer {
 
 ##### Success Criteria (Backend First)
 
-- [ ] Customer database schema created and migrated
-- [ ] GET /api/customers/branding/:urlSlug endpoint working (<100ms target)
-- [ ] POST /api/customers/:id/branding (initial setup) working
-- [ ] PUT /api/customers/:id/branding/config (config updates) working
-- [ ] POST /api/customers/:id/branding/upload (file updates) working
+- [x] Customer database schema created and migrated
+- [x] GET /api/customers/branding/:urlSlug endpoint working (<100ms target)
+- [ ] POST /api/customers/:id/branding (initial setup)
+- [ ] PUT /api/customers/:id/branding/config (config updates)
+- [ ] POST /api/customers/:id/branding/upload (file updates)
 - [ ] File validation: size limits, type checking, customer ownership
 - [ ] Contract tests passing for all branding endpoints
 - [ ] Local file storage with URL generation working
@@ -635,6 +720,134 @@ curl /api/customers/branding/acme
 - [x] **API Endpoints**: Updated to `/api/branches/*`
 - [x] **Tests**: Contract tests for branches management APIs
 - [x] **Database Migration**: Successfully migrated existing tenant data
+- [x] **Customer-Scoped CRUD**: Complete branch management for customers
+  - [x] **CreateCustomerBranchDto**: Customer-scoped DTO without customerId field
+  - [x] **Service Methods**: Customer-scoped create, update, delete with proper validation
+  - [x] **Controller Endpoints**: Full CRUD at `/api/salon/{slug}/branches/*`
+  - [x] **Role-Based Access Control**:
+    - CLIENT users: Read-only access (GET operations only)
+    - ADMIN users: Full CRUD access (POST, PATCH, DELETE operations)
+    - STAFF users: Not used (simplified implementation)
+  - [x] **Soft Delete**: Proper soft-delete implementation with customer context
+  - [x] **Postman Collection**: Complete customer branch management endpoints
+
+#### Step 2.6: Multi-Tenant Authentication System
+
+##### 🎯 **URL Structure Implementation**
+
+**Pattern**: `/salon/{customer-slug}/dashboard`
+
+```typescript
+// Example URLs
+https://yourdomain.com/salon/acme/dashboard
+https://yourdomain.com/salon/elite-cuts/bookings
+https://yourdomain.com/admin/customers          // Admin routes
+https://yourdomain.com/                         // Landing page
+```
+
+##### 🔒 **Enhanced Authentication Flow**
+
+**Login Response Example:**
+
+```json
+{
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "userId": "user_123",
+    "userName": "John Doe",
+    "phone": "+1234567890",
+    "customers": [
+      {
+        "id": "customer_acme",
+        "name": "Acme Barbershop",
+        "urlSlug": "acme",
+        "logoUrl": "https://cdn.example.com/acme/logo.png"
+      },
+      {
+        "id": "customer_elite",
+        "name": "Elite Cuts",
+        "urlSlug": "elite-cuts",
+        "logoUrl": "https://cdn.example.com/elite/logo.png"
+      }
+    ],
+    "defaultCustomerId": "customer_acme"
+  }
+}
+```
+
+**JWT Payload Structure:**
+
+```typescript
+{
+  "sub": "user_123",
+  "email": "john@example.com",
+  "role": "CLIENT",
+  "customerIds": ["customer_acme", "customer_elite"],
+  "defaultCustomerId": "customer_acme",
+  "iat": 1640995200,
+  "exp": 1640998800
+}
+```
+
+##### 🛡️ **Security Features**
+
+- **Server-side Validation**: Customer access verified against database
+- **URL-enforced Context**: Customer context extracted from `/salon/{slug}` URLs
+- **Access Control**: Users only access customers they belong to
+- **Automatic Filtering**: All data queries scoped to active customer
+
+##### 📚 **New API Endpoints**
+
+⚠️ UPDATE
+
+```typescript
+// Customer context validation (protected)
+GET /api/customers/context/:urlSlug
+Authorization: Bearer {jwt_token}
+X-Customer-Slug: {customer-slug} // Optional header fallback
+
+// User's accessible customers (protected)
+GET /api/customers/my-customers
+Authorization: Bearer {jwt_token}
+
+// EVALUATE AND UPDATE THEM
+```
+
+##### 🎨 **Frontend Integration**
+
+**Customer URL Utility:**
+
+```typescript
+// Extract customer from URL
+const customerSlug = CustomerUrlService.extractCustomerSlug();
+// Result: "acme" from "/salon/acme/dashboard"
+
+// Build customer URLs
+const bookingUrl = CustomerUrlService.buildCustomerUrl('acme', '/bookings');
+// Result: "/salon/acme/bookings"
+
+// Navigate to customer context
+CustomerUrlService.navigateToCustomer('elite-cuts', '/services');
+// Navigates to: "/salon/elite-cuts/services"
+```
+
+**Customer Context Flow:**
+
+1. User visits `/salon/acme/dashboard`
+2. Frontend extracts `acme` from URL
+3. Frontend calls `/api/customers/context/acme` to validate
+4. Backend verifies user has access to `acme` customer
+5. Customer context established for all subsequent requests
+6. All data automatically filtered to `acme` customer
+
+**Key Testing Scenarios:**
+
+1. **Authentication Flow**: Register/Login with enhanced customer data
+2. **Customer Context**: Validate customer access via URL slugs
+3. **Customer-Scoped Access**: Test `/salon/{slug}/branches` endpoints
+4. **Security Validation**: Verify unauthorized access prevention
+5. **Multi-Tenant Data**: Confirm customer filtering in responses
 
 ### Phase 3: Business Logic (Week 3)
 
@@ -788,6 +1001,8 @@ curl /api/customers/branding/acme
 - `GET /api/bookings/availability` - Query available time slots
 - `PUT /api/bookings/:id` - Update booking status
 - `DELETE /api/bookings/:id` - Cancel booking
+
+### Customer (⚠️ UPDATE)
 
 ## Future Considerations
 

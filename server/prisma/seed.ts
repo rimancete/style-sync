@@ -339,9 +339,40 @@ async function main() {
         role: UserRole.STAFF,
       },
     }),
+    // Add a customer admin user for testing branch operations
+    prisma.user.create({
+      data: {
+        email: 'admin@acme.com',
+        password: hashedPassword,
+        name: 'Acme Admin',
+        phone: '(11) 96666-6666',
+        role: UserRole.ADMIN,
+      },
+    }),
   ]);
 
   console.log('✅ Created users');
+
+  // Create user-customer associations
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const userCustomerAssociations = await Promise.all([
+    // Associate client user with Acme customer
+    prisma.userCustomer.create({
+      data: {
+        userId: users[1].id, // client@test.com
+        customerId: customer1.id, // Acme Barbershop
+      },
+    }),
+    // Associate admin user with Acme customer
+    prisma.userCustomer.create({
+      data: {
+        userId: users[3].id, // admin@acme.com (new user)
+        customerId: customer1.id, // Acme Barbershop
+      },
+    }),
+  ]);
+
+  console.log('✅ Created user-customer associations');
 
   // Create sample bookings
   const tomorrow = new Date();
@@ -387,9 +418,10 @@ async function main() {
 - Sample Bookings: ${sampleBookings.length}
 
 👥 Test accounts:
-- Admin: admin@stylesync.com / 123456
-- Client: client@test.com / 123456
+- Platform Admin: admin@stylesync.com / 123456
+- Client: client@test.com / 123456 (associated with Acme customer - READ ONLY)
 - Staff: staff@stylesync.com / 123456
+- Customer Admin: admin@acme.com / 123456 (associated with Acme customer - FULL ACCESS)
 `);
 }
 

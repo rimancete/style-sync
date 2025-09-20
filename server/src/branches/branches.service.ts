@@ -295,4 +295,135 @@ export class BranchesService {
 
     return parts.join(', ');
   }
+
+  /**
+   * Customer-scoped branch operations
+   */
+  async findByCustomer(customerId: string): Promise<BranchesListResponseDto> {
+    const branches = await this.db.branch.findMany({
+      where: {
+        customerId,
+        deletedAt: null,
+      },
+      orderBy: { createdAt: 'asc' },
+      include: {
+        country: true,
+        customer: true,
+      },
+    });
+
+    return {
+      branches: branches.map(branch => this.mapToResponseDto(branch)),
+      total: branches.length,
+    };
+  }
+
+  async findOneByCustomer(
+    id: string,
+    customerId: string,
+  ): Promise<BranchResponseDto> {
+    const branch = await this.db.branch.findUnique({
+      where: {
+        id,
+        customerId,
+        deletedAt: null,
+      },
+      include: {
+        country: true,
+        customer: true,
+      },
+    });
+
+    if (!branch) {
+      throw new NotFoundException(
+        `Branch with ID ${id} not found in customer context`,
+      );
+    }
+
+    return this.mapToResponseDto(branch);
+  }
+
+  /**
+   * Customer-scoped CRUD operations
+   */
+  async createByCustomer(
+    createBranchDto: Omit<CreateBranchDto, 'customerId'>,
+    customerId: string,
+  ): Promise<BranchResponseDto> {
+    // Check if branch with same name already exists for this customer (excluding soft-deleted)
+    const existing = await this.db.branch.findFirst({
+      where: {
+        name: createBranchDto.name,
+        customerId,
+        deletedAt: null,
+      },
+    });
+
+    if (existing) {
+      throw new ConflictException(
+        'Branch with this name already exists for this customer',
+      );
+    }
+
+    // Create branch with customer context
+    const fullCreateDto: CreateBranchDto = {
+      ...createBranchDto,
+      customerId,
+    };
+
+    return this.create(fullCreateDto);
+  }
+
+  async updateByCustomer(
+    id: string,
+    updateBranchDto: UpdateBranchDto,
+    customerId: string,
+  ): Promise<BranchResponseDto> {
+    // Verify branch belongs to customer and is not soft-deleted
+    const existingBranch = await this.db.branch.findFirst({
+      where: { id, customerId, deletedAt: null },
+    });
+
+    if (!existingBranch) {
+      throw new NotFoundException(
+        `Branch with ID ${id} not found for this customer`,
+      );
+    }
+
+    // Check for name conflicts within customer scope (excluding soft-deleted)
+    if (updateBranchDto.name) {
+      const nameConflict = await this.db.branch.findFirst({
+        where: {
+          name: updateBranchDto.name,
+          customerId,
+          deletedAt: null,
+          NOT: { id },
+        },
+      });
+
+      if (nameConflict) {
+        throw new ConflictException(
+          'Branch with this name already exists for this customer',
+        );
+      }
+    }
+
+    return this.update(id, updateBranchDto);
+  }
+
+  async removeByCustomer(id: string, customerId: string): Promise<void> {
+    // Verify branch belongs to customer and is not already soft-deleted
+    const existingBranch = await this.db.branch.findFirst({
+      where: { id, customerId, deletedAt: null },
+    });
+
+    if (!existingBranch) {
+      throw new NotFoundException(
+        `Branch with ID ${id} not found for this customer`,
+      );
+    }
+
+    // Use the existing remove method which implements soft-delete
+    return this.remove(id);
+  }
 }

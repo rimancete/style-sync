@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "StyleSync API",
-    "description": "Multi-location barbershop booking system API collection for testing and development",
+    "description": "Multi-location barbershop booking system API collection for testing and development.\n\n🔑 **Test Users:**\n- **admin@acme.com** / 123456 (ADMIN role - Full CRUD access to customer branches)\n- **client@test.com** / 123456 (CLIENT role - Read-only access to customer branches)\n- **admin@stylesync.com** / 123456 (Platform ADMIN - System-wide access)\n\n📋 **Customer Context:**\n- Customer: Acme Barbershop (slug: 'acme')\n- URL Pattern: /salon/acme/branches/*",
     "version": "1.0.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -16,6 +16,24 @@
       "value": "",
       "type": "string",
       "description": "JWT token for authenticated requests"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string",
+      "description": "Refresh token for token renewal"
+    },
+    {
+      "key": "customerId",
+      "value": "",
+      "type": "string",
+      "description": "Active customer ID for multi-tenant operations"
+    },
+    {
+      "key": "customerSlug",
+      "value": "acme",
+      "type": "string",
+      "description": "Customer URL slug for salon routes"
     }
   ],
   "auth": {
@@ -187,17 +205,28 @@
                   "if (pm.response.code === 200) {",
                   "  const json = pm.response.json();",
                   "  ",
-                  "  // Basic validation",
-                  "  pm.test('Login successful', function () {",
+                  "  // Enhanced validation for multi-tenant response",
+                  "  pm.test('Login successful with customer data', function () {",
                   "    pm.expect(json.data.token).to.be.a('string');",
-                  "    pm.expect(json.data.refresh_token).to.be.a('string');",
-                  "    pm.expect(json.data.user_name).to.be.a('string');",
-                  "    pm.expect(json.data.user_id).to.be.a('string');",
+                  "    pm.expect(json.data.refreshToken).to.be.a('string');",
+                  "    pm.expect(json.data.userName).to.be.a('string');",
+                  "    pm.expect(json.data.userId).to.be.a('string');",
+                  "    pm.expect(json.data.customers).to.be.an('array');",
                   "  });",
                   "  ",
-                  "  // Save tokens to collection variables",
+                  "  // Save tokens and customer data to collection variables",
                   "  pm.collectionVariables.set('authToken', json.data.token);",
-                  "  pm.collectionVariables.set('refreshToken', json.data.refresh_token);",
+                  "  pm.collectionVariables.set('refreshToken', json.data.refreshToken);",
+                  "  ",
+                  "  // Save customer data if available",
+                  "  if (json.data.defaultCustomerId) {",
+                  "    pm.collectionVariables.set('customerId', json.data.defaultCustomerId);",
+                  "  }",
+                  "  if (json.data.customers && json.data.customers.length > 0) {",
+                  "    pm.collectionVariables.set('customerSlug', json.data.customers[0].urlSlug);",
+                  "  }",
+                  "  ",
+                  "  console.log('Available customers:', json.data.customers.length);",
                   "}"
                 ]
               }
@@ -213,7 +242,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"client@test.com\",\n  \"password\": \"123456\"\n}"
+              "raw": "{\n  \"email\": \"admin@acme.com\",\n  \"password\": \"123456\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/login",
@@ -284,6 +313,91 @@
               "path": ["auth", "refresh"]
             },
             "description": "Refresh JWT token using refresh token in Authorization header. Uses {{refreshToken}} variable set by login request."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Multi-Tenant Features",
+      "description": "Enhanced authentication and customer context management for multi-tenant architecture",
+      "item": [
+        {
+          "name": "Get User's Customers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customers/my-customers",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "my-customers"]
+            },
+            "description": "Retrieve all customers the authenticated user has access to. Essential for multi-tenant user interface."
+          }
+        },
+        {
+          "name": "Validate Customer Context",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customers/context/{{customerSlug}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "context", "{{customerSlug}}"]
+            },
+            "description": "Validate customer context from URL slug. Used for /salon/{customer-slug} route validation."
+          }
+        },
+        {
+          "name": "Customer-Scoped Branch List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/salon/{{customerSlug}}/branches",
+              "host": ["{{baseUrl}}"],
+              "path": ["salon", "{{customerSlug}}", "branches"]
+            },
+            "description": "Get branches filtered by customer context. ✅ Available to both ADMIN and CLIENT users. URL pattern: /salon/{customer-slug}/branches"
+          }
+        },
+        {
+          "name": "Customer-Scoped Branch Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/salon/{{customerSlug}}/branches/:branchId",
+              "host": ["{{baseUrl}}"],
+              "path": ["salon", "{{customerSlug}}", "branches", ":branchId"],
+              "variable": [
+                {
+                  "key": "branchId",
+                  "value": "branch-id-here",
+                  "description": "ID of the branch within customer context"
+                }
+              ]
+            },
+            "description": "Get specific branch by ID within customer context. ✅ Available to both ADMIN and CLIENT users. URL pattern: /salon/{customer-slug}/branches/{branch-id}"
           }
         }
       ]
@@ -476,6 +590,154 @@
               ]
             },
             "description": "Soft delete a branch (Admin only)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customer Branch Management",
+      "description": "Customer-scoped branch management with role-based access control",
+      "item": [
+        {
+          "name": "Create Customer Branch",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  pm.collectionVariables.set('branchId', json.data.id);",
+                  "  console.log('Customer branch created, ID saved:', json.data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Downtown Location\",\n  \"countryCode\": \"BR\",\n  \"street\": \"Rua Principal, 456\",\n  \"district\": \"Centro\",\n  \"city\": \"São Paulo\",\n  \"stateProvince\": \"SP\",\n  \"postalCode\": \"01234-567\",\n  \"phone\": \"(11) 98765-4321\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/salon/{{customerSlug}}/branches",
+              "host": ["{{baseUrl}}"],
+              "path": ["salon", "{{customerSlug}}", "branches"]
+            },
+            "description": "Creates a new branch for the current customer. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can create branches. Customer ID is automatically determined from URL context."
+          }
+        },
+        {
+          "name": "List Customer Branches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/salon/{{customerSlug}}/branches",
+              "host": ["{{baseUrl}}"],
+              "path": ["salon", "{{customerSlug}}", "branches"]
+            },
+            "description": "Get branches filtered by customer context. ✅ Available to both ADMIN and CLIENT users. URL pattern: /salon/{customer-slug}/branches"
+          }
+        },
+        {
+          "name": "Get Customer Branch by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/salon/{{customerSlug}}/branches/:branchId",
+              "host": ["{{baseUrl}}"],
+              "path": ["salon", "{{customerSlug}}", "branches", ":branchId"],
+              "variable": [
+                {
+                  "key": "branchId",
+                  "value": "branch-id-here",
+                  "description": "ID of the branch within customer context"
+                }
+              ]
+            },
+            "description": "Get specific branch by ID within customer context. ✅ Available to both ADMIN and CLIENT users. URL pattern: /salon/{customer-slug}/branches/{branch-id}"
+          }
+        },
+        {
+          "name": "Update Customer Branch",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Downtown Location - Updated\",\n  \"phone\": \"(11) 99999-8888\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/salon/{{customerSlug}}/branches/:branchId",
+              "host": ["{{baseUrl}}"],
+              "path": ["salon", "{{customerSlug}}", "branches", ":branchId"],
+              "variable": [
+                {
+                  "key": "branchId",
+                  "value": "branch-id-here",
+                  "description": "ID of the branch to update"
+                }
+              ]
+            },
+            "description": "Update branch information within customer context. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can update branches. Only branches belonging to the current customer can be updated."
+          }
+        },
+        {
+          "name": "Delete Customer Branch",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/salon/{{customerSlug}}/branches/:branchId",
+              "host": ["{{baseUrl}}"],
+              "path": ["salon", "{{customerSlug}}", "branches", ":branchId"],
+              "variable": [
+                {
+                  "key": "branchId",
+                  "value": "branch-id-here",
+                  "description": "ID of the branch to delete"
+                }
+              ]
+            },
+            "description": "Soft delete a branch within customer context. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can delete branches. The branch will be marked as deleted but not physically removed from the database."
           }
         }
       ]

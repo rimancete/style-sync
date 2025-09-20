@@ -8,10 +8,19 @@ export interface ApiError {
   errors?: Record<string, string[]>;
 }
 
+export interface CustomerSummary {
+  id: string;
+  name: string;
+  urlSlug: string;
+  logoUrl?: string;
+}
+
 export interface AuthResponseData {
   token: string;
   userName: string;
   userId: string;
   refreshToken: string;
   phone: string | null;
+  customers: CustomerSummary[]; // Available customers
+  defaultCustomerId?: string; // Primary customer
 }

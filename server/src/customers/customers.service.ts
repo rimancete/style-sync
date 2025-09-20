@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CustomerBrandingResponseDto } from './dto/customer-branding.response.dto';
 import { UpdateCustomerBrandingDto } from './dto/update-customer-branding.dto';
+import { CustomerSummary } from '../common/interfaces/api-response.interface';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -136,5 +137,34 @@ export class CustomersService {
     }
 
     return customer;
+  }
+
+  /**
+   * Get user's customer associations
+   */
+  async getUserCustomers(userId: string): Promise<CustomerSummary[]> {
+    const userCustomers = await this.prisma.userCustomer.findMany({
+      where: { userId },
+      include: {
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            urlSlug: true,
+            logoUrl: true,
+            isActive: true,
+          },
+        },
+      },
+    });
+
+    return userCustomers
+      .filter(uc => uc.customer.isActive)
+      .map(uc => ({
+        id: uc.customer.id,
+        name: uc.customer.name,
+        urlSlug: uc.customer.urlSlug,
+        logoUrl: uc.customer.logoUrl || undefined,
+      }));
   }
 }

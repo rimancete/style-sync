@@ -8,7 +8,10 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { DatabaseService } from '../database/database.service';
 import { RegisterDto } from './dto/register.dto';
-import { AuthResponseData } from '../common/interfaces/api-response.interface';
+import {
+  AuthResponseData,
+  CustomerSummary,
+} from '../common/interfaces/api-response.interface';
 
 @Injectable()
 export class AuthService {
@@ -36,13 +39,26 @@ export class AuthService {
       },
     });
 
-    const tokens = this.generateTokens(user.id, user.email, user.role);
+    // Load user's customer associations
+    const userCustomers = await this.getUserCustomers(user.id);
+    const customerIds = userCustomers.map(c => c.id);
+    const defaultCustomerId = customerIds[0] || undefined;
+
+    const tokens = this.generateTokens(
+      user.id,
+      user.email,
+      user.role,
+      customerIds,
+      defaultCustomerId,
+    );
     return {
       token: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       userId: user.id,
       userName: user.name,
       phone: user.phone,
+      customers: userCustomers,
+      defaultCustomerId,
     };
   }
 
@@ -58,13 +74,26 @@ export class AuthService {
     const user = await this.validateUser(email, password);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const tokens = this.generateTokens(user.id, user.email, user.role);
+    // Load user's customer associations
+    const userCustomers = await this.getUserCustomers(user.id);
+    const customerIds = userCustomers.map(c => c.id);
+    const defaultCustomerId = customerIds[0] || undefined;
+
+    const tokens = this.generateTokens(
+      user.id,
+      user.email,
+      user.role,
+      customerIds,
+      defaultCustomerId,
+    );
     return {
       token: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       userId: user.id,
       userName: user.name,
       phone: user.phone,
+      customers: userCustomers,
+      defaultCustomerId,
     };
   }
 
@@ -74,6 +103,8 @@ export class AuthService {
         sub: string;
         email: string;
         role: string;
+        customerIds?: string[];
+        defaultCustomerId?: string;
       }>(refreshToken, {
         secret: this.configService.getOrThrow<string>('jwt.refreshSecret'),
       });
@@ -85,13 +116,26 @@ export class AuthService {
 
       if (!user) throw new UnauthorizedException('User not found');
 
-      const tokens = this.generateTokens(user.id, user.email, user.role);
+      // Load fresh customer associations
+      const userCustomers = await this.getUserCustomers(user.id);
+      const customerIds = userCustomers.map(c => c.id);
+      const defaultCustomerId = customerIds[0] || undefined;
+
+      const tokens = this.generateTokens(
+        user.id,
+        user.email,
+        user.role,
+        customerIds,
+        defaultCustomerId,
+      );
       return {
         token: tokens.accessToken,
         refreshToken: tokens.refreshToken,
         userId: user.id,
         userName: user.name,
         phone: user.phone,
+        customers: userCustomers,
+        defaultCustomerId,
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -101,23 +145,60 @@ export class AuthService {
     }
   }
 
-  private generateTokens(userId: string, email: string, role: string) {
-    const accessToken = this.jwtService.sign(
-      { sub: userId, email, role },
-      {
-        secret: this.configService.getOrThrow<string>('jwt.secret'),
-        expiresIn: this.configService.getOrThrow<string>('jwt.expiresIn'),
-      },
-    );
-    const refreshToken = this.jwtService.sign(
-      { sub: userId, email, role },
-      {
-        secret: this.configService.getOrThrow<string>('jwt.refreshSecret'),
-        expiresIn: this.configService.getOrThrow<string>(
-          'jwt.refreshExpiresIn',
-        ),
-      },
-    );
+  private generateTokens(
+    userId: string,
+    email: string,
+    role: string,
+    customerIds: string[] = [],
+    defaultCustomerId?: string,
+  ) {
+    const payload = {
+      sub: userId,
+      email,
+      role,
+      customerIds,
+      defaultCustomerId,
+    };
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: this.configService.getOrThrow<string>('jwt.secret'),
+      expiresIn: this.configService.getOrThrow<string>('jwt.expiresIn'),
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.getOrThrow<string>('jwt.refreshSecret'),
+      expiresIn: this.configService.getOrThrow<string>('jwt.refreshExpiresIn'),
+    });
+
     return { accessToken, refreshToken };
+  }
+
+  /**
+   * Get user's customer associations
+   */
+  private async getUserCustomers(userId: string): Promise<CustomerSummary[]> {
+    const userCustomers = await this.db.userCustomer.findMany({
+      where: { userId },
+      include: {
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            urlSlug: true,
+            logoUrl: true,
+            isActive: true,
+          },
+        },
+      },
+    });
+
+    return userCustomers
+      .filter(uc => uc.customer.isActive)
+      .map(uc => ({
+        id: uc.customer.id,
+        name: uc.customer.name,
+        urlSlug: uc.customer.urlSlug,
+        logoUrl: uc.customer.logoUrl || undefined,
+      }));
   }
 }

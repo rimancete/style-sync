@@ -17,12 +17,16 @@ import {
 import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { CustomerContextGuard } from '../common/guards/customer-context.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Public } from '../common/decorators/public.decorator';
+import { User } from '../common/decorators/user.decorator';
 import { UserRole } from '@prisma/client';
+import { AuthenticatedUser } from '../common/types/auth.types';
 import { CustomersService } from './customers.service';
 import { CustomerBrandingResponseDto } from './dto/customer-branding.response.dto';
 import { UpdateCustomerBrandingDto } from './dto/update-customer-branding.dto';
+import { CustomerSummaryDto } from '../auth/dto/auth-response.dto';
 
 @ApiTags('Customers')
 @Controller('customers')
@@ -81,5 +85,46 @@ export class CustomersController {
     @Body() updateDto: UpdateCustomerBrandingDto,
   ): Promise<CustomerBrandingResponseDto> {
     return this.customersService.updateCustomerBranding(customerId, updateDto);
+  }
+
+  @Get('context/:urlSlug')
+  @UseGuards(JwtAuthGuard, CustomerContextGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get customer context for authenticated user',
+    description:
+      'Validate and retrieve customer context for salon URLs. Used by frontend to establish customer context.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Customer context validated and retrieved',
+    type: CustomerBrandingResponseDto,
+  })
+  @ApiResponse({ status: 404, description: 'Customer not found' })
+  @ApiResponse({ status: 403, description: 'Access denied to customer' })
+  async getCustomerContext(
+    @Param('urlSlug') urlSlug: string,
+  ): Promise<CustomerBrandingResponseDto> {
+    // CustomerContextGuard already validated access, just return context
+    return this.customersService.getCustomerBranding(urlSlug);
+  }
+
+  @Get('my-customers')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Get user's accessible customers",
+    description:
+      'Retrieve all customers that the authenticated user has access to.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User customers retrieved successfully',
+    type: [CustomerSummaryDto],
+  })
+  async getMyCustomers(
+    @User() user: AuthenticatedUser,
+  ): Promise<CustomerSummaryDto[]> {
+    return this.customersService.getUserCustomers(user.userId);
   }
 }
