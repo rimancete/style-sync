@@ -73,7 +73,12 @@ export class Country {
       },
     },
   })
-  addressFormat: any;
+  addressFormat: {
+    fields: string[];
+    required: string[];
+    validation: Record<string, string | string[]>;
+    labels: Record<string, string>;
+  };
 
   @ApiProperty({
     description: 'Timestamp when the country was created',

@@ -63,7 +63,7 @@ export class CreateCountryDto {
   addressFormat: {
     fields: string[];
     required: string[];
-    validation: Record<string, any>;
+    validation: Record<string, string | string[]>;
     labels: Record<string, string>;
   };
 }

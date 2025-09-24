@@ -974,6 +974,15 @@ CustomerUrlService.navigateToCustomer('elite-cuts', '/services');
 - `PUT /api/branches/:id` - Update branch
 - `DELETE /api/branches/:id` - Delete branch
 
+### Branches (Customer)
+
+- Customer-scoped REST surface validated via contract suite:
+  - `GET /api/salon/{customerSlug}/branches`
+  - `GET /api/salon/{customerSlug}/branches/:id`
+  - `POST /api/salon/{customerSlug}/branches`
+  - `PATCH /api/salon/{customerSlug}/branches/:id`
+  - `DELETE /api/salon/{customerSlug}/branches/:id`
+
 ### Countries (Admin only)
 
 - `GET /api/countries` - List all countries
