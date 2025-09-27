@@ -143,9 +143,13 @@ describe('Customers API Contracts', () => {
         name: 'Acme Barbershop',
         urlSlug: 'acme',
         branding: {
+          favicon32x32: null,
+          favicon16x16: null,
+          appleTouch: null,
           documentTitle: 'Acme Barbershop - Professional Haircuts',
           theme: {
             light: {
+              logoUrl: null,
               logoAlt: 'Acme Barbershop Logo',
               primary: {
                 main: '#272726FF',
@@ -215,9 +219,13 @@ describe('Customers API Contracts', () => {
         name: 'Acme Barbershop',
         urlSlug: 'acme',
         branding: {
+          favicon32x32: null,
+          favicon16x16: null,
+          appleTouch: null,
           documentTitle: 'Updated Acme Barbershop Title',
           theme: {
             light: {
+              logoUrl: null,
               logoAlt: 'Updated Logo Alt',
               primary: {
                 main: '#FF0000',

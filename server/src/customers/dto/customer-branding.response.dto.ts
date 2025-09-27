@@ -12,13 +12,13 @@ export class CustomerBrandingResponseDto {
 
   @ApiProperty()
   branding: {
-    favicon32x32?: string;
-    favicon16x16?: string;
-    appleTouch?: string;
+    favicon32x32: string | null;
+    favicon16x16: string | null;
+    appleTouch: string | null;
     documentTitle: string;
     theme: {
       light: {
-        logoUrl?: string;
+        logoUrl: string | null;
         logoAlt: string;
         primary: {
           main: string;

@@ -440,7 +440,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 
 - [x] Add Customer model to Prisma schema
   - [x] Basic fields: id, name, urlSlug (unique), isActive, createdAt, updatedAt
-  - [x] Branding fields: pageTitle, logoUrl, logoAlt, favicon32x32, favicon16x16, appleTouch
+  - [x] Branding fields: documentTitle, logoUrl, logoAlt, favicon32x32, favicon16x16, appleTouch
   - [x] Theme colors: primaryMain, primaryLight, primaryDark, primaryContrast, secondaryMain, secondaryLight, secondaryDark, secondaryContrast, backgroundColor
 - [x] Update the relevant entities with 'customerId' field and its relationships.
 - [x] Create database migration
@@ -472,36 +472,58 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] **Config Update Endpoint**: `PUT /api/customers/:customerId/branding/config`
   - Update branding data without touching files
   - ✅ Implemented and tested
-- [ ] **Initial Setup Endpoint**: `POST /api/customers/:customerId/branding`
-  - Multipart form data: logo, favicon32x32, favicon16x16, appleTouch files
-  - JSON config field with pageTitle, logoAlt, theme colors
-  - Atomic operation: files + config in one request
-  - Return complete branding configuration
-- [ ] **File Update Endpoint**: `POST /api/customers/:customerId/branding/upload`
-  - Update images without changing configuration
-  - Handle individual file replacements
-- [ ] File processing middleware
-  - Size limits (5MB max), type validation
-  - Local storage with CDN-ready structure
-  - URL generation for stored files
+- [x] **Initial Setup Endpoint**: `POST /api/customers/:customerId/branding`
+  - ✅ Multipart form data: logo, favicon32x32, favicon16x16, appleTouch files
+  - ✅ JSON config field with documentTitle, logoAlt, theme colors
+  - ✅ Atomic operation: files + config in one request
+  - ✅ Return complete branding configuration
+  - ✅ Admin-only access with JWT authentication
+  - ✅ Rate limiting (3 requests/minute)
+- [x] **File Update Endpoint**: `POST /api/customers/:customerId/branding/upload`
+  - ✅ Update images without changing configuration
+  - ✅ Handle individual file replacements
+  - ✅ Admin-only access with JWT authentication
+  - ✅ Rate limiting (5 requests/minute)
+- [x] File processing middleware
+  - ✅ Size limits (5MB for logo, 1MB for favicons, 2MB for apple touch)
+  - ✅ Type validation (PNG, JPG, JPEG, SVG, WebP for logo; ICO, PNG for favicons)
+  - ✅ Local storage with CDN-ready structure (`uploads/customers/{customerId}/`)
+  - ✅ URL generation for stored files with timestamp naming
+  - ✅ Static file serving via Express
+  - ✅ Automatic cleanup of old files on updates
 
 ##### Step 2.4.5: Backend Testing & Validation
 
 - [x] Contract tests for customer branding API (basic functionality tested)
+- [x] Contract tests for file upload endpoints (upload validation, auth, error handling)
 - [x] Performance tests for customer lookup (<100ms) - tested manually
 - [x] Error handling tests for invalid customers - tested manually
+- [x] File upload integration tests (manual testing with test script)
+- [x] Static file serving validation (HTTP accessibility of uploaded files)
 
 ##### ✅ **Customer Module Implementation Complete**
 
 - **Database Schema**: ✅ Customer entity with full branding support
-- **API Endpoints**: ✅ GET /api/customers/branding/:urlSlug ✅ PUT /api/customers/:id/branding/config
+- **API Endpoints**:
+  - ✅ GET /api/customers/branding/:urlSlug (public, rate-limited)
+  - ✅ PUT /api/customers/:id/branding/config (admin-only, config updates)
+  - ✅ POST /api/customers/:id/branding (admin-only, initial setup with files + config)
+  - ✅ POST /api/customers/:id/branding/upload (admin-only, file updates only)
+- **File Upload System**:
+  - ✅ Multipart form data handling with Multer
+  - ✅ File validation (type, size, field validation)
+  - ✅ Customer-specific storage organization
+  - ✅ Atomic file operations with database updates
+  - ✅ Automatic cleanup of old files
+  - ✅ Static file serving with HTTP accessibility
 - **Authentication**: ✅ JWT-based admin-only access control
-- **Error Handling**: ✅ Proper 404s and 401s for invalid requests
+- **Error Handling**: ✅ Proper 404s, 401s, and 400s for invalid requests
 - **Data Persistence**: ✅ Branding changes saved and retrieved correctly
 - **Business Logic**: ✅ Customer-specific branding with theme customization
 - **Security & DDoS Protection**: ✅ Rate limiting implemented and tested
   - ✅ 20 requests/minute limit for public branding endpoint
-  - ✅ 5 requests/minute limit for admin operations
+  - ✅ 3 requests/minute limit for initial branding setup
+  - ✅ 5 requests/minute limit for file updates and config changes
   - ✅ IP-based tracking with URL slug consideration
   - ✅ Proper error responses and monitoring headers
   - ✅ Configurable limits via environment variables
@@ -641,7 +663,7 @@ model Customer {
   urlSlug     String @unique
 
   // Branding Configuration
-  pageTitle   String @default("")
+  documentTitle   String @default("")
   logoUrl     String?
   logoAlt     String @default("")
 
@@ -684,29 +706,72 @@ model Customer {
 - [ ] Frontend can fetch and apply complete customer branding
 - [ ] System handles missing/invalid customers gracefully
 
-##### Developer Workflow (Initial Setup)
+##### Developer Workflow & Usage Examples
+
+**1. Initial Branding Setup (Complete)**
 
 ```bash
-# 1. Complete branding setup in one request
-curl -X POST /api/customers/acme-id/branding \
+# Complete branding setup with files and configuration
+curl -X POST "http://localhost:3001/api/customers/{customerId}/branding" \
+  -H "Authorization: Bearer {admin_jwt_token}" \
   -F "logo=@logo.png" \
   -F "favicon32x32=@favicon32.ico" \
   -F "favicon16x16=@favicon16.ico" \
   -F "appleTouch=@apple-touch.png" \
   -F 'config={
-    "pageTitle": "Acme Barbershop - Book Your Appointment",
-    "logoAlt": "Acme Barbershop",
+    "documentTitle": "Acme Barbershop - Book Your Appointment",
+    "logoAlt": "Acme Barbershop Logo",
     "theme": {
       "light": {
-        "primary": {"main": "#272726FF", "light": "#706E6DFF", ...},
-        "secondary": {"main": "#8D8C8BFF", "light": "#E7E7E6FF", ...},
+        "primary": {"main": "#272726FF", "light": "#706E6DFF", "dark": "#1B1B1BFF", "contrast": "#ECE8E6FF"},
+        "secondary": {"main": "#8D8C8BFF", "light": "#E7E7E6FF", "dark": "#3B3B3BFF", "contrast": "#1B1B1BFF"},
         "background": "#F7F7F7FF"
       }
     }
   }'
+```
 
-# 2. Verify via protected endpoint
-curl /api/customers/branding/acme
+**2. File-Only Updates**
+
+```bash
+# Update only specific files without changing configuration
+curl -X POST "http://localhost:3001/api/customers/{customerId}/branding/upload" \
+  -H "Authorization: Bearer {admin_jwt_token}" \
+  -F "logo=@new-logo.png" \
+  -F "favicon32x32=@new-favicon.ico"
+```
+
+**3. Configuration-Only Updates**
+
+```bash
+# Update only configuration without touching files
+curl -X PUT "http://localhost:3001/api/customers/{customerId}/branding/config" \
+  -H "Authorization: Bearer {admin_jwt_token}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "documentTitle": "Updated Barbershop Title",
+    "logoAlt": "Updated Logo Description",
+    "theme": {
+      "light": {
+        "primary": {"main": "#FF0000"}
+      }
+    }
+  }'
+```
+
+**4. Retrieve Branding (Public)**
+
+```bash
+# Get complete branding configuration (public endpoint, rate-limited)
+curl "http://localhost:3001/api/customers/branding/{urlSlug}"
+```
+
+**5. Access Uploaded Files**
+
+```bash
+# Files are accessible via static HTTP serving
+# Format: http://localhost:3001/uploads/customers/{customerId}/{filename}
+curl "http://localhost:3001/uploads/customers/cmfy4ppjn0002gt1azx6tls4l/cmfy4ppjn0002gt1azx6tls4l_logo_1758727189371.png"
 ```
 
 #### Step 2.5: Branches Module
