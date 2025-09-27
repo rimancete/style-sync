@@ -52,7 +52,9 @@ Access during development:
 - `build:all`: build both applications
 
 ## Highlight (Backend)
+- Customer-based context
 - Rate limit protection
+- Customer branding, including images management (cloud-based migration)
 
 ## Roadmap (Frontend-first)
 - ✅ Docker Compose for local PostgreSQL (project-scoped)

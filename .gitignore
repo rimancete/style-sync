@@ -21,6 +21,9 @@ server/.env
 !server/.env.staging
 !server/.env.production
 
+# Server Uploaded files
+server/uploads/
+
 # Database
 *.db
 *.sqlite
