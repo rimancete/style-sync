@@ -61,11 +61,11 @@ model Customer {
 }
 
 model Branch {
-  id               String           @id @default(cuid())
+  id               String               @id @default(cuid())
   name             String
   phone            String
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
   deletedAt        DateTime?
   countryCode      String
   street           String
@@ -77,29 +77,43 @@ model Branch {
   formattedAddress String
   countryId        String
   customerId       String
-  country          Country          @relation(fields: [countryId], references: [id])
-  customer         Customer         @relation(fields: [customerId], references: [id])
+  country          Country              @relation(fields: [countryId], references: [id])
+  customer         Customer             @relation(fields: [customerId], references: [id])
   bookings         Booking[]
-  professionals    Professional[]
+  professionals    ProfessionalBranch[]
   servicePricing   ServicePricing[]
 
   @@map("branches")
 }
 
 model Professional {
-  id        String    @id @default(cuid())
-  name      String
-  photoUrl  String?
-  isActive  Boolean   @default(true)
-  branchId  String
+  id         String    @id @default(cuid())
+  name       String
+  documentId String?
+  photoUrl   String?
+  isActive   Boolean   @default(true)
   customerId String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  bookings  Booking[]
-  branch    Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
-  customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  bookings   Booking[]
+  customer   Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  branches   ProfessionalBranch[]
 
+  @@unique([documentId, customerId])
   @@map("professionals")
+}
+
+model ProfessionalBranch {
+  id            String      @id @default(cuid())
+  professionalId String
+  branchId      String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  professional  Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  branch        Branch       @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@unique([professionalId, branchId])
+  @@map("professional_branches")
 }
 
 model Service {

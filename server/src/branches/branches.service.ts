@@ -68,19 +68,28 @@ export class BranchesService {
     return this.mapToResponseDto(branch);
   }
 
-  async findAll(): Promise<BranchesListResponseDto> {
-    const branches = await this.db.branch.findMany({
-      where: { deletedAt: null },
-      orderBy: { createdAt: 'asc' },
-      include: {
-        country: true,
-        customer: true,
-      },
-    });
+  async findAll(page = 1, limit = 500): Promise<BranchesListResponseDto> {
+    const skip = (page - 1) * limit;
+
+    const [branches, total] = await Promise.all([
+      this.db.branch.findMany({
+        where: { deletedAt: null },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'asc' },
+        include: {
+          country: true,
+          customer: true,
+        },
+      }),
+      this.db.branch.count({ where: { deletedAt: null } }),
+    ]);
 
     return {
       branches: branches.map(branch => this.mapToResponseDto(branch)),
-      total: branches.length,
+      total,
+      page,
+      limit,
     };
   }
 
@@ -203,7 +212,9 @@ export class BranchesService {
       where: { id, deletedAt: null },
       include: {
         professionals: {
-          where: { isActive: true },
+          include: {
+            professional: true,
+          },
         },
         bookings: true,
         servicePricing: true,
@@ -215,7 +226,10 @@ export class BranchesService {
     }
 
     // Check if branch has associated data that would prevent deletion
-    if (existingBranch.professionals.length > 0) {
+    const activeProfessionals = existingBranch.professionals.filter(
+      pb => pb.professional.isActive,
+    );
+    if (activeProfessionals.length > 0) {
       throw new ConflictException(
         'Cannot delete branch with associated professionals',
       );
@@ -299,22 +313,40 @@ export class BranchesService {
   /**
    * Customer-scoped branch operations
    */
-  async findByCustomer(customerId: string): Promise<BranchesListResponseDto> {
-    const branches = await this.db.branch.findMany({
-      where: {
-        customerId,
-        deletedAt: null,
-      },
-      orderBy: { createdAt: 'asc' },
-      include: {
-        country: true,
-        customer: true,
-      },
-    });
+  async findByCustomer(
+    customerId: string,
+    page = 1,
+    limit = 500,
+  ): Promise<BranchesListResponseDto> {
+    const skip = (page - 1) * limit;
+
+    const [branches, total] = await Promise.all([
+      this.db.branch.findMany({
+        where: {
+          customerId,
+          deletedAt: null,
+        },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'asc' },
+        include: {
+          country: true,
+          customer: true,
+        },
+      }),
+      this.db.branch.count({
+        where: {
+          customerId,
+          deletedAt: null,
+        },
+      }),
+    ]);
 
     return {
       branches: branches.map(branch => this.mapToResponseDto(branch)),
-      total: branches.length,
+      total,
+      page,
+      limit,
     };
   }
 

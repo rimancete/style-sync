@@ -26,6 +26,7 @@ module.exports = {
       'customer',  // Customer system
       'booking',  // Booking system
       'branch',   // Multi-branch features
+      'professional',   // Professional system
       'service',  // Services
       'user',     // User management
       'core',     // Core functionality

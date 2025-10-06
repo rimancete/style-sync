@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { BranchesModule } from './branches/branches.module';
 import { CountriesModule } from './countries/countries.module';
 import { CustomersModule } from './customers/customers.module';
+import { ProfessionalsModule } from './professionals/professionals.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { CustomersModule } from './customers/customers.module';
     CountriesModule,
     BranchesModule,
     CustomersModule,
+    ProfessionalsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -20,6 +20,18 @@ export class FileService {
   private readonly logger = new Logger(FileService.name);
 
   /**
+   * Upload a single file and generate URL
+   */
+  uploadFile(
+    file: Express.Multer.File,
+    customerId: string,
+    filename?: string,
+  ): string {
+    const fileName = filename || file.filename;
+    return generateFileUrl(fileName, customerId);
+  }
+
+  /**
    * Process uploaded files and generate URLs
    */
   processUploadedFiles(

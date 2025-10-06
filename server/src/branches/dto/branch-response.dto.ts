@@ -107,4 +107,16 @@ export class BranchesListResponseDto {
     example: 2,
   })
   total: number;
+
+  @ApiProperty({
+    description: 'Current page (for pagination)',
+    example: 1,
+  })
+  page: number;
+
+  @ApiProperty({
+    description: 'Number of items per page',
+    example: 500,
+  })
+  limit: number;
 }

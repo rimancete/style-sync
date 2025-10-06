@@ -9,6 +9,7 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
+  Query,
   BadRequestException,
 } from '@nestjs/common';
 import {
@@ -18,6 +19,7 @@ import {
   ApiParam,
   ApiBearerAuth,
   ApiExtraModels,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { BranchesService } from './branches.service';
 import { CreateBranchDto } from './dto/create-branch.dto';
@@ -88,6 +90,18 @@ export class BranchesController {
     description:
       'Retrieves a list of all branches in the system. Only accessible by admin users.',
   })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number for pagination',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items per page',
+    example: 500,
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'List of branches retrieved successfully',
@@ -101,8 +115,14 @@ export class BranchesController {
     status: HttpStatus.FORBIDDEN,
     description: 'Admin role required',
   })
-  async findAll(): Promise<BranchesListResponseDto> {
-    return this.branchesService.findAll();
+  async findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<BranchesListResponseDto> {
+    return this.branchesService.findAll(
+      page ? parseInt(page) : 1,
+      limit ? parseInt(limit) : 500,
+    );
   }
 
   @Get(':id')
@@ -314,6 +334,18 @@ export class CustomerBranchesController {
     description:
       'Retrieves all branches for the current customer context from salon URL.',
   })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number for pagination',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items per page',
+    example: 500,
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Customer branches retrieved successfully',
@@ -325,12 +357,18 @@ export class CustomerBranchesController {
   })
   async getCustomerBranches(
     @User() user: AuthenticatedUser,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ): Promise<BranchesListResponseDto> {
     if (!user.activeCustomerId) {
       throw new BadRequestException('Customer context is required');
     }
 
-    return this.branchesService.findByCustomer(user.activeCustomerId);
+    return this.branchesService.findByCustomer(
+      user.activeCustomerId,
+      page ? parseInt(page) : 1,
+      limit ? parseInt(limit) : 500,
+    );
   }
 
   @Get(':id')

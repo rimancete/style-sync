@@ -269,19 +269,27 @@ async function main() {
     prisma.professional.create({
       data: {
         name: 'Michel',
-        branchId: branch1.id,
         customerId: customer1.id,
         photoUrl: 'https://via.placeholder.com/150/0000FF/808080?text=Michel',
         isActive: true,
+        branches: {
+          create: {
+            branchId: branch1.id,
+          },
+        },
       },
     }),
     prisma.professional.create({
       data: {
         name: 'Luiz',
-        branchId: branch1.id,
         customerId: customer1.id,
         photoUrl: 'https://via.placeholder.com/150/FF0000/FFFFFF?text=Luiz',
         isActive: true,
+        branches: {
+          create: {
+            branchId: branch1.id,
+          },
+        },
       },
     }),
 
@@ -289,19 +297,27 @@ async function main() {
     prisma.professional.create({
       data: {
         name: 'Dario',
-        branchId: branch2.id,
         customerId: customer1.id,
         photoUrl: 'https://via.placeholder.com/150/00FF00/000000?text=Dario',
         isActive: true,
+        branches: {
+          create: {
+            branchId: branch2.id,
+          },
+        },
       },
     }),
     prisma.professional.create({
       data: {
         name: 'Carlos',
-        branchId: branch2.id,
         customerId: customer1.id,
         photoUrl: 'https://via.placeholder.com/150/FFFF00/000000?text=Carlos',
         isActive: true,
+        branches: {
+          create: {
+            branchId: branch2.id,
+          },
+        },
       },
     }),
   ]);

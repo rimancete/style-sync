@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "56c7534f-0cd1-4d3b-9074-6c49fcbff167",
+		"_postman_id": "9f8ce246-72da-41bb-a924-2f586372140c",
 		"name": "StyleSync API",
 		"description": "Clean minimal collection for StyleSync API testing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -188,6 +188,51 @@
 			"item": [
 				{
 					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const json = pm.response.json();",
+									"    pm.collectionVariables.set('authToken', json.data.token);",
+									"    pm.collectionVariables.set('refreshToken', json.data.refreshToken);",
+									"    console.log('Tokens saved successfully');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@stylesync.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customer(acme) Login",
 					"event": [
 						{
 							"listen": "test",
@@ -2040,6 +2085,984 @@
 				}
 			],
 			"description": "Complete branch management with admin and customer operations"
+		},
+		{
+			"name": "Professionals Management",
+			"item": [
+				{
+					"name": "Professionals - Admin",
+					"item": [
+						{
+							"name": "List All Professionals",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/professionals",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"professionals"
+									]
+								},
+								"description": "Retrieves a list of all professionals in the system. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can access this endpoint."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/professionals",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"professionals"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": [\n    {\n      \"id\": \"professional-id\",\n      \"name\": \"João Silva\",\n      \"photoUrl\": \"https://cdn.example.com/professionals/joao-silva.jpg\",\n      \"isActive\": true,\n      \"customerId\": \"customer-id\",\n      \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n      \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n      \"branches\": [\n        {\n          \"id\": \"branch-id\",\n          \"name\": \"Unidade 1\"\n        }\n      ]\n    }\n  ],\n  \"total\": 1,\n  \"page\": 1,\n  \"limit\": 1000\n}"
+								}
+							]
+						},
+						{
+							"name": "Create Professional",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const json = pm.response.json();",
+											"    pm.collectionVariables.set('professionalId', json.data.id);",
+											"    console.log('Professional created, ID saved:', json.data.id);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"João Silva\",\n  \"isActive\": true,\n  \"customerId\": \"{{customerId}}\",\n  \"branchIds\": [\"{{branchId}}\"]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/professionals",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"professionals"
+									]
+								},
+								"description": "Creates a new professional. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can create professionals."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"João Silva\",\n  \"isActive\": true,\n  \"customerId\": \"customer-id\",\n  \"branchIds\": [\"branch-id\"]\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/professionals",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"professionals"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"professional-new-id\",\n    \"name\": \"João Silva\",\n    \"photoUrl\": null,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n    \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n    \"branches\": [\n      {\n        \"id\": \"branch-id\",\n        \"name\": \"Unidade 1\"\n      }\n    ]\n  }\n}"
+								},
+								{
+									"name": "Conflict Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"João Silva\",\n  \"isActive\": true,\n  \"customerId\": \"customer-id\",\n  \"branchIds\": [\"branch-id\"]\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/professionals",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"professionals"
+											]
+										}
+									},
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": 409,\n  \"message\": \"Professional with this name already exists for this customer\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Professional by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/professionals/{{professionalId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"professionals",
+										"{{professionalId}}"
+									]
+								},
+								"description": "Retrieves detailed information about a specific professional by its ID. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can access this endpoint."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/professionals/professional-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"professionals",
+												"professional-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"professional-id\",\n    \"name\": \"João Silva\",\n    \"photoUrl\": \"https://cdn.example.com/professionals/joao-silva.jpg\",\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n    \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n    \"branches\": [\n      {\n        \"id\": \"branch-id\",\n        \"name\": \"Unidade 1\"\n      }\n    ]\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Professional",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"João Silva Updated\",\n  \"branchIds\": [\"{{branchId}}\"]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/professionals/{{professionalId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"professionals",
+										"{{professionalId}}"
+									]
+								},
+								"description": "Updates information for an existing professional. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can update professionals."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"João Silva Updated\",\n  \"branchIds\": [\"branch-id\"]\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/professionals/professional-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"professionals",
+												"professional-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"professional-id\",\n    \"name\": \"João Silva Updated\",\n    \"photoUrl\": null,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n    \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n    \"branches\": [\n      {\n        \"id\": \"branch-id\",\n        \"name\": \"Unidade 1\"\n      }\n    ]\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Upload Professional Photo",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "photo",
+											"description": "Professional photo file (PNG, JPG, JPEG, SVG, WebP)",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/professionals/{{professionalId}}/photo",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"professionals",
+										"{{professionalId}}",
+										"photo"
+									]
+								},
+								"description": "Uploads a photo for a professional. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can upload professional photos."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "photo",
+													"type": "file",
+													"src": []
+												}
+											]
+										},
+										"url": {
+											"raw": "{{baseUrl}}/professionals/professional-id/photo",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"professionals",
+												"professional-id",
+												"photo"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"professional-id\",\n    \"name\": \"João Silva\",\n    \"photoUrl\": \"https://cdn.example.com/professionals/professional-id_1234567890.jpg\",\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n    \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n    \"branches\": [\n      {\n        \"id\": \"branch-id\",\n        \"name\": \"Unidade 1\"\n      }\n    ]\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete Professional Photo",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/professionals/{{professionalId}}/photo",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"professionals",
+										"{{professionalId}}",
+										"photo"
+									]
+								},
+								"description": "Deletes the photo for a professional. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can delete professional photos."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/professionals/professional-id/photo",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"professionals",
+												"professional-id",
+												"photo"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"professional-id\",\n    \"name\": \"João Silva\",\n    \"photoUrl\": null,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n    \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n    \"branches\": [\n      {\n        \"id\": \"branch-id\",\n        \"name\": \"Unidade 1\"\n      }\n    ]\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Deactivate Professional",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/professionals/{{professionalId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"professionals",
+										"{{professionalId}}"
+									]
+								},
+								"description": "Deactivates a professional from the system. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can deactivate professionals. Only possible if the professional has no associated bookings."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/professionals/professional-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"professionals",
+												"professional-id"
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Conflict Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/professionals/professional-with-bookings",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"professionals",
+												"professional-with-bookings"
+											]
+										}
+									},
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": 409,\n  \"message\": \"Cannot delete professional with associated bookings\"\n}"
+								}
+							]
+						}
+					],
+					"description": "Admin-only professional management endpoints"
+				},
+				{
+					"name": "Professionals - Customer",
+					"item": [
+						{
+							"name": "List Customer Professionals",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/professionals",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"professionals"
+									]
+								},
+								"description": "Retrieves all professionals for the current customer context."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/professionals",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"professionals"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": [\n    {\n      \"id\": \"professional-id\",\n      \"name\": \"João Silva\",\n      \"photoUrl\": \"https://cdn.example.com/professionals/joao-silva.jpg\",\n      \"isActive\": true,\n      \"customerId\": \"customer-id\",\n      \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n      \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n      \"branches\": [\n        {\n          \"id\": \"branch-id\",\n          \"name\": \"Unidade 1\"\n        }\n      ]\n    }\n  ],\n  \"total\": 1,\n  \"page\": 1,\n  \"limit\": 1000\n}"
+								}
+							]
+						},
+						{
+							"name": "Create Customer Professional",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const json = pm.response.json();",
+											"    pm.collectionVariables.set('professionalId', json.data.id);",
+											"    console.log('Customer professional created, ID saved:', json.data.id);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Maria Santos\",\n  \"isActive\": true,\n  \"branchIds\": [\"{{branchId}}\"]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/professionals",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"professionals"
+									]
+								},
+								"description": "Creates a new professional for the current customer context. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can create professionals. Customer ID is automatically determined from URL context."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Maria Santos\",\n  \"isActive\": true,\n  \"branchIds\": [\"branch-id\"]\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/professionals",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"professionals"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"professional-new-id\",\n    \"name\": \"Maria Santos\",\n    \"photoUrl\": null,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n    \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n    \"branches\": [\n      {\n        \"id\": \"branch-id\",\n        \"name\": \"Unidade 1\"\n      }\n    ]\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Customer Professional by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/professionals/{{professionalId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"professionals",
+										"{{professionalId}}"
+									]
+								},
+								"description": "Retrieves a specific professional within the customer context."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/professionals/professional-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"professionals",
+												"professional-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"professional-id\",\n    \"name\": \"João Silva\",\n    \"photoUrl\": \"https://cdn.example.com/professionals/joao-silva.jpg\",\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n    \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n    \"branches\": [\n      {\n        \"id\": \"branch-id\",\n        \"name\": \"Unidade 1\"\n      }\n    ]\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Customer Professional",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"João Silva Updated\",\n  \"branchIds\": [\"{{branchId}}\"]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/professionals/{{professionalId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"professionals",
+										"{{professionalId}}"
+									]
+								},
+								"description": "Updates a professional within the customer context. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can update professionals."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"João Silva Updated\",\n  \"branchIds\": [\"branch-id\"]\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/professionals/professional-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"professionals",
+												"professional-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"professional-id\",\n    \"name\": \"João Silva Updated\",\n    \"photoUrl\": null,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n    \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n    \"branches\": [\n      {\n        \"id\": \"branch-id\",\n        \"name\": \"Unidade 1\"\n      }\n    ]\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Deactivate Customer Professional",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/professionals/{{professionalId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"professionals",
+										"{{professionalId}}"
+									]
+								},
+								"description": "Deactivates a professional within the customer context. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can deactivate professionals."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/professionals/professional-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"professionals",
+												"professional-id"
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Customer-scoped professional management (ADMIN: Full CRUD, CLIENT: Read-only)"
+				},
+				{
+					"name": "Professionals - Branch",
+					"item": [
+						{
+							"name": "List Branch Professionals",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/branches/{{branchId}}/professionals",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"branches",
+										"{{branchId}}",
+										"professionals"
+									]
+								},
+								"description": "Retrieves all active professionals working at a specific branch within the customer context."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/branches/branch-id/professionals",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"branches",
+												"branch-id",
+												"professionals"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": [\n    {\n      \"id\": \"professional-id\",\n      \"name\": \"João Silva\",\n      \"photoUrl\": \"https://cdn.example.com/professionals/joao-silva.jpg\",\n      \"isActive\": true,\n      \"customerId\": \"customer-id\",\n      \"createdAt\": \"2025-09-19T15:00:00.000Z\",\n      \"updatedAt\": \"2025-09-19T15:00:00.000Z\",\n      \"branches\": [\n        {\n          \"id\": \"branch-id\",\n          \"name\": \"Unidade 1\"\n        }\n      ]\n    }\n  ],\n  \"total\": 1,\n  \"page\": 1,\n  \"limit\": 1000\n}"
+								}
+							]
+						}
+					],
+					"description": "Branch-specific professional queries"
+				}
+			],
+			"description": "Complete professional management with admin, customer, and branch-specific operations"
 		}
 	],
 	"variable": [
@@ -2072,6 +3095,10 @@
 			"key": "customerSlug",
 			"value": "acme",
 			"type": "string"
+		},
+		{
+			"key": "professionalId",
+			"value": ""
 		}
 	]
 }
