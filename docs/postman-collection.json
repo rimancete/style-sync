@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "9f8ce246-72da-41bb-a924-2f586372140c",
 		"name": "StyleSync API",
-		"description": "Clean minimal collection for StyleSync API testing",
+		"description": "Collection for StyleSync API testing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "15102598"
 	},
@@ -275,7 +275,7 @@
 					"response": []
 				},
 				{
-					"name": "User Login",
+					"name": "Client(acme) Login",
 					"event": [
 						{
 							"listen": "test",
@@ -303,6 +303,92 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"email\": \"client@test.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Client(multi) Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const json = pm.response.json();",
+									"    pm.collectionVariables.set('authToken', json.data.token);",
+									"    pm.collectionVariables.set('refreshToken', json.data.refreshToken);",
+									"    console.log('Tokens saved successfully');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"client2@multi.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Client(elite) Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const json = pm.response.json();",
+									"    pm.collectionVariables.set('authToken', json.data.token);",
+									"    pm.collectionVariables.set('refreshToken', json.data.refreshToken);",
+									"    console.log('Tokens saved successfully');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"client@elitebeauty.com\",\n  \"password\": \"123456\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
