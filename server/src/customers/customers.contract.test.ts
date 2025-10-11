@@ -10,6 +10,7 @@ import { ResponseTransformInterceptor } from '../common/interceptors/response-tr
 import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { CustomerAccessGuard } from '../common/guards/customer-access.guard';
 
 // Contract tests - types are validated through API responses
 
@@ -113,8 +114,22 @@ describe('Customers API Contracts', () => {
       .overrideProvider(DatabaseService)
       .useValue(mockDb)
       .overrideGuard(JwtAuthGuard)
-      .useValue({ canActivate: () => true })
+      .useValue({
+        canActivate: (context: any) => {
+          const request = context.switchToHttp().getRequest();
+          request.user = {
+            userId: 'admin-user-1',
+            email: 'admin@test.com',
+            role: 'ADMIN',
+            customerIds: ['customer-1', 'customer-2'],
+            defaultCustomerId: 'customer-1',
+          };
+          return true;
+        },
+      })
       .overrideGuard(RolesGuard)
+      .useValue({ canActivate: () => true })
+      .overrideGuard(CustomerAccessGuard)
       .useValue({ canActivate: () => true })
       .compile();
 

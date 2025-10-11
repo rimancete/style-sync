@@ -488,6 +488,12 @@ describe('Branches API Contracts', () => {
           }
           return Promise.resolve(applyIncludes(branch, include));
         }),
+        count: jest.fn(({ where }: any = {}) => {
+          const filtered = branches.filter(candidate =>
+            matchesWhere(candidate, where),
+          );
+          return Promise.resolve(filtered.length);
+        }),
         create: jest.fn(({ data, include }: any) => {
           const country = findCountryByCode(data.countryCode);
           if (!country) {

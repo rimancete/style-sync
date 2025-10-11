@@ -9,6 +9,7 @@ import * as request from 'supertest';
 import { CustomersController } from './customers.controller';
 import { CustomersService } from './customers.service';
 import { DatabaseService } from '../database/database.service';
+import { FileService } from '../common/services/file.service';
 import configuration from '../config/configuration';
 
 describe('Customers Rate Limiting', () => {
@@ -74,6 +75,14 @@ describe('Customers Rate Limiting', () => {
             },
             $connect: jest.fn(),
             $disconnect: jest.fn(),
+          },
+        },
+        {
+          provide: FileService,
+          useValue: {
+            processUploadedFiles: jest.fn(),
+            uploadFile: jest.fn(),
+            deleteFile: jest.fn(),
           },
         },
         // Apply ThrottlerGuard globally in test
