@@ -259,6 +259,7 @@ export class BranchesService {
   ): BranchResponseDto {
     return {
       id: branch.id,
+      displayId: branch.displayId,
       name: branch.name,
       countryCode: branch.countryCode,
       street: branch.street,

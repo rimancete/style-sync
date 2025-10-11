@@ -237,6 +237,7 @@ export class CountriesService {
 
   private mapToResponseDto(country: {
     id: string;
+    displayId: number;
     code: string;
     name: string;
     addressFormat: JsonValue;
@@ -244,6 +245,7 @@ export class CountriesService {
   }): CountryResponseDto {
     return {
       id: country.id,
+      displayId: country.displayId,
       code: country.code,
       name: country.name,
       addressFormat: country.addressFormat as {

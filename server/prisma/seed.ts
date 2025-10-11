@@ -163,7 +163,17 @@ async function main() {
     },
   });
 
-  console.log('✅ Created customer');
+  const customer2 = await prisma.customer.create({
+    data: {
+      name: 'Elite Beauty Salon',
+      urlSlug: 'elite-beauty',
+      documentTitle: 'Elite Beauty Salon - Premium Beauty Services',
+      logoAlt: 'Elite Beauty Salon Logo',
+      isActive: true,
+    },
+  });
+
+  console.log('✅ Created customers');
 
   // Create branches
   const branch1 = await prisma.branch.create({
@@ -199,6 +209,23 @@ async function main() {
       phone: '(11) 99876-5432',
       countryId: countries[0].id, // Brazil
       customerId: customer1.id,
+    },
+  });
+
+  const branch3 = await prisma.branch.create({
+    data: {
+      name: 'Manhattan Location',
+      countryCode: 'US',
+      street: '5th Avenue',
+      unit: '1200',
+      district: null,
+      city: 'New York',
+      stateProvince: 'NY',
+      postalCode: '10001',
+      formattedAddress: '5th Avenue, 1200, New York, NY 10001, US',
+      phone: '(212) 555-0100',
+      countryId: countries[1].id, // United States
+      customerId: customer2.id,
     },
   });
 
@@ -240,6 +267,41 @@ async function main() {
     }),
   ]);
 
+  const services2 = await Promise.all([
+    prisma.service.create({
+      data: {
+        name: 'Manicure & Pedicure',
+        description: 'Complete nail care with polish',
+        duration: 60,
+        customerId: customer2.id,
+      },
+    }),
+    prisma.service.create({
+      data: {
+        name: 'Hair Coloring',
+        description: 'Professional hair coloring service',
+        duration: 120,
+        customerId: customer2.id,
+      },
+    }),
+    prisma.service.create({
+      data: {
+        name: 'Facial Treatment',
+        description: 'Relaxing facial with skincare',
+        duration: 45,
+        customerId: customer2.id,
+      },
+    }),
+    prisma.service.create({
+      data: {
+        name: 'Professional Makeup',
+        description: 'Event makeup application',
+        duration: 90,
+        customerId: customer2.id,
+      },
+    }),
+  ]);
+
   console.log('✅ Created services');
 
   // Create service pricing for each branch
@@ -255,6 +317,12 @@ async function main() {
     { serviceId: services[1].id, branchId: branch2.id, price: 28.0 },
     { serviceId: services[2].id, branchId: branch2.id, price: 18.0 },
     { serviceId: services[3].id, branchId: branch2.id, price: 35.0 },
+
+    // Elite Beauty prices
+    { serviceId: services2[0].id, branchId: branch3.id, price: 45.0 },
+    { serviceId: services2[1].id, branchId: branch3.id, price: 150.0 },
+    { serviceId: services2[2].id, branchId: branch3.id, price: 80.0 },
+    { serviceId: services2[3].id, branchId: branch3.id, price: 120.0 },
   ];
 
   await Promise.all(
@@ -320,6 +388,34 @@ async function main() {
         },
       },
     }),
+
+    // Elite Beauty professionals
+    prisma.professional.create({
+      data: {
+        name: 'Sarah',
+        customerId: customer2.id,
+        photoUrl: 'https://via.placeholder.com/150/FF69B4/FFFFFF?text=Sarah',
+        isActive: true,
+        branches: {
+          create: {
+            branchId: branch3.id,
+          },
+        },
+      },
+    }),
+    prisma.professional.create({
+      data: {
+        name: 'Emma',
+        customerId: customer2.id,
+        photoUrl: 'https://via.placeholder.com/150/9370DB/FFFFFF?text=Emma',
+        isActive: true,
+        branches: {
+          create: {
+            branchId: branch3.id,
+          },
+        },
+      },
+    }),
   ]);
 
   console.log('✅ Created professionals');
@@ -365,6 +461,36 @@ async function main() {
         role: UserRole.ADMIN,
       },
     }),
+    // Elite Beauty customer admin
+    prisma.user.create({
+      data: {
+        email: 'admin@elitebeauty.com',
+        password: hashedPassword,
+        name: 'Elite Beauty Admin',
+        phone: '(212) 555-0200',
+        role: UserRole.ADMIN,
+      },
+    }),
+    // Elite Beauty client
+    prisma.user.create({
+      data: {
+        email: 'client@elitebeauty.com',
+        password: hashedPassword,
+        name: 'Maria Rodriguez',
+        phone: '(212) 555-0300',
+        role: UserRole.CLIENT,
+      },
+    }),
+    // Multi-customer client
+    prisma.user.create({
+      data: {
+        email: 'client2@multi.com',
+        password: hashedPassword,
+        name: 'Multi Customer Client',
+        phone: '(555) 000-0000',
+        role: UserRole.CLIENT,
+      },
+    }),
   ]);
 
   console.log('✅ Created users');
@@ -382,8 +508,36 @@ async function main() {
     // Associate admin user with Acme customer
     prisma.userCustomer.create({
       data: {
-        userId: users[3].id, // admin@acme.com (new user)
+        userId: users[3].id, // admin@acme.com
         customerId: customer1.id, // Acme Barbershop
+      },
+    }),
+    // Elite Beauty customer admin
+    prisma.userCustomer.create({
+      data: {
+        userId: users[4].id, // admin@elitebeauty.com
+        customerId: customer2.id, // Elite Beauty
+      },
+    }),
+    // Elite Beauty client
+    prisma.userCustomer.create({
+      data: {
+        userId: users[5].id, // client@elitebeauty.com
+        customerId: customer2.id, // Elite Beauty
+      },
+    }),
+    // Multi-customer client -> Acme
+    prisma.userCustomer.create({
+      data: {
+        userId: users[6].id, // client2@multi.com
+        customerId: customer1.id, // Acme Barbershop
+      },
+    }),
+    // Multi-customer client -> Elite Beauty
+    prisma.userCustomer.create({
+      data: {
+        userId: users[6].id, // client2@multi.com
+        customerId: customer2.id, // Elite Beauty
       },
     }),
   ]);
@@ -418,6 +572,29 @@ async function main() {
         status: 'PENDING',
       },
     }),
+    // Elite Beauty bookings
+    prisma.booking.create({
+      data: {
+        userId: users[5].id, // Elite Beauty client
+        branchId: branch3.id,
+        serviceId: services2[0].id, // Manicure & Pedicure
+        professionalId: professionals[4].id, // Sarah
+        scheduledAt: new Date(tomorrow.getTime() + 4 * 60 * 60 * 1000), // +4 hours
+        totalPrice: 45.0,
+        status: 'CONFIRMED',
+      },
+    }),
+    prisma.booking.create({
+      data: {
+        userId: users[5].id, // Elite Beauty client
+        branchId: branch3.id,
+        serviceId: services2[2].id, // Facial Treatment
+        professionalId: null, // Any professional
+        scheduledAt: new Date(tomorrow.getTime() + 6 * 60 * 60 * 1000), // +6 hours
+        totalPrice: 80.0,
+        status: 'PENDING',
+      },
+    }),
   ]);
 
   console.log('✅ Created sample bookings');
@@ -425,9 +602,9 @@ async function main() {
   console.log('🎉 Database seeding completed successfully!');
   console.log(`
 📊 Seeded data summary:
-- Customers: 1
-- Branches: ${[branch1, branch2].length}
-- Services: ${services.length}
+- Customers: 2
+- Branches: ${[branch1, branch2, branch3].length}
+- Services: ${services.length + services2.length}
 - Service Pricing: ${pricingData.length}
 - Professionals: ${professionals.length}
 - Users: ${users.length}
@@ -435,9 +612,12 @@ async function main() {
 
 👥 Test accounts:
 - Platform Admin: admin@stylesync.com / 123456
-- Client: client@test.com / 123456 (associated with Acme customer - READ ONLY)
+- Acme Client: client@test.com / 123456 (Acme customer - READ ONLY)
 - Staff: staff@stylesync.com / 123456
-- Customer Admin: admin@acme.com / 123456 (associated with Acme customer - FULL ACCESS)
+- Acme Admin: admin@acme.com / 123456 (Acme customer - FULL ACCESS)
+- Elite Beauty Admin: admin@elitebeauty.com / 123456 (Elite Beauty - FULL ACCESS)
+- Elite Beauty Client: client@elitebeauty.com / 123456 (Elite Beauty - READ ONLY)
+- Multi-Customer Client: client2@multi.com / 123456 (BOTH customers - READ ONLY)
 `);
 }
 

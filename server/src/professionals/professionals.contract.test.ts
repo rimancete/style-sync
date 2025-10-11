@@ -463,6 +463,7 @@ describe('Professionals (Contract Tests)', () => {
           expect.arrayContaining([
             expect.objectContaining({
               id: testProfessional2.id,
+              displayId: expect.any(Number),
               name: 'Test Professional 2',
               isActive: true,
               customerId: testCustomer.id,

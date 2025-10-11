@@ -9,6 +9,9 @@ export class CustomerSummaryDto implements CustomerSummary {
   id!: string;
 
   @ApiProperty()
+  displayId!: number;
+
+  @ApiProperty()
   name!: string;
 
   @ApiProperty()

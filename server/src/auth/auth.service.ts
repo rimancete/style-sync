@@ -183,6 +183,7 @@ export class AuthService {
         customer: {
           select: {
             id: true,
+            displayId: true,
             name: true,
             urlSlug: true,
             logoUrl: true,
@@ -196,6 +197,7 @@ export class AuthService {
       .filter(uc => uc.customer.isActive)
       .map(uc => ({
         id: uc.customer.id,
+        displayId: uc.customer.displayId,
         name: uc.customer.name,
         urlSlug: uc.customer.urlSlug,
         logoUrl: uc.customer.logoUrl || undefined,

@@ -40,6 +40,7 @@ describe('Countries API Contracts', () => {
   beforeAll(async () => {
     const countries: Array<{
       id: string;
+      displayId: number;
       code: string;
       name: string;
       addressFormat: Record<string, unknown>;
@@ -70,6 +71,7 @@ describe('Countries API Contracts', () => {
         findMany: jest.fn(() => {
           return countries.map(c => ({
             id: c.id,
+            displayId: c.displayId,
             code: c.code,
             name: c.name,
             addressFormat: c.addressFormat,
@@ -79,6 +81,7 @@ describe('Countries API Contracts', () => {
         create: jest.fn(({ data }) => {
           const created = {
             id: `country_${countries.length + 1}`,
+            displayId: countries.length + 1,
             code: data.code,
             name: data.name,
             addressFormat: data.addressFormat,
@@ -88,6 +91,7 @@ describe('Countries API Contracts', () => {
           countries.push(created);
           return {
             id: created.id,
+            displayId: created.displayId,
             code: created.code,
             name: created.name,
             addressFormat: created.addressFormat,
@@ -101,6 +105,7 @@ describe('Countries API Contracts', () => {
           Object.assign(country, data);
           return {
             id: country.id,
+            displayId: country.displayId,
             code: country.code,
             name: country.name,
             addressFormat: country.addressFormat,

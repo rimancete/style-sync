@@ -8,6 +8,12 @@ export class CountryResponseDto {
   id: string;
 
   @ApiProperty({
+    description: 'Sequential display ID for user-friendly reference',
+    example: 1,
+  })
+  displayId: number;
+
+  @ApiProperty({
     description: 'ISO 3166-1 alpha-2 country code',
     example: 'BR',
   })

@@ -18,6 +18,12 @@ export class ProfessionalEntity {
   id: string;
 
   @ApiProperty({
+    description: 'Sequential display ID for user-friendly reference',
+    example: 1,
+  })
+  displayId: number;
+
+  @ApiProperty({
     description: 'Name of the professional',
     example: 'João Silva',
   })
@@ -82,6 +88,7 @@ export class ProfessionalEntity {
   ): ProfessionalEntity {
     const entity = new ProfessionalEntity();
     entity.id = professional.id;
+    entity.displayId = professional.displayId;
     entity.name = professional.name;
     entity.documentId = professional.documentId;
     entity.photoUrl = professional.photoUrl;

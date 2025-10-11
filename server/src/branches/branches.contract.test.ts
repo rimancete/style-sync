@@ -26,6 +26,7 @@ import { CustomerUrlUtil } from '../common/utils/url-customer.util';
 
 interface CountryRecord {
   id: string;
+  displayId: number;
   code: string;
   name: string;
   addressFormat: Record<string, unknown>;
@@ -40,6 +41,7 @@ interface CustomerRecord {
 
 type BranchRecord = {
   id: string;
+  displayId: number;
   name: string;
   countryCode: string;
   street: string;
@@ -62,6 +64,7 @@ type BranchRecord = {
 const countries: CountryRecord[] = [
   {
     id: 'mock-country-br',
+    displayId: 1,
     code: 'BR',
     name: 'Brazil',
     addressFormat: {
@@ -90,6 +93,7 @@ const countries: CountryRecord[] = [
   },
   {
     id: 'mock-country-us',
+    displayId: 2,
     code: 'US',
     name: 'United States',
     addressFormat: {
@@ -134,6 +138,7 @@ const customers: CustomerRecord[] = [
 const baseBranches = (): BranchRecord[] => [
   {
     id: 'branch-1',
+    displayId: 1,
     name: 'Active Branch 1',
     countryCode: 'BR',
     street: 'Rua Teste 123',
@@ -151,6 +156,7 @@ const baseBranches = (): BranchRecord[] => [
   },
   {
     id: 'branch-2',
+    displayId: 2,
     name: 'Active Branch 2',
     countryCode: 'US',
     street: '123 Main St',
@@ -168,6 +174,7 @@ const baseBranches = (): BranchRecord[] => [
   },
   {
     id: 'branch-3',
+    displayId: 3,
     name: 'Deleted Branch',
     countryCode: 'BR',
     street: 'Rua Antiga 456',
@@ -186,6 +193,7 @@ const baseBranches = (): BranchRecord[] => [
   },
   {
     id: 'branch-4',
+    displayId: 4,
     name: 'Elite Branch 1',
     countryCode: 'US',
     street: '400 Market Street',
@@ -205,10 +213,16 @@ const baseBranches = (): BranchRecord[] => [
 
 const branches: BranchRecord[] = [];
 let branchSequence = 100;
+let branchDisplayIdSequence = 100;
 
 const nextBranchId = (): string => {
   branchSequence += 1;
   return `branch_${branchSequence}`;
+};
+
+const nextBranchDisplayId = (): number => {
+  branchDisplayIdSequence += 1;
+  return branchDisplayIdSequence;
 };
 
 const resetBranches = (): void => {
@@ -390,6 +404,7 @@ describe('Branches API Contracts', () => {
       expect(branch).toEqual(
         expect.objectContaining({
           id: expect.any(String),
+          displayId: expect.any(Number),
           name: expect.any(String),
           customerId: expect.any(String),
           formattedAddress: expect.any(String),
@@ -408,6 +423,7 @@ describe('Branches API Contracts', () => {
     expect(response.body.data).toEqual(
       expect.objectContaining({
         id: expect.any(String),
+        displayId: expect.any(Number),
         name: expect.any(String),
         countryCode: expect.any(String),
         street: expect.any(String),
@@ -436,6 +452,7 @@ describe('Branches API Contracts', () => {
         }
         return Promise.resolve({
           id: country.id,
+          displayId: country.displayId,
           code: country.code,
           name: country.name,
           addressFormat: country.addressFormat as {
@@ -507,6 +524,7 @@ describe('Branches API Contracts', () => {
 
           const created: BranchRecord = {
             id: nextBranchId(),
+            displayId: nextBranchDisplayId(),
             name: data.name,
             countryCode: data.countryCode,
             street: data.street,

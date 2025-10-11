@@ -8,6 +8,12 @@ export class BranchResponseDto {
   id: string;
 
   @ApiProperty({
+    description: 'Sequential display ID for user-friendly reference',
+    example: 1,
+  })
+  displayId: number;
+
+  @ApiProperty({
     description: 'Name of the branch location',
     example: 'Unidade 1',
   })

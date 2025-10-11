@@ -10,6 +10,7 @@ export interface ApiError {
 
 export interface CustomerSummary {
   id: string;
+  displayId: number;
   name: string;
   urlSlug: string;
   logoUrl?: string;

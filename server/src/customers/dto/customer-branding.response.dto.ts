@@ -5,6 +5,9 @@ export class CustomerBrandingResponseDto {
   id: string;
 
   @ApiProperty()
+  displayId: number;
+
+  @ApiProperty()
   name: string;
 
   @ApiProperty()

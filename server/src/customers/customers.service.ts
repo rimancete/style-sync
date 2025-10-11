@@ -53,6 +53,7 @@ export class CustomersService {
 
     return {
       id: customer.id,
+      displayId: customer.displayId,
       name: customer.name,
       urlSlug: customer.urlSlug,
       branding: {
@@ -172,6 +173,7 @@ export class CustomersService {
         customer: {
           select: {
             id: true,
+            displayId: true,
             name: true,
             urlSlug: true,
             logoUrl: true,
@@ -185,6 +187,7 @@ export class CustomersService {
       .filter(uc => uc.customer.isActive)
       .map(uc => ({
         id: uc.customer.id,
+        displayId: uc.customer.displayId,
         name: uc.customer.name,
         urlSlug: uc.customer.urlSlug,
         logoUrl: uc.customer.logoUrl || undefined,

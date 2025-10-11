@@ -9,6 +9,7 @@ datasource db {
 
 model Country {
   id            String   @id @default(cuid())
+  displayId     Int      @default(autoincrement()) @unique
   code          String   @unique
   name          String
   addressFormat Json
@@ -21,6 +22,7 @@ model Country {
 
 model Customer {
   id          String @id @default(cuid())
+  displayId   Int    @default(autoincrement()) @unique
   name        String
   urlSlug     String @unique
 
@@ -62,6 +64,7 @@ model Customer {
 
 model Branch {
   id               String               @id @default(cuid())
+  displayId        Int                  @default(autoincrement()) @unique
   name             String
   phone            String
   createdAt        DateTime             @default(now())
@@ -88,6 +91,7 @@ model Branch {
 
 model Professional {
   id         String    @id @default(cuid())
+  displayId  Int       @default(autoincrement()) @unique
   name       String
   documentId String?
   photoUrl   String?
@@ -105,6 +109,7 @@ model Professional {
 
 model ProfessionalBranch {
   id            String      @id @default(cuid())
+  displayId     Int         @default(autoincrement()) @unique
   professionalId String
   branchId      String
   createdAt     DateTime    @default(now())
@@ -118,6 +123,7 @@ model ProfessionalBranch {
 
 model Service {
   id          String           @id @default(cuid())
+  displayId   Int              @default(autoincrement()) @unique
   name        String
   description String?
   duration    Int
@@ -133,6 +139,7 @@ model Service {
 
 model ServicePricing {
   id        String   @id @default(cuid())
+  displayId Int      @default(autoincrement()) @unique
   serviceId String
   branchId  String
   price     Decimal  @db.Decimal(10, 2)
@@ -147,6 +154,7 @@ model ServicePricing {
 
 model User {
   id        String    @id @default(cuid())
+  displayId Int       @default(autoincrement()) @unique
   email     String    @unique
   password  String
   name      String
@@ -162,6 +170,7 @@ model User {
 
 model UserCustomer {
   id         String   @id @default(cuid())
+  displayId  Int      @default(autoincrement()) @unique
   userId     String
   customerId String
   createdAt  DateTime @default(now())
@@ -176,6 +185,7 @@ model UserCustomer {
 
 model Booking {
   id             String        @id @default(cuid())
+  displayId      Int           @default(autoincrement()) @unique
   userId         String
   branchId       String
   serviceId      String

@@ -31,11 +31,67 @@ StyleSync is a multi-location barbershop booking system with the following key r
 
 ## Database Schema Design
 
+### Dual ID Strategy (Security + UX)
+
+**Implementation Date**: October 11, 2025
+
+StyleSync uses a **dual ID system** for all entities, balancing security with user experience:
+
+- **Primary Key (`id`)**: CUID (Collision-Resistant Unique Identifier)
+  - Used in URLs, API requests, and database relationships
+  - Prevents enumeration attacks (competitors can't discover `/api/bookings/1`, `/api/bookings/2`, etc.)
+  - Hides business intelligence (booking volume, customer count, etc.)
+  - Example: `clg2a5d9i0002gtkb`
+
+- **Display ID (`displayId`)**: Auto-incrementing Integer
+  - User-friendly reference: "Booking #12345", "Professional #007"
+  - Enables natural ordering and sorting
+  - Useful for customer support and internal operations
+  - Analytics-friendly (gap analysis, growth metrics)
+  - Example: `42`
+
+**API Response Example**:
+
+```json
+{
+  "data": {
+    "id": "clg2a5d9i0002gtkb",
+    "displayId": 42,
+    "name": "João Silva",
+    "createdAt": "2025-10-11T10:30:00.000Z"
+  }
+}
+```
+
+**Benefits**:
+
+- ✅ Security: Non-enumerable CUID primary keys
+- ✅ UX: Friendly sequential display IDs
+- ✅ Analytics: Sequential IDs enable growth tracking
+- ✅ Support: Easy ticket references ("Booking #12345")
+- ✅ Performance: Both fields indexed for their use cases
+- ✅ Backward Compatible: No foreign key changes required
+
+**Entities with Dual IDs**:
+All database entities now have both `id` (CUID) and `displayId` (Int) fields:
+
+- Country
+- Customer
+- Branch
+- Professional
+- ProfessionalBranch
+- Service
+- ServicePricing
+- User
+- UserCustomer
+- Booking
+
 ### Core Entities
 
 ```prisma
 model Country {
   id            String   @id @default(cuid())
+  displayId     Int      @default(autoincrement()) @unique
   code          String   @unique
   name          String
   addressFormat Json
@@ -89,6 +145,7 @@ model Customer {
 
 model Branch {
   id               String           @id @default(cuid())
+  displayId        Int              @default(autoincrement()) @unique
   name             String
   phone            String
   createdAt        DateTime         @default(now())
@@ -115,6 +172,7 @@ model Branch {
 
 model Professional {
   id        String    @id @default(cuid())
+  displayId Int       @default(autoincrement()) @unique
   name      String
   photoUrl  String?
   isActive  Boolean   @default(true)
@@ -131,6 +189,7 @@ model Professional {
 
 model Service {
   id          String           @id @default(cuid())
+  displayId   Int              @default(autoincrement()) @unique
   name        String
   description String?
   duration    Int
@@ -160,6 +219,7 @@ model ServicePricing {
 
 model User {
   id        String    @id @default(cuid())
+  displayId Int       @default(autoincrement()) @unique
   email     String    @unique
   password  String
   name      String
@@ -189,6 +249,7 @@ model UserCustomer {
 
 model Booking {
   id             String        @id @default(cuid())
+  displayId      Int           @default(autoincrement()) @unique
   userId         String
   branchId       String
   serviceId      String
