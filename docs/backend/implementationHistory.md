@@ -1,405 +1,3 @@
-# StyleSync Backend Implementation Plan
-
-## Project Overview
-
-StyleSync is a multi-location barbershop booking system with the following key requirements:
-
-- **Customer-Scoped**: Complete customer-scoped management. One single code base, multiple clients.
-- **Multi-branch**: Multiple branch locations ("Unidade 1", "Unidade 2")
-- **Professional selection**: Clients can choose specific professionals or "any available"
-- **Single service booking**: One service per appointment (simplified business logic)
-- **Location-based pricing**: Same services can have different prices per branch
-- **Multilingual support**: Primary Portuguese, expandable to other languages
-
-## Architecture Decisions
-
-### Technology Stack
-
-- **Backend**: NestJS + TypeScript
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: JWT tokens
-- **Development Database**: Docker Compose
-- **API Documentation**: Swagger/OpenAPI + Postman collection
-- **Validation**: class-validator + class-transformer
-
-### Business Logic Clarifications
-
-1. **Professional Preferences**: Clients can book "any available professional" (professionalId = null)
-2. **Service Combinations**: Single service per booking (no complex multi-service logic)
-3. **Pricing Strategy**: Location-specific pricing for services
-4. **Cancellation Rules**: Deferred to future implementation
-
-## Database Schema Design
-
-### Dual ID Strategy (Security + UX)
-
-**Implementation Date**: October 11, 2025
-
-StyleSync uses a **dual ID system** for all entities, balancing security with user experience:
-
-- **Primary Key (`id`)**: CUID (Collision-Resistant Unique Identifier)
-  - Used in URLs, API requests, and database relationships
-  - Prevents enumeration attacks (competitors can't discover `/api/bookings/1`, `/api/bookings/2`, etc.)
-  - Hides business intelligence (booking volume, customer count, etc.)
-  - Example: `clg2a5d9i0002gtkb`
-
-- **Display ID (`displayId`)**: Auto-incrementing Integer
-  - User-friendly reference: "Booking #12345", "Professional #007"
-  - Enables natural ordering and sorting
-  - Useful for customer support and internal operations
-  - Analytics-friendly (gap analysis, growth metrics)
-  - Example: `42`
-
-**API Response Example**:
-
-```json
-{
-  "data": {
-    "id": "clg2a5d9i0002gtkb",
-    "displayId": 42,
-    "name": "João Silva",
-    "createdAt": "2025-10-11T10:30:00.000Z"
-  }
-}
-```
-
-**Benefits**:
-
-- ✅ Security: Non-enumerable CUID primary keys
-- ✅ UX: Friendly sequential display IDs
-- ✅ Analytics: Sequential IDs enable growth tracking
-- ✅ Support: Easy ticket references ("Booking #12345")
-- ✅ Performance: Both fields indexed for their use cases
-- ✅ Backward Compatible: No foreign key changes required
-
-**Entities with Dual IDs**:
-All database entities now have both `id` (CUID) and `displayId` (Int) fields:
-
-- Country
-- Customer
-- Branch
-- Professional
-- ProfessionalBranch
-- Service
-- ServicePricing
-- User
-- UserCustomer
-- Booking
-
-### Core Entities
-
-```prisma
-model Country {
-  id            String   @id @default(cuid())
-  displayId     Int      @default(autoincrement()) @unique
-  code          String   @unique
-  name          String
-  addressFormat Json
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  branches      Branch[]
-
-  @@map("countries")
-}
-
-model Customer {
-  id          String @id @default(cuid())
-  name        String
-  urlSlug     String @unique
-
-  // Branding Configuration
-  documentTitle   String @default("")
-  logoUrl     String?
-  logoAlt     String @default("")
-
-  // Favicons
-  favicon32x32  String?
-  favicon16x16  String?
-  appleTouch    String?
-
-  // Theme Colors (Light theme)
-  primaryMain     String @default("#272726FF")
-  primaryLight    String @default("#706E6DFF")
-  primaryDark     String @default("#1B1B1BFF")
-  primaryContrast String @default("#ECE8E6FF")
-
-  secondaryMain     String @default("#8D8C8BFF")
-  secondaryLight    String @default("#E7E7E6FF")
-  secondaryDark     String @default("#3B3B3BFF")
-  secondaryContrast String @default("#1B1B1BFF")
-
-  backgroundColor String @default("#F7F7F7FF")
-
-  isActive    Boolean @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relationships
-  branches      Branch[]
-  services      Service[]
-  users         UserCustomer[]
-  professionals Professional[]
-
-  @@map("customers")
-}
-
-model Branch {
-  id               String           @id @default(cuid())
-  displayId        Int              @default(autoincrement()) @unique
-  name             String
-  phone            String
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  deletedAt        DateTime?
-  countryCode      String
-  street           String
-  unit             String?
-  district         String?
-  city             String
-  stateProvince    String
-  postalCode       String
-  formattedAddress String
-  countryId        String
-  customerId       String
-  country          Country          @relation(fields: [countryId], references: [id])
-  customer         Customer         @relation(fields: [customerId], references: [id])
-  bookings         Booking[]
-  professionals    Professional[]
-  servicePricing   ServicePricing[]
-
-  @@map("branches")
-}
-
-model Professional {
-  id        String    @id @default(cuid())
-  displayId Int       @default(autoincrement()) @unique
-  name      String
-  photoUrl  String?
-  isActive  Boolean   @default(true)
-  branchId  String
-  customerId String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  bookings  Booking[]
-  branch    Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
-  customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  @@map("professionals")
-}
-
-model Service {
-  id          String           @id @default(cuid())
-  displayId   Int              @default(autoincrement()) @unique
-  name        String
-  description String?
-  duration    Int
-  customerId  String
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  customer    Customer         @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  bookings    Booking[]
-  pricing     ServicePricing[]
-
-  @@map("services")
-}
-
-model ServicePricing {
-  id        String   @id @default(cuid())
-  serviceId String
-  branchId  String
-  price     Decimal  @db.Decimal(10, 2)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  branch    Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
-
-  @@unique([serviceId, branchId])
-  @@map("service_pricing")
-}
-
-model User {
-  id        String    @id @default(cuid())
-  displayId Int       @default(autoincrement()) @unique
-  email     String    @unique
-  password  String
-  name      String
-  phone     String?
-  role      UserRole  @default(CLIENT)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  bookings  Booking[]
-  customers UserCustomer[]
-
-  @@map("users")
-}
-
-model UserCustomer {
-  id         String   @id @default(cuid())
-  userId     String
-  customerId String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, customerId])
-  @@map("user_customers")
-}
-
-model Booking {
-  id             String        @id @default(cuid())
-  displayId      Int           @default(autoincrement()) @unique
-  userId         String
-  branchId       String
-  serviceId      String
-  professionalId String?
-  scheduledAt    DateTime
-  status         BookingStatus @default(PENDING)
-  totalPrice     Decimal       @db.Decimal(10, 2)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  professional   Professional? @relation(fields: [professionalId], references: [id])
-  service        Service       @relation(fields: [serviceId], references: [id])
-  branch         Branch        @relation(fields: [branchId], references: [id], onDelete: Cascade)
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("bookings")
-}
-
-enum UserRole {
-  CLIENT
-  STAFF
-  ADMIN
-}
-
-enum BookingStatus {
-  PENDING
-  CONFIRMED
-  COMPLETED
-  CANCELLED
-}
-```
-
-## Core directory Structure
-
-```
-├── docker/
-│   ├── docker-compose.yml 🚫 (auto-hidden)
-│   └── init.sql 🚫 (auto-hidden)
-├── server/
-│   ├── .husky/ 🚫 (auto-hidden)
-│   ├── coverage/ 🚫 (auto-hidden)
-│   ├── dist/ 🚫 (auto-hidden)
-│   ├── docs/
-│   │   └── ENVIRONMENT_SETUP.md 🚫 (auto-hidden)
-│   ├── prisma/
-│   │   ├── migrations/
-│   │   ├── schema.prisma 🚫 (auto-hidden)
-│   │   └── seed.ts 🚫 (auto-hidden)
-│   ├── src/
-│   │   ├── auth/
-│   │   │   ├── dto/
-│   │   │   │   ├── auth-response.dto.ts 🚫 (auto-hidden)
-│   │   │   │   ├── login.dto.ts 🚫 (auto-hidden)
-│   │   │   │   ├── register.dto.ts 🚫 (auto-hidden)
-│   │   │   │   └── token.dto.ts 🚫 (auto-hidden)
-│   │   │   ├── guards/
-│   │   │   │   ├── jwt-auth.guard.ts 🚫 (auto-hidden)
-│   │   │   │   └── roles.guard.ts 🚫 (auto-hidden)
-│   │   │   ├── strategies/
-│   │   │   │   └── jwt.strategy.ts 🚫 (auto-hidden)
-│   │   │   ├── auth.contract.test.ts 🚫 (auto-hidden)
-│   │   │   ├── auth.controller.ts 🚫 (auto-hidden)
-│   │   │   ├── auth.module.ts 🚫 (auto-hidden)
-│   │   │   └── auth.service.ts 🚫 (auto-hidden)
-│   │   ├── branches/
-│   │   │   ├── dto/
-│   │   │   │   ├── branch-response.dto.ts 🚫 (auto-hidden)
-│   │   │   │   ├── create-branch.dto.ts 🚫 (auto-hidden)
-│   │   │   │   ├── create-customer-branch.dto.ts 🚫 (auto-hidden)
-│   │   │   │   └── update-branch.dto.ts 🚫 (auto-hidden)
-│   │   │   ├── entities/
-│   │   │   │   └── branch.entity.ts 🚫 (auto-hidden)
-│   │   │   ├── branches.contract.test.ts 🚫 (auto-hidden)
-│   │   │   ├── branches.controller.ts 🚫 (auto-hidden)
-│   │   │   ├── branches.module.ts 🚫 (auto-hidden)
-│   │   │   └── branches.service.ts 🚫 (auto-hidden)
-│   │   ├── common/
-│   │   │   ├── decorators/
-│   │   │   │   ├── public.decorator.ts 🚫 (auto-hidden)
-│   │   │   │   ├── rate-limit.decorator.ts 🚫 (auto-hidden)
-│   │   │   │   ├── roles.decorator.ts 🚫 (auto-hidden)
-│   │   │   │   └── user.decorator.ts 🚫 (auto-hidden)
-│   │   │   ├── filters/
-│   │   │   │   └── http-exception.filter.ts 🚫 (auto-hidden)
-│   │   │   ├── guards/
-│   │   │   │   ├── customer-context.guard.ts 🚫 (auto-hidden)
-│   │   │   │   └── rate-limit.guard.ts 🚫 (auto-hidden)
-│   │   │   ├── interceptors/
-│   │   │   │   └── response-transform.interceptor.ts 🚫 (auto-hidden)
-│   │   │   ├── interfaces/
-│   │   │   │   └── api-response.interface.ts 🚫 (auto-hidden)
-│   │   │   ├── pipes/
-│   │   │   ├── types/
-│   │   │   │   └── auth.types.ts 🚫 (auto-hidden)
-│   │   │   └── utils/
-│   │   │       └── url-customer.util.ts 🚫 (auto-hidden)
-│   │   ├── config/
-│   │   │   └── configuration.ts 🚫 (auto-hidden)
-│   │   ├── countries/
-│   │   │   ├── dto/
-│   │   │   │   ├── country-response.dto.ts 🚫 (auto-hidden)
-│   │   │   │   ├── create-country.dto.ts 🚫 (auto-hidden)
-│   │   │   │   └── update-country.dto.ts 🚫 (auto-hidden)
-│   │   │   ├── entities/
-│   │   │   │   └── country.entity.ts 🚫 (auto-hidden)
-│   │   │   ├── countries.contract.test.ts 🚫 (auto-hidden)
-│   │   │   ├── countries.controller.ts 🚫 (auto-hidden)
-│   │   │   ├── countries.module.ts 🚫 (auto-hidden)
-│   │   │   └── countries.service.ts 🚫 (auto-hidden)
-│   │   ├── customers/
-│   │   │   ├── dto/
-│   │   │   │   ├── customer-branding.response.dto.ts 🚫 (auto-hidden)
-│   │   │   │   └── update-customer-branding.dto.ts 🚫 (auto-hidden)
-│   │   │   ├── entities/
-│   │   │   │   └── customer.entity.ts 🚫 (auto-hidden)
-│   │   │   ├── customers.contract.test.ts 🚫 (auto-hidden)
-│   │   │   ├── customers.controller.ts 🚫 (auto-hidden)
-│   │   │   ├── customers.module.ts 🚫 (auto-hidden)
-│   │   │   ├── customers.rate-limit.test.ts 🚫 (auto-hidden)
-│   │   │   └── customers.service.ts 🚫 (auto-hidden)
-│   │   ├── database/
-│   │   │   ├── database.module.ts 🚫 (auto-hidden)
-│   │   │   └── database.service.ts 🚫 (auto-hidden)
-│   │   ├── health/
-│   │   │   ├── dto/
-│   │   │   │   └── health-response.dto.ts 🚫 (auto-hidden)
-│   │   │   ├── health.contract.test.ts 🚫 (auto-hidden)
-│   │   │   ├── health.controller.ts 🚫 (auto-hidden)
-│   │   │   ├── health.module.ts 🚫 (auto-hidden)
-│   │   │   └── health.service.ts 🚫 (auto-hidden)
-│   │   ├── testing/
-│   │   │   └── helpers/
-│   │   │       └── contract-test.helper.ts 🚫 (auto-hidden)
-│   │   ├── app.controller.test.ts 🚫 (auto-hidden)
-│   │   ├── app.controller.ts 🚫 (auto-hidden)
-│   │   ├── app.module.ts 🚫 (auto-hidden)
-│   │   ├── app.service.ts 🚫 (auto-hidden)
-│   │   └── main.ts 🚫 (auto-hidden)
-│   ├── test/
-│   │   ├── app.e2e-spec.ts 🚫 (auto-hidden)
-│   │   └── jest-e2e.json 🚫 (auto-hidden)
-│   ├── .env 🚫 (auto-hidden)
-│   ├── .env.production 🚫 (auto-hidden)
-│   ├── .env.staging 🚫 (auto-hidden)
-│   ├── README.md 🚫 (auto-hidden)
-│   ├── env.template 🚫 (auto-hidden)
-│   ├── package.json 🚫 (auto-hidden)
-```
-
-## Implementation Phases
-
 ### Phase 1: Database Foundation (Bi-week 1)
 
 **Goal**: Get PostgreSQL + Prisma working with multi-branch schema
@@ -476,12 +74,87 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] JWT strategy implementation
 - [x] Login/Register endpoints
 - [x] Password hashing with bcrypt
-- [x] Basic user registration
+- [x] **Customer-Linked Registration**: Multi-tenant user registration system
 - [x] **Tests**: Contract tests for auth endpoints (following Health module pattern)
 
-#### Step 2.4: Customers Module
+##### ✅ Customer-Linked Registration Implementation
 
-##### Backend Implementation (Priority)
+**Registration Flow**:
+
+```
+POST /api/salon/acme/auth/register
+├─ Validate customer 'acme' exists and is active
+│  └─ 400 if invalid/inactive
+├─ Check if user with email exists
+│  ├─ No → Create new user + Link to customer → Return tokens
+│  └─ Yes → Already linked to this customer?
+│     ├─ Yes → 409 "Already registered with this customer"
+│     └─ No → Update user data + Link to customer → Return tokens
+```
+
+**API Endpoint**:
+
+```typescript
+POST /api/salon/:customerSlug/auth/register
+Content-Type: application/json
+
+Request Body:
+{
+  "email": "user@example.com",
+  "password": "securePassword123",
+  "name": "John Doe",
+  "phone": "(11) 99999-9999"
+}
+
+Response (201):
+{
+  "data": {
+    "token": "eyJhbGciOiJIUzI1...",
+    "refreshToken": "eyJhbGciOiJIUzI1...",
+    "userId": "user_123",
+    "userName": "John Doe",
+    "phone": "(11) 99999-9999",
+    "customers": [
+      {
+        "id": "customer_acme",
+        "displayId": 1,
+        "name": "Acme Barbershop",
+        "urlSlug": "acme",
+        "logoUrl": "https://cdn.example.com/acme/logo.png"
+      }
+    ],
+    "defaultCustomerId": "customer_acme"
+  }
+}
+```
+
+**Business Logic**:
+- First registration: Creates user account + links to customer
+- Subsequent registration: Links existing user to new customer + updates profile
+- Password is only used during initial user creation (ignored for existing users)
+- User profile (name, phone) updated with latest registration data
+- Registration customer becomes the defaultCustomerId in JWT
+
+**Error Handling**:
+- `400 Bad Request`: Customer not found or inactive
+- `409 Conflict`: User already registered with this customer
+
+**Testing Coverage**:
+- ✅ New user registration with customer link
+- ✅ Existing user linking to additional customer
+- ✅ Invalid customer slug validation
+- ✅ Inactive customer rejection
+- ✅ Duplicate registration prevention
+- ✅ Login returns all linked customers
+- ✅ JWT includes all customerIds
+
+**Files Modified**:
+- `server/src/auth/auth.service.ts` - Added `registerWithCustomer()` method
+- `server/src/auth/auth.controller.ts` - Added `CustomerAuthController` class
+- `server/src/auth/auth.module.ts` - Registered new controller
+- `server/src/auth/auth.contract.test.ts` - Added comprehensive contract tests (8 tests covering all scenarios)
+
+#### Step 2.4: Customers Module
 
 **Goal**: Implement customer identification and branding data management:
 
@@ -509,6 +182,8 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] Create Customer entity and interfaces
 
 ##### Step 2.4.2: Customer Module Structure
+
+// DOCUMENT THE CUSTOMER MODULE STRUCTURE
 
 ##### Step 2.4.3: Customer Branding API (DDoS Protected)
 
@@ -561,6 +236,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] Error handling tests for invalid customers - tested manually
 - [x] File upload integration tests (manual testing with test script)
 - [x] Static file serving validation (HTTP accessibility of uploaded files)
+
 
 ##### ✅ **Customer Module Implementation Complete**
 
@@ -637,104 +313,6 @@ async findByCustomer(customerId: string, page = 1, limit = 500) // High limit fo
 - ✅ Consistent pagination across all list endpoints
 - ✅ Proper API documentation with query parameter examples
 - ✅ Ready for future pagination UI implementation in frontend
-
-##### Frontend Implementation (After Backend)
-
-**Goal**: Integrate customer branding into React application
-
-##### Step 2.4.6: Customer Context Provider
-
-- [ ] Create React context for customer state management
-- [ ] Implement customer config fetching from backend
-- [ ] Add loading states and error boundaries
-- [ ] URL parsing logic to extract customer slug
-
-##### Step 2.4.7: Dynamic Branding Application
-
-- [ ] Update document title based on customer config
-- [ ] Apply CSS variables for theme colors
-- [ ] Dynamic logo loading and display
-- [ ] Fallback handling for missing assets
-
-##### Step 2.4.8: Customer URL Integration
-
-- [ ] URL change detection and customer context updates
-- [ ] Default customer fallback for missing URL slugs
-- [ ] Route protection based on customer context
-
-##### Step 2.4.9: Frontend Testing & Validation
-
-- [ ] Unit tests for customer context logic
-- [ ] Integration tests for branding application
-- [ ] E2E tests for customer identification flow
-
-##### Key Technical Considerations
-
-- URL Structure: `https://solutiondomain.com/{customer-url-slug}/`
-- Customer URL slug: lowercase, hyphens, alphanumeric only (max 50 chars)
-- Backend-first approach ensures API stability before frontend integration
-
-##### API Endpoints Summary (Protected):
-
-```typescript
-// Retrieve complete branding configuration
-GET /api/customers/branding/:urlSlug
-
-// Initial branding setup (files + config)
-POST /api/customers/:customerId/branding
-Content-Type: multipart/form-data
-Fields: logo, favicon32x32, favicon16x16, appleTouch (files)
-        config (JSON string)
-
-// Update branding configuration only
-PUT /api/customers/:customerId/branding/config
-Content-Type: application/json
-
-// Update branding files only
-POST /api/customers/:customerId/branding/upload
-Content-Type: multipart/form-data
-```
-
-##### API Response Format:
-
-```typescript
-GET /api/customers/branding/:urlSlug
-
-Response:
-{
-  "data": {
-    "id": "customer-123",
-    "name": "Acme Barbershop",
-    "urlSlug": "acme",
-    "branding": {
-      "favicon32x32": "https://cdn.example.com/customers/acme/favicon32x32.ico",
-      "favicon16x16": "https://cdn.example.com/customers/acme/favicon16x16.ico",
-      "appleTouch": "https://cdn.example.com/customers/acme/appleTouch.ico",
-      "documentTitle": "Acme Barbershop - Book Your Appointment",
-      "theme": {
-         "light": {
-            "logoUrl": "https://cdn.example.com/logos/acme.png",
-            "logoAlt": "Acme Barbershop",
-            "primary": {
-               "main": "#272726FF",
-               "light": "#706E6DFF",
-               "dark": "#1B1B1BFF",
-               "contrast": "#ECE8E6FF"
-            },
-            "secondary": {
-               "main": "#8D8C8BFF",
-               "light": "#E7E7E6FF",
-               "dark": "#3B3B3BFF",
-               "contrast": "#1B1B1BFF"
-            },
-            "background": "#F7F7F7FF"
-         }
-      }
-    },
-    "isActive": true
-  }
-}
-```
 
 ##### Database Schema:
 
@@ -853,6 +431,68 @@ curl "http://localhost:3001/api/customers/branding/{urlSlug}"
 # Files are accessible via static HTTP serving
 # Format: http://localhost:3001/uploads/customers/{customerId}/{filename}
 curl "http://localhost:3001/uploads/customers/cmfy4ppjn0002gt1azx6tls4l/cmfy4ppjn0002gt1azx6tls4l_logo_1758727189371.png"
+```
+
+##### API Endpoints Summary (Protected):
+
+```typescript
+// Retrieve complete branding configuration
+GET /api/customers/branding/:urlSlug
+
+// Initial branding setup (files + config)
+POST /api/customers/:customerId/branding
+Content-Type: multipart/form-data
+Fields: logo, favicon32x32, favicon16x16, appleTouch (files)
+        config (JSON string)
+
+// Update branding configuration only
+PUT /api/customers/:customerId/branding/config
+Content-Type: application/json
+
+// Update branding files only
+POST /api/customers/:customerId/branding/upload
+Content-Type: multipart/form-data
+```
+
+##### API Response Format:
+
+```typescript
+GET /api/customers/branding/:urlSlug
+
+Response:
+{
+  "data": {
+    "id": "customer-123",
+    "name": "Acme Barbershop",
+    "urlSlug": "acme",
+    "branding": {
+      "favicon32x32": "https://cdn.example.com/customers/acme/favicon32x32.ico",
+      "favicon16x16": "https://cdn.example.com/customers/acme/favicon16x16.ico",
+      "appleTouch": "https://cdn.example.com/customers/acme/appleTouch.ico",
+      "documentTitle": "Acme Barbershop - Book Your Appointment",
+      "theme": {
+         "light": {
+            "logoUrl": "https://cdn.example.com/logos/acme.png",
+            "logoAlt": "Acme Barbershop",
+            "primary": {
+               "main": "#272726FF",
+               "light": "#706E6DFF",
+               "dark": "#1B1B1BFF",
+               "contrast": "#ECE8E6FF"
+            },
+            "secondary": {
+               "main": "#8D8C8BFF",
+               "light": "#E7E7E6FF",
+               "dark": "#3B3B3BFF",
+               "contrast": "#1B1B1BFF"
+            },
+            "background": "#F7F7F7FF"
+         }
+      }
+    },
+    "isActive": true
+  }
+}
 ```
 
 #### Step 2.5: Branches Module
@@ -1096,30 +736,7 @@ CustomerUrlService.navigateToCustomer('elite-cuts', '/services');
 - ✅ **Comprehensive Testing**: Contract tests ensure API reliability
 - ✅ **Documentation Complete**: Swagger docs and Postman collection updated
 
-#### Step 3.2: Services Module
-
-- [ ] Service catalog management
-- [ ] Location-based pricing implementation
-- [ ] Service duration configuration
-- [ ] **Tests**: Contract tests for service catalog and pricing APIs
-
-#### Step 3.3: Booking Module Foundation
-
-- [ ] Basic booking CRUD
-- [ ] Availability query structure
-- [ ] Simple time slot logic
-- [ ] **Tests**: Contract tests for booking APIs + property-based tests for availability logic
-
 ### Phase 4: Advanced Features (Week 4)
-
-**Goal**: Complete booking flow
-
-#### Step 4.1: Availability Service
-
-- [ ] Professional availability calculation
-- [ ] "Any professional" slot aggregation
-- [ ] Service duration slot blocking
-- [ ] **Tests**: Property-based tests for complex availability algorithms
 
 #### Step 4.2: API Documentation
 
@@ -1132,166 +749,3 @@ CustomerUrlService.navigateToCustomer('elite-cuts', '/services');
 - [x] Global validation pipes
 - [x] Error response standardization
 - [x] Input sanitization
-
-## Development Guidelines
-
-### Code Standards
-
-- Use NestJS conventions (feature modules)
-- Implement DTOs for all API inputs/outputs
-- Add Swagger decorators to controllers
-- Write meaningful commit messages
-- Keep business logic in services, not controllers
-
-### Testing Strategy
-
-**Contract Testing Approach** (Primary Strategy):
-
-- **Contract tests** for API validation and business rules
-- Focus on frontend-backend compatibility over implementation details
-- Deterministic test data for reliability
-- Reusable testing utilities in `src/testing/helpers/`
-
-**Supplementary Testing**:
-
-- Unit tests for complex business logic (future modules)
-- E2E tests for critical booking flows
-- Property-based tests for booking availability logic (when implemented)
-
-**Test File Naming Convention**:
-
-- `*.contract.test.ts` - API contract validation
-- `*.test.ts` - Unit tests
-- `*.integration.test.ts` - Integration tests
-- `*.e2e-spec.ts` - End-to-end tests
-
-**Available Scripts**:
-
-- `npm test` - Run all tests
-- `npm test:ci` - Run all coverage tests
-
-**Testing Architecture Decisions**:
-
-- ✅ **Contract testing over verbose unit tests**
-- ✅ **Deterministic over random test data**- ✅ **Frontend-focused testing**: Prioritize API contract validation over implementation details
-- ✅ **Reusable test utilities**: Centralized helpers in `src/testing/helpers/` for scalability
-- 🔄 **Property-based testing**: Reserved for complex booking logic (future implementation)
-- 🔄 **Mutation testing**: Planned for CI/CD pipeline to validate test quality
-
-✅ **All Tests Passing** (82 Tests, 9 Test Suites)
-
-**Test Suite Summary** (as of October 11, 2025):
-
-- ✅ `app.controller.test.ts` - Application controller tests
-- ✅ `health.contract.test.ts` - Health check API contracts
-- ✅ `countries.contract.test.ts` - Countries API contracts
-- ✅ `customers.contract.test.ts` - Customer branding API contracts
-- ✅ `customers.rate-limit.test.ts` - Rate limiting and DDoS protection
-- ✅ `customers.upload.contract.test.ts` - File upload API contracts
-- ✅ `auth.contract.test.ts` - Authentication API contracts
-- ✅ `branches.contract.test.ts` - Branch management API contracts
-- ✅ `professionals.contract.test.ts` - Professional management API contracts (25 tests)
-
-### Security Considerations
-
-- JWT token expiration handling
-- Password hashing (bcrypt)
-- Input validation and sanitization
-- Role-based access control
-- Rate limiting (future consideration)
-
-## Core API Endpoints Overview
-
-### Health & Monitoring
-
-- `GET /api/health` - Application health check
-- `GET /api/health/database` - Database connection health
-- `GET /api/health/detailed` - Detailed system status
-
-### Authentication
-
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/refresh` - Token refresh
-
-### Branches (Admin only)
-
-- `GET /api/branches` - List all branches
-- `POST /api/branches` - Create branch
-- `GET /api/branches/:id` - Get branch details
-- `PUT /api/branches/:id` - Update branch
-- `DELETE /api/branches/:id` - Delete branch
-
-### Branches (Customer)
-
-- Customer-scoped REST surface validated via contract suite:
-  - `GET /api/salon/{customerSlug}/branches`
-  - `GET /api/salon/{customerSlug}/branches/:id`
-  - `POST /api/salon/{customerSlug}/branches`
-  - `PATCH /api/salon/{customerSlug}/branches/:id`
-  - `DELETE /api/salon/{customerSlug}/branches/:id`
-
-### Countries (Admin only)
-
-- `GET /api/countries` - List all countries
-- `POST /api/countries` - Create country
-- `GET /api/countries/:code` - Get Country details
-
-### Professionals
-
-- `GET /api/branches/:branchId/professionals` - List professionals by branch
-- `POST /api/professionals` - Create professional (Admin)
-- `PUT /api/professionals/:id` - Update professional
-- `DELETE /api/professionals/:id` - Deactivate professional
-
-### Services
-
-- `GET /api/services` - List all services
-- `GET /api/branches/:branchId/services` - Services with branch pricing
-- `POST /api/services` - Create service (Admin)
-- `POST /api/services/:id/pricing` - Set branch-specific pricing
-
-### Bookings
-
-- `POST /api/bookings` - Create booking
-- `GET /api/bookings/my` - User's booking history
-- `GET /api/bookings/availability` - Query available time slots
-- `PUT /api/bookings/:id` - Update booking status
-- `DELETE /api/bookings/:id` - Cancel booking
-
-### Customer (⚠️ UPDATE)
-
-## Future Considerations
-
-### Not Implementing Initially
-
-- Advanced cancellation policies
-- Multi-service bookings
-- Professional working hours management
-- Automated SMS/Email notifications
-- Payment processing integration
-- Advanced reporting/analytics
-
-### Multilingual Support
-
-- Frontend: i18next (React)
-- Backend: Simple translation service for API responses
-- Database: Store translatable content in JSON columns when needed
-
-## Success Metrics
-
-- [ ] User can register and login
-- [ ] Admin can manage branches and services
-- [ ] Client can view available time slots
-- [ ] Client can book appointments
-- [ ] System handles "any professional" booking logic
-- [ ] API is documented with Swagger
-- [ ] Database supports multiple branches with different pricing
-
-## Notes
-
-- Start with Portuguese as primary language
-- Focus on core booking functionality first
-- Keep business rules simple initially
-- Prioritize working software over perfect architecture
-- Document decisions and trade-offs as you go

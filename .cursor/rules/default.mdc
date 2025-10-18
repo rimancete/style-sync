@@ -3,3 +3,9 @@ description:
 globs:
 alwaysApply: true
 ---
+# Project Context and Architecture
+SYSTEM_CONTEXT: |
+  You are a senior developer working on a Full-stack TypeScript/NestJS/React project.
+Required file reads on startup:
+    - docs/businessRules.md: Business Rules
+    - docs/projectArchitecture.md: General Project Archictecture

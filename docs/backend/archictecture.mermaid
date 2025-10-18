@@ -1,0 +1,465 @@
+```mermaid
+graph TB
+    %% External Layer
+    subgraph External["🌐 External Layer"]
+        Client["Client Applications<br/>(React SPA)"]
+        AdminClient["Admin Dashboard"]
+    end
+
+    %% Entry Point
+    subgraph Bootstrap["🚀 NestJS Bootstrap (main.ts)"]
+        CORS["CORS Middleware<br/>(Origin validation)"]
+        GlobalPrefix["Global Prefix<br/>(/api)"]
+        StaticAssets["Static Assets<br/>(/uploads/)"]
+        ValidationPipe["Global Validation Pipe<br/>(Transform, Whitelist)"]
+        Swagger["Swagger Documentation<br/>(/api/docs)"]
+    end
+
+    %% Request Processing Pipeline
+    subgraph Pipeline["🔄 Request Processing Pipeline"]
+        ThrottleG["ThrottlerGuard<br/>(Global Rate Limiting)<br/>60 req/min default"]
+        ExceptionFilter["HttpExceptionFilter<br/>(Error Formatting)"]
+        ResponseInterceptor["ResponseTransformInterceptor<br/>(Wrap responses in {data})"]
+    end
+
+    %% Controllers Layer
+    subgraph Controllers["🎮 Controller Layer"]
+        subgraph PublicC["Public Endpoints"]
+            HealthC["HealthController<br/>GET /health<br/>GET /health/database<br/>GET /health/detailed"]
+            AuthC["AuthController<br/>POST /auth/login<br/>POST /auth/refresh"]
+            CustomerAuthC["CustomerAuthController<br/>POST /salon/:slug/auth/register"]
+            CustomerBrandingC["CustomersController<br/>GET /customers/branding/:slug"]
+        end
+
+        subgraph AdminC["Admin Endpoints (Global)"]
+            AdminBranchC["BranchesController<br/>CRUD /branches"]
+            AdminCountryC["CountriesController<br/>CRUD /countries"]
+            AdminProfC["ProfessionalsController<br/>CRUD /professionals"]
+        end
+
+        subgraph CustomerC["Customer-Scoped Endpoints"]
+            CSBranchC["CustomerBranchesController<br/>CRUD /salon/:slug/branches"]
+            CSProfC["CustomerProfessionalsController<br/>CRUD /salon/:slug/professionals"]
+            CSBranchProfC["CustomerBranchProfessionalsController<br/>GET /salon/:slug/branches/:id/professionals"]
+            CustomerContextC["CustomersController<br/>GET /customers/context/:slug<br/>GET /customers/my-customers"]
+        end
+    end
+
+    %% Security Layer
+    subgraph Security["🔐 Security Layer (Guards & Strategies)"]
+        JWTGuard["JwtAuthGuard<br/>(Validates JWT token)"]
+        JWTStrategy["JwtStrategy<br/>(Passport strategy)"]
+        CustomerGuard["CustomerContextGuard<br/>(Resolves & validates customer)<br/>(Injects activeCustomerId)"]
+        RolesGuard["RolesGuard<br/>(ADMIN/STAFF/CLIENT)"]
+        CustomerAccessGuard["CustomerAccessGuard<br/>(Validates user-customer link)"]
+        GlobalAdminGuard["GlobalAdminGuard<br/>(Admin-only operations)"]
+        PublicDecorator["@Public()<br/>(Bypass authentication)"]
+    end
+
+    %% Service Layer
+    subgraph Services["⚙️ Service Layer (Business Logic)"]
+        HealthS["HealthService"]
+        AuthS["AuthService<br/>(JWT generation, validation)<br/>(Password hashing: bcrypt)<br/>(User-Customer linking)"]
+        BranchS["BranchesService<br/>(Admin & customer-scoped ops)<br/>(Soft delete support)"]
+        CountryS["CountriesService"]
+        CustomerS["CustomersService<br/>(Branding management)<br/>(File upload handling)"]
+        ProfS["ProfessionalsService<br/>(Photo uploads)<br/>(Branch association)"]
+        FileS["FileService<br/>(Multer integration)<br/>(File validation)"]
+    end
+
+    %% Data Access Layer
+    subgraph DataAccess["💾 Data Access Layer"]
+        DatabaseService["DatabaseService<br/>(extends PrismaClient)<br/>(Connection pool)<br/>(Health checks)"]
+        PrismaClient["Prisma ORM<br/>(Type-safe queries)<br/>(Migrations)<br/>(Query logging)"]
+    end
+
+    %% Database Layer
+    subgraph Database["🗄️ PostgreSQL Database"]
+        subgraph CoreTables["Core Tables"]
+            User["users<br/>(id: CUID, displayId: Int)<br/>(email, password, role)"]
+            Customer["customers<br/>(id: CUID, displayId: Int)<br/>(urlSlug: unique)<br/>(branding config)"]
+            UserCustomer["user_customers<br/>(junction table)<br/>(userId, customerId)"]
+        end
+
+        subgraph BusinessTables["Business Tables"]
+            Country["countries<br/>(code, name, addressFormat)"]
+            Branch["branches<br/>(id: CUID, displayId: Int)<br/>(customerId, countryId)<br/>(deletedAt: soft delete)"]
+            Professional["professionals<br/>(id: CUID, displayId: Int)<br/>(customerId, documentId)<br/>(photoUrl, isActive)"]
+            ProfBranch["professional_branches<br/>(professionalId, branchId)"]
+            Service["services<br/>(customerId, duration)"]
+            ServicePricing["service_pricing<br/>(serviceId, branchId, price)"]
+            Booking["bookings<br/>(userId, branchId, serviceId)<br/>(professionalId, status)"]
+        end
+    end
+
+    %% Common Infrastructure
+    subgraph Common["🔧 Common Infrastructure"]
+        Decorators["Decorators<br/>@Public, @Roles, @User<br/>@RateLimit, @CustomerBrandingUpload"]
+        Filters["Filters<br/>HttpExceptionFilter"]
+        Interceptors["Interceptors<br/>ResponseTransformInterceptor"]
+        Pipes["Pipes<br/>ValidationPipe"]
+        Utils["Utils<br/>CustomerUrlUtil<br/>(URL parsing & validation)"]
+        Types["Types & Interfaces<br/>AuthenticatedUser<br/>ApiResponse"]
+    end
+
+    %% Configuration
+    subgraph Config["⚙️ Configuration"]
+        ConfigModule["ConfigModule<br/>(Global)"]
+        EnvVars["Environment Variables<br/>DATABASE_URL, JWT_SECRET<br/>JWT_REFRESH_SECRET<br/>SWAGGER_ENABLED"]
+    end
+
+    %% Data Flow Connections
+    Client --> CORS
+    AdminClient --> CORS
+    CORS --> GlobalPrefix
+    GlobalPrefix --> ThrottleG
+    ThrottleG --> HealthC
+    ThrottleG --> AuthC
+    ThrottleG --> CustomerAuthC
+    ThrottleG --> CustomerBrandingC
+    ThrottleG --> AdminBranchC
+    ThrottleG --> AdminCountryC
+    ThrottleG --> AdminProfC
+    ThrottleG --> CSBranchC
+    ThrottleG --> CSProfC
+    ThrottleG --> CSBranchProfC
+    ThrottleG --> CustomerContextC
+
+    %% Public endpoints
+    HealthC --> HealthS
+    AuthC --> PublicDecorator
+    AuthC --> AuthS
+    CustomerAuthC --> PublicDecorator
+    CustomerAuthC --> AuthS
+    CustomerBrandingC --> PublicDecorator
+    CustomerBrandingC --> CustomerS
+
+    %% Admin endpoints with guards
+    AdminBranchC --> JWTGuard
+    AdminBranchC --> RolesGuard
+    AdminBranchC --> BranchS
+    AdminCountryC --> JWTGuard
+    AdminCountryC --> RolesGuard
+    AdminCountryC --> CountryS
+    AdminProfC --> JWTGuard
+    AdminProfC --> GlobalAdminGuard
+    AdminProfC --> ProfS
+
+    %% Customer-scoped endpoints with guards
+    CSBranchC --> JWTGuard
+    CSBranchC --> CustomerGuard
+    CSBranchC --> RolesGuard
+    CSBranchC --> BranchS
+    CSProfC --> JWTGuard
+    CSProfC --> CustomerGuard
+    CSProfC --> RolesGuard
+    CSProfC --> ProfS
+    CSBranchProfC --> JWTGuard
+    CSBranchProfC --> CustomerGuard
+    CSBranchProfC --> ProfS
+    CustomerContextC --> JWTGuard
+    CustomerContextC --> CustomerGuard
+    CustomerContextC --> CustomerS
+
+    %% Guard dependencies
+    JWTGuard --> JWTStrategy
+    JWTStrategy --> AuthS
+    CustomerGuard --> DatabaseService
+    CustomerGuard --> Utils
+
+    %% Service to Data Access
+    HealthS --> DatabaseService
+    AuthS --> DatabaseService
+    BranchS --> DatabaseService
+    CountryS --> DatabaseService
+    CustomerS --> DatabaseService
+    CustomerS --> FileS
+    ProfS --> DatabaseService
+    ProfS --> FileS
+
+    %% Data Access to Database
+    DatabaseService --> PrismaClient
+    PrismaClient --> User
+    PrismaClient --> Customer
+    PrismaClient --> UserCustomer
+    PrismaClient --> Country
+    PrismaClient --> Branch
+    PrismaClient --> Professional
+    PrismaClient --> ProfBranch
+    PrismaClient --> Service
+    PrismaClient --> ServicePricing
+    PrismaClient --> Booking
+
+    %% Database Relationships
+    User -.-> UserCustomer
+    Customer -.-> UserCustomer
+    Customer -.-> Branch
+    Customer -.-> Professional
+    Customer -.-> Service
+    Country -.-> Branch
+    Branch -.-> Professional
+    Branch -.-> ProfBranch
+    Professional -.-> ProfBranch
+    Service -.-> ServicePricing
+    Branch -.-> ServicePricing
+    Service -.-> Booking
+    Branch -.-> Booking
+    Professional -.-> Booking
+    User -.-> Booking
+
+    %% Response Flow
+    HealthS --> ResponseInterceptor
+    AuthS --> ResponseInterceptor
+    BranchS --> ResponseInterceptor
+    CountryS --> ResponseInterceptor
+    CustomerS --> ResponseInterceptor
+    ProfS --> ResponseInterceptor
+    ResponseInterceptor --> Client
+    ResponseInterceptor --> AdminClient
+    ExceptionFilter --> Client
+    ExceptionFilter --> AdminClient
+
+    %% Configuration connections
+    ConfigModule --> EnvVars
+    EnvVars --> DatabaseService
+    EnvVars --> JWTStrategy
+    EnvVars --> Swagger
+
+    %% Styling
+    classDef external fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef security fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef service fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef data fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    classDef controller fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef infrastructure fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+
+    class Client,AdminClient external
+    class JWTGuard,JWTStrategy,CustomerGuard,RolesGuard,CustomerAccessGuard,GlobalAdminGuard,PublicDecorator security
+    class HealthS,AuthS,BranchS,CountryS,CustomerS,ProfS,FileS service
+    class DatabaseService,PrismaClient,User,Customer,UserCustomer,Country,Branch,Professional,ProfBranch,Service,ServicePricing,Booking data
+    class HealthC,AuthC,CustomerAuthC,CustomerBrandingC,AdminBranchC,AdminCountryC,AdminProfC,CSBranchC,CSProfC,CSBranchProfC,CustomerContextC controller
+    class Decorators,Filters,Interceptors,Pipes,Utils,Types,ConfigModule infrastructure
+```
+## Architecture Overview
+
+### 🏗️ Architectural Style
+**Layered Architecture with Multi-Tenancy**
+
+The StyleSync backend implements a clean layered architecture with strict separation of concerns:
+
+1. **Presentation Layer**: NestJS controllers with dual routing strategy
+2. **Business Logic Layer**: Service classes with domain logic
+3. **Data Access Layer**: Prisma ORM with DatabaseService wrapper
+4. **Cross-Cutting Concerns**: Guards, Interceptors, Filters, Pipes
+
+---
+
+### 🔑 Key Architectural Decisions
+
+#### 1. **Dual Controller Pattern**
+Each module has two controller types:
+- **Admin Controllers**: Global operations (e.g., `/api/branches`)
+- **Customer-Scoped Controllers**: Tenant-isolated operations (e.g., `/api/salon/:slug/branches`)
+
+This enables:
+- ✅ Multi-tenant isolation at the routing level
+- ✅ Different authorization rules per context
+- ✅ Clear API surface for different user types
+
+#### 2. **Multi-Tenancy via URL Slugs**
+Customers are isolated using URL-based tenancy:
+```
+/api/salon/{customerSlug}/branches
+/api/salon/{customerSlug}/professionals
+```
+
+**CustomerContextGuard** extracts the slug, validates customer access, and injects `activeCustomerId` into the request user object.
+
+#### 3. **Security Architecture**
+
+**Authentication Flow**:
+```
+JWT Token → JwtAuthGuard → JwtStrategy → Validates user → Attaches to request
+```
+
+**Authorization Layers**:
+1. **JwtAuthGuard**: Validates JWT token presence and validity
+2. **CustomerContextGuard**: Resolves and validates customer context from URL
+3. **RolesGuard**: Checks user role (ADMIN, STAFF, CLIENT)
+4. **CustomerAccessGuard**: Validates user has access to specific customer
+5. **GlobalAdminGuard**: Restricts to global admin operations
+
+#### 4. **Dual ID Strategy**
+All entities use two identifiers:
+- **Primary Key (`id`)**: CUID (non-enumerable, secure, used in URLs)
+- **Display ID (`displayId`)**: Auto-incrementing integer (user-friendly, for support)
+
+Benefits:
+- 🔒 Security: Non-enumerable URLs prevent data scraping
+- 👤 UX: Friendly references like "Booking #12345"
+- 📊 Analytics: Sequential IDs enable growth tracking
+
+#### 5. **Response Wrapping**
+All successful responses (except health checks) are wrapped:
+```json
+{
+  "data": { /* actual response */ }
+}
+```
+
+Implemented via `ResponseTransformInterceptor` for consistency across all endpoints.
+
+#### 6. **Rate Limiting Strategy**
+Two-tier rate limiting:
+- **Default**: 60 requests/minute (global)
+- **Strict**: 10 requests/minute (sensitive endpoints like branding uploads)
+
+Prevents DDoS and abuse on public endpoints.
+
+---
+
+### 📊 Data Flow
+
+#### Typical Authenticated Request Flow:
+```
+1. Client sends HTTP request with JWT
+2. CORS validation
+3. Global prefix applied (/api)
+4. ThrottlerGuard checks rate limits
+5. Controller receives request
+6. JwtAuthGuard validates token
+7. CustomerContextGuard resolves customer (if customer-scoped)
+8. RolesGuard checks user role
+9. ValidationPipe transforms/validates DTO
+10. Service executes business logic
+11. Prisma Client queries PostgreSQL
+12. ResponseTransformInterceptor wraps response
+13. HTTP response sent to client
+```
+
+#### Error Handling Flow:
+```
+Exception thrown anywhere
+  → HttpExceptionFilter catches
+  → Formats as { status, message, errors? }
+  → Returns to client
+```
+
+---
+
+### 🔐 Authentication & Authorization
+
+#### User-Customer Association
+Users can be associated with multiple customers via `user_customers` junction table:
+- Login returns all associated customers
+- Customer-scoped operations require valid association
+- CustomerContextGuard validates access
+
+#### Role-Based Access Control (RBAC)
+Three roles with hierarchical permissions:
+- **CLIENT**: Can view and book
+- **STAFF**: Can manage bookings for their branch
+- **ADMIN**: Full access to customer data
+
+---
+
+### 📦 Module Structure
+
+Each business module follows this structure:
+```
+module-name/
+├── dto/                    # Data Transfer Objects
+├── entities/               # Response entities
+├── module.controller.ts    # HTTP endpoints
+├── module.service.ts       # Business logic
+├── module.module.ts        # NestJS module definition
+└── module.contract.test.ts # API contract tests
+```
+
+**Implemented Modules**:
+- ✅ Health (monitoring)
+- ✅ Auth (authentication)
+- ✅ Countries (address formats)
+- ✅ Customers (multi-tenant branding)
+- ✅ Branches (location management)
+- ✅ Professionals (staff management)
+- 🔄 Services (catalog - pending)
+- 🔄 Bookings (appointments - pending)
+
+---
+
+### 🗄️ Database Design
+
+#### Core Entities:
+- **User**: Authentication and authorization
+- **Customer**: Multi-tenant boundary (urlSlug for routing)
+- **UserCustomer**: Many-to-many user-customer association
+
+#### Business Entities:
+- **Country**: Address format configuration
+- **Branch**: Physical locations (soft delete support via `deletedAt`)
+- **Professional**: Staff members (many-to-many with branches)
+- **Service**: Service catalog (customer-specific)
+- **ServicePricing**: Location-based pricing
+- **Booking**: Appointment system
+
+#### Key Relationships:
+- Customer → Branches (1:N)
+- Customer → Professionals (1:N)
+- Customer → Services (1:N)
+- Professional ←→ Branches (N:M via professional_branches)
+- Service → ServicePricing → Branch (pricing per location)
+
+---
+
+### 🚀 Deployment Architecture
+
+#### Development:
+- Docker Compose for PostgreSQL
+- Hot-reload with `nest start --watch`
+- Swagger at `/api/docs`
+
+#### Production:
+- Build: `npm run build`
+- Start: `npm run start:prod`
+- Environment-based configuration
+- Static file serving for uploads
+
+---
+
+### 🧪 Testing Strategy
+
+**Contract Testing** (Primary):
+- API contract validation in `*.contract.test.ts`
+- Tests frontend-backend compatibility
+- Validates request/response structure
+
+**Test Coverage**:
+- 82 tests across 9 test suites
+- Health, Auth, Countries, Customers, Branches, Professionals
+- Rate limiting tests for DDoS protection
+
+---
+
+### 🔮 Future Modules (Phases 3-4)
+
+**Phase 3 - Service Catalog**:
+- Service management with durations
+- Location-based pricing
+- Service availability
+
+**Phase 4 - Booking System**:
+- Availability calculation
+- Professional scheduling
+- "Any professional" slot aggregation
+- Booking CRUD with status management
+
+---
+
+### 📝 Notes
+
+- All timestamps use PostgreSQL's `TIMESTAMPTZ`
+- File uploads stored in `uploads/` directory
+- Prisma handles connection pooling
+- Query logging enabled in development
+- Soft deletes implemented for branches (deletedAt field)

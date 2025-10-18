@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9f8ce246-72da-41bb-a924-2f586372140c",
+		"_postman_id": "36647425-c1b1-43f4-b470-a325af90db69",
 		"name": "StyleSync API",
 		"description": "Collection for StyleSync API testing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -404,7 +404,7 @@
 					"response": []
 				},
 				{
-					"name": "User Register",
+					"name": "Register User (Acme)",
 					"event": [
 						{
 							"listen": "test",
@@ -417,8 +417,8 @@
 									"    if (json.data.defaultCustomerId) {",
 									"        pm.collectionVariables.set('customerId', json.data.defaultCustomerId);",
 									"    }",
-									"    console.log('Registration successful, tokens saved');",
-									"    console.log('Available customers:', json.data.customers.length);",
+									"    console.log('Registration successful for customer:', json.data.defaultCustomerId);",
+									"    console.log('User linked to customers:', json.data.customers.length);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -435,18 +435,80 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"multitenant@test.com\",\n  \"password\": \"TestPassword123!\",\n  \"name\": \"Multi Tenant User\",\n  \"phone\": \"+1234567890\"\n}"
+							"raw": "{\n  \"email\": \"newclient@test.com\",\n  \"password\": \"TestPassword123!\",\n  \"name\": \"New Client\",\n  \"phone\": \"(11) 99999-9999\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/auth/register",
+							"raw": "{{baseUrl}}/salon/acme/auth/register",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"salon",
+								"acme",
 								"auth",
 								"register"
 							]
+						},
+						"description": "Customer-scoped registration for Acme. Creates a new user or links an existing user to the Acme customer."
+					},
+					"response": []
+				},
+				{
+					"name": "Register User (Elite Beauty)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const json = pm.response.json();",
+									"    pm.collectionVariables.set('authToken', json.data.token);",
+									"    pm.collectionVariables.set('refreshToken', json.data.refreshToken);",
+									"    console.log('Registration successful for customer:', json.data.defaultCustomerId);",
+									"    console.log('User now linked to customers:', json.data.customers.map(c => c.urlSlug).join(', '));",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
 						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"newclient@test.com\",\n  \"password\": \"ignored-for-existing-users\",\n  \"name\": \"Updated Client Name\",\n  \"phone\": \"(11) 88888-8888\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/salon/elite-beauty/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"salon",
+								"elite-beauty",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Customer-scoped registration for Elite Cuts. If the email already exists, this links the user to Elite Cuts and updates their profile."
 					},
 					"response": []
 				},

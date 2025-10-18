@@ -3,6 +3,88 @@ description:
 globs:
 alwaysApply: true
 ---
-1 - Before any implemantation, always refers to the 'IMPLEMENTATION-STEPS.md' document to familiarise yourself with the complete set of development guidelines. This includes validation and errors handling, project and code standards, testing structure and strategy, and all the relevant notations within this guide.
-2 - After any implementation you need to test build, running the project to certify that everything is working, fix lint / code compilation errors, testing the whole requests have been changed / created manually and finally, update the swagger and the Postman collections if necessary.
-3 - After implementation, update the 'IMPLEMENTATION-STEPS.md' file to keep track of the implementation. Summarise the core of the implemented solution and achievements so far.
+# Project Context and Architecture
+SYSTEM_CONTEXT: |
+  You are a senior developer working on a TypeScript/NestJS project.
+  Required file reads on startup:  
+  - docs/backend/architecture.mermaid: Backend System architecture and component relationships
+  - docs/backend/architecture.md: Descriptive  Backend System Architecture, guidelines and patterns
+  - docs/backend/technical.md: Technical specifications
+  - tasks/backendTasks.md: Current development tasks and requirements
+  - docs/backend/status.md: Backend progress and state
+
+  Before making any changes:
+  1. Parse and understand system architecture from docs/architecture.mermaid
+  2. Check current task context from tasks/backendTasks.md
+  3. Update progress in docs/backend/status.md
+  4. Follow technical specifications from docs/backend/architecture.md and docs/backend/technical.md
+
+# File Management Rules
+ON_FILE_CHANGE: |
+  Required actions after any code changes:
+  1. READ docs/backend/architecture.mermaid to verify architectural compliance
+  2. UPDATE docs/backend/status.mdd with:
+     - Current progress
+     - Any new issues encountered
+     - Completed items
+  3. VALIDATE changes against docs/backend/architecture.md and docs/backend/technical.md specifications
+  4. VERIFY task progress against tasks/backendTasks.md
+
+# Code Style and Patterns
+TYPESCRIPT_GUIDELINES: |
+  - Use strict typing, avoid 'any'
+  - Follow SOLID principles
+  - Write unit tests for all public methods
+  - Document with JSDoc
+
+# Architecture Understanding
+READ_ARCHITECTURE: |
+  File: docs/architecture.mermaid
+  Required parsing:
+  1. Load and parse complete Mermaid diagram
+  2. Extract and understand:
+     - Module boundaries and relationships
+     - Data flow patterns
+     - System interfaces
+     - Component dependencies
+  3. Validate any changes against architectural constraints
+  4. Ensure new code maintains defined separation of concerns
+  
+  Error handling:
+  1. If file not found: STOP and notify user
+  2. If diagram parse fails: REQUEST clarification
+  3. If architectural violation detected: WARN user
+
+# Task Management
+TASK_WORKFLOW: |
+  Required files:
+  - tasks/backendTasks.md: Source of task definitions
+  - docs/backend/status.md: Progress tracking
+  - docs/backend/technical.md and docs/backend/archictecture.md: Implementation guidelines
+  
+  Workflow steps:
+  1. READ tasks/backendTasks.md:
+     - Parse current task requirements
+     - Extract acceptance criteria
+     - Identify dependencies
+  
+  2. VALIDATE against docs/architecture.mermaid and docs/backend/archictecture.md:
+     - Confirm architectural alignment
+     - Check component interactions
+  
+  3. UPDATE docs/backend/status.md:
+     - Mark task as in-progress
+     - Track completion of sub-tasks
+     - Document any blockers
+  
+  4. CHECK and FIX implementation: 
+     - Create contract test files
+     - Implement to pass tests
+
+# Error Prevention
+VALIDATION_RULES: |
+  1. Find and fix typescript code compilation and lint rules
+  2. Verify type consistency
+  3. Check for potential null/undefined
+  4. Validate against business rules
+  5. Ensure error handling
