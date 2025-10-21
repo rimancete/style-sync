@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export class RegisterDto {
   @ApiProperty({ example: 'newuser@example.com' })
@@ -19,4 +25,14 @@ export class RegisterDto {
   @IsOptional()
   @IsString()
   phone?: string;
+
+  @ApiProperty({
+    example: false,
+    required: false,
+    description:
+      'Confirms linking an existing user account to this customer. Required when registering with an email that already exists.',
+  })
+  @IsOptional()
+  @IsBoolean()
+  confirmLink?: boolean;
 }

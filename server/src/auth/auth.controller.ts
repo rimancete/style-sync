@@ -17,6 +17,7 @@ import {
   ApiParam,
   ApiBadRequestResponse,
   ApiConflictResponse,
+  ApiResponse,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -69,7 +70,9 @@ export class CustomerAuthController {
   @ApiOperation({
     summary: 'Customer-scoped user registration',
     description:
-      'Register a new user or link an existing user to a customer. If the user already exists with the provided email, they will be linked to this customer and their profile data (name, phone) will be updated.',
+      'Register a new user or link an existing user to a customer. This uses a two-step flow for existing users: ' +
+      '1) First attempt returns 428 if user exists, prompting confirmation. ' +
+      '2) Second attempt with confirmLink=true links the user and updates their profile data (name, phone).',
   })
   @ApiParam({
     name: 'customerSlug',
@@ -89,6 +92,22 @@ export class CustomerAuthController {
         message: {
           type: 'string',
           example: 'Customer not found or inactive',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 428,
+    description:
+      'User already exists - confirmation required to link account (send confirmLink=true to proceed)',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'number', example: 428 },
+        message: {
+          type: 'string',
+          example:
+            'User already exists. Please confirm to link this account to the customer.',
         },
       },
     },

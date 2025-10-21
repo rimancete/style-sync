@@ -2,15 +2,15 @@
 
 ## Phase 2 (Core Modules)
 ### AUT-002: Implement Customer-Linked Registration
-Status: In Progress
+Status: Completed
 Priority: High
 Dependencies: None
 
 #### Requirements
 - [x] **Customer-Linked Registration**: Multi-tenant user registration system
-- [ ] **Two Steps Customer Registration Flow**: If the user exists we need to return a specif status code like 428. The frontend will ask if the user wants to register his user to this customer and then the frontend will try to register again and the backend will accept it.
+- [x] **Two Steps Customer Registration Flow**: If the user exists we need to return a specif status code like 428. The frontend will ask if the user wants to register his user to this customer and then the frontend will try to register again and the backend will accept it.
 Another improvement is to update the user name and phone when this user is linked to the selected customer.
-- [ ] **Tests**: Contract tests for auth endpoints (base implemented but it will be updated)
+- [x] **Tests**: Contract tests for auth endpoints (base implemented but it will be updated)
 
 ## Phase 3 (Business Logic)
 ### SER-001: Implement Service Module

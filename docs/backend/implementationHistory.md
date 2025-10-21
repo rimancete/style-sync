@@ -77,7 +77,7 @@ npm install --save-dev @types/bcrypt @types/passport-jwt
 - [x] **Customer-Linked Registration**: Multi-tenant user registration system
 - [x] **Tests**: Contract tests for auth endpoints (following Health module pattern)
 
-##### ✅ Customer-Linked Registration Implementation
+##### ✅ Customer-Linked Registration Implementation (Two-Step Flow)
 
 **Registration Flow**:
 
@@ -86,10 +86,14 @@ POST /api/salon/acme/auth/register
 ├─ Validate customer 'acme' exists and is active
 │  └─ 400 if invalid/inactive
 ├─ Check if user with email exists
-│  ├─ No → Create new user + Link to customer → Return tokens
+│  ├─ No → Create new user + Link to customer → Return tokens (201)
 │  └─ Yes → Already linked to this customer?
 │     ├─ Yes → 409 "Already registered with this customer"
-│     └─ No → Update user data + Link to customer → Return tokens
+│     └─ No → Two-Step Flow:
+│        ├─ Step 1: confirmLink=false (or missing)
+│        │  └─ 428 "User already exists. Please confirm to link..."
+│        └─ Step 2: confirmLink=true
+│           └─ Update user data (name, phone) + Link to customer → Return tokens (201)
 ```
 
 **API Endpoint**:
@@ -98,7 +102,7 @@ POST /api/salon/acme/auth/register
 POST /api/salon/:customerSlug/auth/register
 Content-Type: application/json
 
-Request Body:
+Request Body (Step 1 - New User or Initial Attempt):
 {
   "email": "user@example.com",
   "password": "securePassword123",
@@ -106,7 +110,16 @@ Request Body:
   "phone": "(11) 99999-9999"
 }
 
-Response (201):
+Request Body (Step 2 - Confirm Link for Existing User):
+{
+  "email": "user@example.com",
+  "password": "ignored",  // Password ignored for existing users
+  "name": "John Doe Updated",
+  "phone": "(11) 88888-8888",
+  "confirmLink": true  // Required to proceed with linking
+}
+
+Response (201 - Success):
 {
   "data": {
     "token": "eyJhbGciOiJIUzI1...",
@@ -126,33 +139,102 @@ Response (201):
     "defaultCustomerId": "customer_acme"
   }
 }
+
+Response (428 - Confirmation Required):
+{
+  "status": 428,
+  "message": "User already exists. Please confirm to link this account to the customer."
+}
 ```
 
 **Business Logic**:
-- First registration: Creates user account + links to customer
-- Subsequent registration: Links existing user to new customer + updates profile
+- **New User Registration**: Creates user account + links to customer → Returns tokens (201)
+- **Existing User Linking (Two-Step Flow)**:
+  1. **First Attempt** (without confirmLink): Returns HTTP 428 Precondition Required
+  2. **Second Attempt** (with confirmLink=true): Links existing user to new customer + updates profile → Returns tokens (201)
 - Password is only used during initial user creation (ignored for existing users)
-- User profile (name, phone) updated with latest registration data
+- User profile (name, phone) updated with latest registration data when linking
 - Registration customer becomes the defaultCustomerId in JWT
+- **UX Benefit**: Frontend can prompt user explicitly before linking accounts across customers
 
 **Error Handling**:
 - `400 Bad Request`: Customer not found or inactive
+- `428 Precondition Required`: User exists, confirmation required to link (new)
 - `409 Conflict`: User already registered with this customer
 
 **Testing Coverage**:
 - ✅ New user registration with customer link
-- ✅ Existing user linking to additional customer
+- ✅ Existing user returns HTTP 428 without confirmLink
+- ✅ Existing user linking to additional customer with confirmLink=true
+- ✅ User profile (name, phone) updated when linking with confirmation
 - ✅ Invalid customer slug validation
 - ✅ Inactive customer rejection
 - ✅ Duplicate registration prevention
 - ✅ Login returns all linked customers
 - ✅ JWT includes all customerIds
+- ✅ All 87 tests passing (9 auth contract tests)
+
+**Implementation Details**:
+
+1. **DTO Enhancement** (`server/src/auth/dto/register.dto.ts`):
+   ```typescript
+   @ApiProperty({
+     example: false,
+     required: false,
+     description: 'Confirms linking an existing user account to this customer...',
+   })
+   @IsOptional()
+   @IsBoolean()
+   confirmLink?: boolean;
+   ```
+
+2. **Custom Exception** (`server/src/common/exceptions/precondition-required.exception.ts`):
+   ```typescript
+   export class PreconditionRequiredException extends HttpException {
+     constructor(message: string = 'Precondition Required') {
+       super(message, 428); // HTTP 428 Precondition Required
+     }
+   }
+   ```
+
+3. **Service Logic** (`server/src/auth/auth.service.ts`):
+   ```typescript
+   if (existingUser) {
+     // Check if already linked
+     if (existingLink) {
+       throw new ConflictException('Already registered with this customer');
+     }
+     
+     // Two-step flow: require confirmation
+     if (!registerDto.confirmLink) {
+       throw new PreconditionRequiredException(
+         'User already exists. Please confirm to link this account to the customer.',
+       );
+     }
+     
+     // Proceed with linking and profile update
+     user = await this.db.user.update(...);
+     await this.db.userCustomer.create(...);
+   }
+   ```
+
+4. **API Documentation** (`server/src/auth/auth.controller.ts`):
+   - Added `@ApiResponse` decorator for HTTP 428
+   - Updated operation description to explain two-step flow
+   - Enhanced examples and error scenarios
+
+5. **Contract Tests** (`server/src/auth/auth.contract.test.ts`):
+   - Test for HTTP 428 response without confirmLink
+   - Test for successful linking with confirmLink=true
+   - Test for profile updates during linking
+   - All edge cases covered
 
 **Files Modified**:
-- `server/src/auth/auth.service.ts` - Added `registerWithCustomer()` method
-- `server/src/auth/auth.controller.ts` - Added `CustomerAuthController` class
-- `server/src/auth/auth.module.ts` - Registered new controller
-- `server/src/auth/auth.contract.test.ts` - Added comprehensive contract tests (8 tests covering all scenarios)
+- `server/src/auth/dto/register.dto.ts` - Added confirmLink field
+- `server/src/common/exceptions/precondition-required.exception.ts` - Created custom exception
+- `server/src/auth/auth.service.ts` - Implemented two-step flow logic
+- `server/src/auth/auth.controller.ts` - Updated API documentation
+- `server/src/auth/auth.contract.test.ts` - Enhanced test coverage (9 tests)
 
 #### Step 2.4: Customers Module
 

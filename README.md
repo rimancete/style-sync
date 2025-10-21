@@ -33,7 +33,7 @@ style-sync/
 npm run install:all
 
 # 2. Set up development environment
-# See docs/backend/technical.md for detailed backend instructions
+# See docs/backend/setup.md for detailed backend instructions
 # Frontend side will have its detailed instructions as well.
 
 # 3. Start development servers

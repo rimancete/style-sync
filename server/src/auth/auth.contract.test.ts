@@ -178,7 +178,7 @@ describe('Auth API Contracts', () => {
       });
     });
 
-    it('POST /salon/:customerSlug/auth/register should link existing user to new customer', async () => {
+    it('POST /salon/:customerSlug/auth/register should return 428 when trying to link existing user without confirmation', async () => {
       // First registration with acme
       await request(app.getHttpServer() as Parameters<typeof request>[0])
         .post('/salon/acme/auth/register')
@@ -190,7 +190,7 @@ describe('Auth API Contracts', () => {
         })
         .expect(201);
 
-      // Second registration with elite-cuts (same email, different customer)
+      // Second registration with elite-cuts without confirmLink (same email, different customer)
       const res = await request(
         app.getHttpServer() as Parameters<typeof request>[0],
       )
@@ -200,6 +200,39 @@ describe('Auth API Contracts', () => {
           password: 'ignored', // Password ignored for existing users
           name: 'Updated Name',
           phone: '(11) 77777-7777',
+        })
+        .expect(428);
+
+      expect(res.body).toEqual({
+        status: 428,
+        message:
+          'User already exists. Please confirm to link this account to the customer.',
+      });
+    });
+
+    it('POST /salon/:customerSlug/auth/register should link existing user to new customer with confirmLink=true', async () => {
+      // First registration with acme
+      await request(app.getHttpServer() as Parameters<typeof request>[0])
+        .post('/salon/acme/auth/register')
+        .send({
+          email: 'confirmeduser@test.com',
+          password: '123456',
+          name: 'Confirmed User',
+          phone: '(11) 88888-8888',
+        })
+        .expect(201);
+
+      // Second registration with elite-cuts with confirmLink=true (same email, different customer)
+      const res = await request(
+        app.getHttpServer() as Parameters<typeof request>[0],
+      )
+        .post('/salon/elite-cuts/auth/register')
+        .send({
+          email: 'confirmeduser@test.com',
+          password: 'ignored', // Password ignored for existing users
+          name: 'Updated Name',
+          phone: '(11) 77777-7777',
+          confirmLink: true,
         })
         .expect(201);
 

@@ -13,6 +13,7 @@ import {
   AuthResponseData,
   CustomerSummary,
 } from '../common/interfaces/api-response.interface';
+import { PreconditionRequiredException } from '../common/exceptions/precondition-required.exception';
 
 @Injectable()
 export class AuthService {
@@ -67,6 +68,13 @@ export class AuthService {
 
       if (existingLink) {
         throw new ConflictException('Already registered with this customer');
+      }
+
+      // Two-step registration flow: require confirmation to link existing user
+      if (!registerDto.confirmLink) {
+        throw new PreconditionRequiredException(
+          'User already exists. Please confirm to link this account to the customer.',
+        );
       }
 
       // Update user data (name and phone) and link to customer

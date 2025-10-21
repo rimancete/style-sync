@@ -11,8 +11,11 @@
 
 ### Phase 2 (Core Modules) Completion Checklist
 - [X] Customer-scoped
-- [ ] Authentication module (JWT)
-    - [ ] Customer-Linked Registration
+- [X] Authentication module (JWT)
+    - [X] Customer-Linked Registration
+    - [X] Two-step registration flow with HTTP 428
+    - [X] Login with customer associations
+    - [X] Refresh token support
 - [X] Branch management
 
 ### Phase 3 (Business Logic)

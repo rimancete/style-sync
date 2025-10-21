@@ -60,6 +60,7 @@ TASK_WORKFLOW: |
   - tasks/backendTasks.md: Source of task definitions
   - docs/backend/status.md: Progress tracking
   - docs/backend/technical.md: Implementation guidelines
+  - docs/backend/implementationHistory.md: Implementation history
   
   Workflow steps:
   1. READ tasks/backendTasks.md:
@@ -79,6 +80,9 @@ TASK_WORKFLOW: |
   4. CHECK and FIX implementation: 
      - Create contract test files
      - Implement to pass tests
+  
+  5. UPDATE docs/backend/implementationHistory.md: 
+     - Document implementation
 
 # Error Prevention
 VALIDATION_RULES: |
