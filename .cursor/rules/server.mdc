@@ -1,7 +1,6 @@
 ---
-description:
-globs:
-alwaysApply: true
+globs: server/**/*
+alwaysApply: false
 ---
 # Project Context and Architecture
 SYSTEM_CONTEXT: |
@@ -17,7 +16,7 @@ SYSTEM_CONTEXT: |
   1. Parse and understand system architecture from docs/architecture.mermaid
   2. Check current task context from tasks/backendTasks.md
   3. Update progress in docs/backend/status.md
-  4. Follow technical specifications from docs/backend/architecture.md and docs/backend/technical.md
+  4. Follow technical specifications from docs/backend/technical.md
 
 # File Management Rules
 ON_FILE_CHANGE: |
@@ -27,7 +26,7 @@ ON_FILE_CHANGE: |
      - Current progress
      - Any new issues encountered
      - Completed items
-  3. VALIDATE changes against docs/backend/architecture.md and docs/backend/technical.md specifications
+  3. VALIDATE changes against docs/backend/technical.md specifications
   4. VERIFY task progress against tasks/backendTasks.md
 
 # Code Style and Patterns
@@ -60,7 +59,7 @@ TASK_WORKFLOW: |
   Required files:
   - tasks/backendTasks.md: Source of task definitions
   - docs/backend/status.md: Progress tracking
-  - docs/backend/technical.md and docs/backend/archictecture.md: Implementation guidelines
+  - docs/backend/technical.md: Implementation guidelines
   
   Workflow steps:
   1. READ tasks/backendTasks.md:
@@ -68,7 +67,7 @@ TASK_WORKFLOW: |
      - Extract acceptance criteria
      - Identify dependencies
   
-  2. VALIDATE against docs/architecture.mermaid and docs/backend/archictecture.md:
+  2. VALIDATE against docs/architecture.mermaid:
      - Confirm architectural alignment
      - Check component interactions
   

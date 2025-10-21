@@ -33,13 +33,14 @@ style-sync/
 npm run install:all
 
 # 2. Set up development environment
-# See docs/SETUP.md for detailed instructions
+# See docs/backend/technical.md for detailed backend instructions
+# Frontend side will have its detailed instructions as well.
 
 # 3. Start development servers
 npm run start:dev
 ```
 
-**📚 For complete setup instructions, see [`docs/SETUP.md`](./docs/SETUP.md)**
+**📚 For project architecture overview, see [`docs/projectArchitecture.md`](./docs/projectArchitecture.md)**
 
 Access during development:
 - Frontend: http://localhost:3000
@@ -62,7 +63,7 @@ Access during development:
 - Booking flow UI: service selection → availability → calendar → confirmation
 - Client portal with authentication placeholder
 - Admin dashboard pages (occupancy, revenue, clients, marketing)
-- Integrate reminders (email/SMS) and Stripe for payments
+- Integrate reminders (email/SMS/WhatsApp) and Stripe for payments
 
 ---
 Made with ❤️ for salon owners, stylists, and clients.
