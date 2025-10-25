@@ -818,6 +818,209 @@ CustomerUrlService.navigateToCustomer('elite-cuts', '/services');
 - ✅ **Comprehensive Testing**: Contract tests ensure API reliability
 - ✅ **Documentation Complete**: Swagger docs and Postman collection updated
 
+#### Step 3.2: Services Module Planning (October 25, 2025)
+
+**Implementation Date**: October 25, 2025  
+**Status**: Planning Complete - Ready for Implementation  
+**Estimated Implementation Time**: 17 hours (2-3 days)
+
+#### Planning Session Design Decisions
+
+**1. Soft Delete Strategy: `isActive` Boolean** ✅
+
+**Decision**: Add `isActive` boolean field to Service model (matching Professional pattern)
+
+**Rationale**: 
+- Inconsistency identified: Branch uses `deletedAt`, Professional uses `isActive`, Service had neither
+- Chose `isActive` to match Professional model since services are "resources" like professionals
+- Simpler frontend filtering and state management
+- Developer familiarity through consistency
+
+**2. Service Deactivation Business Rule** ✅
+
+**Decision**: Prevent deactivation if service has ANY bookings (past or future)
+
+**Rationale**:
+- Preserves booking history integrity
+- Prevents data anomalies (orphaned booking references)
+- Clear, simple business rule: "Cannot remove services with booking history"
+- Aligns with Professional deletion behavior
+- Returns HTTP 409 Conflict with clear error message
+
+**3. Simplified Pricing Model (v1)** ✅
+
+**Decision**: Keep one price per service-branch combination
+
+**Accepted Limitations for v1**:
+- ❌ No professional-level pricing (junior vs senior rates)
+- ❌ No time-based pricing (peak hours, weekend rates)
+- ❌ No promotional pricing periods
+
+**Benefits**:
+- Simple to implement and understand
+- Clear business rule enforcement via `@@unique([serviceId, branchId])`
+- Easy frontend caching and display
+- Aligns with "simplified business logic" principle
+
+**Future Enhancement Path**: Documented `ServicePricingRule` table with conditional pricing
+
+**4. Service-Professional Relationship (v1)** ✅
+
+**Decision**: No explicit relationship - all professionals can perform all services at their branches
+
+**Rationale**:
+- Simplifies availability calculation in Phase 4 (Booking Module)
+- Matches simplified barbershop business model
+- Fewer database queries for booking availability
+- Easier scheduling logic
+
+**Documented for Future Enhancement**: `ServiceProfessional` junction table for skill restrictions, certifications, and specializations
+
+**5. Service Ordering Strategy** ✅
+
+**Decision**: Dual sorting - displayId (primary) + name (secondary)
+
+**Implementation**:
+```typescript
+orderBy: [
+  { displayId: 'asc' },  // Creation order
+  { name: 'asc' },       // Alphabetical fallback
+]
+```
+
+**Benefits**:
+- Shows service introduction timeline
+- Alphabetical fallback for readability
+- No additional `displayOrder` field needed for v1
+- Deterministic sorting for UI consistency
+
+**Future Enhancement**: Add explicit `displayOrder` field for custom drag-and-drop menu arrangement
+
+#### Documentation Created
+
+1. **SERVICE_MODULE_IMPLEMENTATION_PLAN.md** (Comprehensive 500+ line plan)
+   - Database schema changes
+   - 14 API endpoint specifications
+   - DTO and Entity class definitions
+   - Service layer method signatures
+   - Business validation rules
+   - 40+ contract test specifications
+   - Implementation phases with time estimates
+   - Future enhancement documentation
+
+2. **SERVICE_MODULE_QUICKREF.md** (Quick reference guide)
+   - Design decisions summary table
+   - API endpoints overview
+   - Authentication matrix
+   - Implementation checklist
+   - Testing strategy overview
+   - Critical validation rules
+
+3. **Updated Task Tracking**
+   - `tasks/backendTasks.md` - Detailed implementation phases
+   - `docs/backend/status.md` - Progress tracking
+   - Created 10 TODO items for implementation tracking
+
+#### API Endpoints Designed (14 total)
+
+**Admin (Global) - 5 endpoints**:
+- `GET /api/services` - List all services (cross-customer)
+- `POST /api/services` - Create service
+- `GET /api/services/:id` - Get service
+- `PATCH /api/services/:id` - Update service
+- `DELETE /api/services/:id` - Deactivate service
+
+**Customer-Scoped - 5 endpoints**:
+- `GET /api/salon/:slug/services` - List customer services
+- `POST /api/salon/:slug/services` - Create customer service
+- `GET /api/salon/:slug/services/:id` - Get customer service
+- `PATCH /api/salon/:slug/services/:id` - Update customer service
+- `DELETE /api/salon/:slug/services/:id` - Deactivate customer service
+
+**Branch + Pricing - 4 endpoints**:
+- `GET /api/salon/:slug/branches/:branchId/services` - Services with pricing
+- `POST /api/salon/:slug/services/:serviceId/pricing` - Set/update pricing
+- `GET /api/salon/:slug/services/:serviceId/pricing/:branchId` - Get pricing
+- `DELETE /api/salon/:slug/services/:serviceId/pricing/:branchId` - Remove pricing
+
+#### Implementation Structure
+
+**Files to Create**:
+- 8 DTO files (create, update, response DTOs for services and pricing)
+- 2 Entity classes (service, service-pricing)
+- 3 Core files (service, controller, module)
+- 1 Test file (40+ contract tests)
+
+**Key Business Validations**:
+- Service name: 2-100 characters, unique per customer
+- Duration: 5-480 minutes (8 hours max)
+- Price: 0.01-9999.99 (2 decimals)
+- Deactivation: Prevented if bookings exist
+- Pricing: Branch must belong to same customer as service
+
+#### Testing Strategy
+
+**Target**: 40+ contract tests
+
+**Test Categories**:
+1. Authentication & Authorization (8 tests)
+2. Service CRUD Operations (12 tests)
+3. Pricing Management (10 tests)
+4. Branch Services Queries (5 tests)
+5. Validation & Edge Cases (10+ tests)
+
+**Test Approach**:
+- Deterministic test data (no random generation)
+- Minimal fixtures per scenario
+- Transaction rollback for cleanup
+- Following Professional module test pattern
+
+#### Success Criteria Defined
+
+- ✅ All 40+ contract tests passing
+- ✅ Swagger documentation complete with examples
+- ✅ Services can be created and priced per branch
+- ✅ Deactivation prevented when bookings exist
+- ✅ Customer-scoped operations properly isolated
+- ✅ Role-based access control working (ADMIN vs CLIENT)
+- ✅ Code quality checks passing
+- ✅ Postman collection updated
+
+#### Future Enhancements Documented
+
+1. **ServiceProfessional** junction table - skill restrictions and certifications
+2. **ServiceCategory** model - grouping and organization
+3. **ServicePricingRule** model - conditional pricing (time, professional level, promotions)
+4. **displayOrder** field - custom service menu arrangement
+5. **Availability schedules** - time/day restrictions per service
+
+#### Architecture Alignment
+
+**Follows Established Patterns**:
+- ✅ Dual Controller Pattern (Admin + Customer-Scoped)
+- ✅ Multi-Tenancy via URL Slugs
+- ✅ Dual ID Strategy (CUID + displayId)
+- ✅ Response Wrapping via Interceptor
+- ✅ Guard Composition (JWT + CustomerContext + Roles)
+- ✅ Repository Pattern with Prisma
+- ✅ DTO Transformation via Entity Classes
+
+#### Next Steps
+
+**Implementation Order**:
+1. Database migration (add `isActive` field)
+2. Create DTOs and Entity classes
+3. Implement service layer with business validations
+4. Create controller with all 14 endpoints
+5. Add Swagger documentation
+6. Write 40+ contract tests
+7. Update Postman collection
+8. Final documentation updates
+
+**Estimated Timeline**: 17 hours over 2-3 days
+
+---
+
 ### Phase 4: Advanced Features (Week 4)
 
 #### Step 4.2: API Documentation

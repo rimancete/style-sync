@@ -20,7 +20,13 @@
 
 ### Phase 3 (Business Logic)
 - [X] Professional management
-- [ ] Service catalog
+- [~] Service catalog (Planning Complete - Implementation In Progress)
+  - [x] Design decisions finalized
+  - [x] Implementation plan created (17-hour estimate)
+  - [ ] Database migration (isActive field)
+  - [ ] Service CRUD implementation
+  - [ ] Pricing management implementation
+  - [ ] Contract testing (40+ tests)
 - [ ] Booking system
 
 ### Phase 4 (Advanced Business Features)

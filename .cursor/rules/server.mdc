@@ -22,7 +22,7 @@ SYSTEM_CONTEXT: |
 ON_FILE_CHANGE: |
   Required actions after any code changes:
   1. READ docs/backend/architecture.mermaid to verify architectural compliance
-  2. UPDATE docs/backend/status.mdd with:
+  2. UPDATE docs/backend/status.md with:
      - Current progress
      - Any new issues encountered
      - Completed items
