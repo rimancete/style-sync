@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "36647425-c1b1-43f4-b470-a325af90db69",
+		"_postman_id": "90ad0267-cc73-4195-b32a-c0bb40226447",
 		"name": "StyleSync API",
 		"description": "Collection for StyleSync API testing",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -3211,6 +3211,1147 @@
 				}
 			],
 			"description": "Complete professional management with admin, customer, and branch-specific operations"
+		},
+		{
+			"name": "Services Management",
+			"item": [
+				{
+					"name": "Services - Admin",
+					"item": [
+						{
+							"name": "List All Services",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/services?page=1&limit=500&isActive=true",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"services"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "Page number"
+										},
+										{
+											"key": "limit",
+											"value": "500",
+											"description": "Items per page"
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"description": "Filter by active status"
+										}
+									]
+								},
+								"description": "Retrieves all services across all customers. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can access this endpoint."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/services?page=1&limit=500",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "1"
+												},
+												{
+													"key": "limit",
+													"value": "500"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"services\": [\n      {\n        \"id\": \"service-id\",\n        \"displayId\": 1,\n        \"name\": \"Haircut\",\n        \"description\": \"Classic men's haircut\",\n        \"duration\": 30,\n        \"isActive\": true,\n        \"customerId\": \"customer-id\",\n        \"customerName\": \"Acme Barbershop\",\n        \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n        \"updatedAt\": \"2025-10-25T10:00:00.000Z\"\n      }\n    ],\n    \"total\": 1,\n    \"page\": 1,\n    \"limit\": 500\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Create Service",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const json = pm.response.json();",
+											"    pm.collectionVariables.set('serviceId', json.data.id);",
+											"    console.log('Service created, ID saved:', json.data.id);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Premium Haircut\",\n  \"description\": \"Premium men's haircut with styling consultation\",\n  \"duration\": 45,\n  \"customerId\": \"{{customerId}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/services",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"services"
+									]
+								},
+								"description": "Creates a new service for a specific customer. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can create services."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Premium Haircut\",\n  \"description\": \"Premium men's haircut with styling consultation\",\n  \"duration\": 45,\n  \"customerId\": \"customer-id\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/services",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"service-new-id\",\n    \"displayId\": 5,\n    \"name\": \"Premium Haircut\",\n    \"description\": \"Premium men's haircut with styling consultation\",\n    \"duration\": 45,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"customerName\": \"Acme Barbershop\",\n    \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n    \"updatedAt\": \"2025-10-25T10:00:00.000Z\"\n  }\n}"
+								},
+								{
+									"name": "Conflict Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Haircut\",\n  \"duration\": 30,\n  \"customerId\": \"customer-id\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/services",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services"
+											]
+										}
+									},
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": 409,\n  \"message\": \"Service with name 'Haircut' already exists for this customer\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Service by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/services/{{serviceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"services",
+										"{{serviceId}}"
+									]
+								},
+								"description": "Retrieves detailed information about a specific service by its ID. ⚠️ ADMIN ROLE REQUIRED ⚠️"
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/services/service-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services",
+												"service-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"service-id\",\n    \"displayId\": 1,\n    \"name\": \"Haircut\",\n    \"description\": \"Classic men's haircut\",\n    \"duration\": 30,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"customerName\": \"Acme Barbershop\",\n    \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n    \"updatedAt\": \"2025-10-25T10:00:00.000Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Service",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Haircut - Updated\",\n  \"description\": \"Updated description\",\n  \"duration\": 80\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/services/{{serviceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"services",
+										"{{serviceId}}"
+									]
+								},
+								"description": "Updates service information. ⚠️ ADMIN ROLE REQUIRED ⚠️"
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Haircut - Updated\",\n  \"duration\": 40\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/services/service-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services",
+												"service-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"service-id\",\n    \"displayId\": 1,\n    \"name\": \"Haircut - Updated\",\n    \"description\": \"Classic men's haircut\",\n    \"duration\": 40,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"customerName\": \"Acme Barbershop\",\n    \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n    \"updatedAt\": \"2025-10-25T11:00:00.000Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Deactivate Service",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/services/{{serviceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"services",
+										"{{serviceId}}"
+									]
+								},
+								"description": "Deactivates a service (soft delete). ⚠️ ADMIN ROLE REQUIRED ⚠️ Cannot deactivate if bookings exist."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/services/service-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services",
+												"service-id"
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Conflict Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/services/service-with-bookings",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"services",
+												"service-with-bookings"
+											]
+										}
+									},
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": 409,\n  \"message\": \"Cannot deactivate service with existing bookings\"\n}"
+								}
+							]
+						}
+					],
+					"description": "Admin-only service management endpoints"
+				},
+				{
+					"name": "Services - Customer",
+					"item": [
+						{
+							"name": "List Customer Services",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/services",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"services"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "Page number",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "500",
+											"description": "Items per page",
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true",
+											"description": "Filter by active status (default: true)",
+											"disabled": true
+										},
+										{
+											"key": "branchId",
+											"value": "cmh68a18h0005gtspf4nquupm",
+											"description": "Include pricing for specific branch",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Retrieves all services for the current customer context. Can optionally include pricing for a specific branch."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/services",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"services"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"services\": [\n      {\n        \"id\": \"service-id\",\n        \"displayId\": 1,\n        \"name\": \"Haircut\",\n        \"description\": \"Classic men's haircut\",\n        \"duration\": 30,\n        \"isActive\": true,\n        \"customerId\": \"customer-id\",\n        \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n        \"updatedAt\": \"2025-10-25T10:00:00.000Z\"\n      }\n    ],\n    \"total\": 1,\n    \"page\": 1,\n    \"limit\": 500\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Create Customer Service",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const json = pm.response.json();",
+											"    pm.collectionVariables.set('serviceId', json.data.id);",
+											"    console.log('Customer service created, ID saved:', json.data.id);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Beard Trim\",\n  \"description\": \"Professional beard trimming and styling\",\n  \"duration\": 20\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/services",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"services"
+									]
+								},
+								"description": "Creates a new service for the current customer. ⚠️ ADMIN ROLE REQUIRED ⚠️ Customer ID is automatically determined from URL context."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Beard Trim\",\n  \"description\": \"Professional beard trimming and styling\",\n  \"duration\": 20\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/services",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"services"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"service-new-id\",\n    \"displayId\": 6,\n    \"name\": \"Beard Trim\",\n    \"description\": \"Professional beard trimming and styling\",\n    \"duration\": 20,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n    \"updatedAt\": \"2025-10-25T10:00:00.000Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Customer Service by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/services/{{serviceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"services",
+										"{{serviceId}}"
+									]
+								},
+								"description": "Retrieves a specific service within the customer context."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/services/service-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"services",
+												"service-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"service-id\",\n    \"displayId\": 1,\n    \"name\": \"Haircut\",\n    \"description\": \"Classic men's haircut\",\n    \"duration\": 30,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n    \"updatedAt\": \"2025-10-25T10:00:00.000Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Customer Service",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Haircut - Updated\",\n  \"duration\": 35\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/services/{{serviceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"services",
+										"{{serviceId}}"
+									]
+								},
+								"description": "Updates a service within the customer context. ⚠️ ADMIN ROLE REQUIRED ⚠️"
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Haircut - Updated\",\n  \"duration\": 35\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/services/service-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"services",
+												"service-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"service-id\",\n    \"displayId\": 1,\n    \"name\": \"Haircut - Updated\",\n    \"description\": \"Classic men's haircut\",\n    \"duration\": 35,\n    \"isActive\": true,\n    \"customerId\": \"customer-id\",\n    \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n    \"updatedAt\": \"2025-10-25T11:00:00.000Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Deactivate Customer Service",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/services/{{serviceId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"services",
+										"{{serviceId}}"
+									]
+								},
+								"description": "Deactivates a service within the customer context. ⚠️ ADMIN ROLE REQUIRED ⚠️ Cannot deactivate if bookings exist."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/services/service-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"services",
+												"service-id"
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Customer-scoped service management (ADMIN: Full CRUD, CLIENT: Read-only)"
+				},
+				{
+					"name": "Services - Branch & Pricing",
+					"item": [
+						{
+							"name": "List Branch Services with Pricing",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/branches/{{branchId}}/services",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"branches",
+										"{{branchId}}",
+										"services"
+									]
+								},
+								"description": "Retrieves all active services available at a specific branch with their pricing information. This is the service menu for a branch."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/branches/branch-id/services",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"branches",
+												"branch-id",
+												"services"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": [\n    {\n      \"id\": \"service-id\",\n      \"displayId\": 1,\n      \"name\": \"Haircut\",\n      \"description\": \"Classic men's haircut\",\n      \"duration\": 30,\n      \"isActive\": true,\n      \"customerId\": \"customer-id\",\n      \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n      \"updatedAt\": \"2025-10-25T10:00:00.000Z\",\n      \"pricing\": {\n        \"branchId\": \"branch-id\",\n        \"branchName\": \"Downtown\",\n        \"price\": \"25.00\",\n        \"currency\": \"USD\"\n      }\n    }\n  ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Set/Update Service Pricing",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"branchId\": \"{{branchId}}\",\n  \"price\": 32.00\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/services/{{serviceId}}/pricing",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"services",
+										"{{serviceId}}",
+										"pricing"
+									]
+								},
+								"description": "Creates or updates pricing for a service at a specific branch. ⚠️ ADMIN ROLE REQUIRED ⚠️ If pricing already exists, it will be updated."
+							},
+							"response": [
+								{
+									"name": "Success Response (Created)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"branchId\": \"branch-id\",\n  \"price\": 35.00,\n  \"currency\": \"USD\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/services/service-id/pricing",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"services",
+												"service-id",
+												"pricing"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"serviceId\": \"service-id\",\n    \"branchId\": \"branch-id\",\n    \"branchName\": \"Downtown\",\n    \"price\": \"35.00\",\n    \"currency\": \"USD\",\n    \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n    \"updatedAt\": \"2025-10-25T10:00:00.000Z\"\n  }\n}"
+								},
+								{
+									"name": "Success Response (Updated)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"branchId\": \"branch-id\",\n  \"price\": 40.00,\n  \"currency\": \"USD\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/services/service-id/pricing",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"services",
+												"service-id",
+												"pricing"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"serviceId\": \"service-id\",\n    \"branchId\": \"branch-id\",\n    \"branchName\": \"Downtown\",\n    \"price\": \"40.00\",\n    \"currency\": \"USD\",\n    \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n    \"updatedAt\": \"2025-10-25T11:00:00.000Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Service Pricing",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/services/{{serviceId}}/pricing/{{branchId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"services",
+										"{{serviceId}}",
+										"pricing",
+										"{{branchId}}"
+									]
+								},
+								"description": "Retrieves pricing information for a specific service at a specific branch."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/services/service-id/pricing/branch-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"services",
+												"service-id",
+												"pricing",
+												"branch-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"serviceId\": \"service-id\",\n    \"branchId\": \"branch-id\",\n    \"branchName\": \"Downtown\",\n    \"price\": \"35.00\",\n    \"currency\": \"USD\",\n    \"createdAt\": \"2025-10-25T10:00:00.000Z\",\n    \"updatedAt\": \"2025-10-25T10:00:00.000Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete Service Pricing",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/services/{{serviceId}}/pricing/{{branchId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"services",
+										"{{serviceId}}",
+										"pricing",
+										"{{branchId}}"
+									]
+								},
+								"description": "Removes pricing for a service at a specific branch. ⚠️ ADMIN ROLE REQUIRED ⚠️"
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/services/service-id/pricing/branch-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"services",
+												"service-id",
+												"pricing",
+												"branch-id"
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Branch-specific service queries and pricing management"
+				}
+			],
+			"description": "Complete service management with admin, customer, and pricing operations"
 		}
 	],
 	"variable": [
@@ -3246,6 +4387,10 @@
 		},
 		{
 			"key": "professionalId",
+			"value": ""
+		},
+		{
+			"key": "serviceId",
 			"value": ""
 		}
 	]

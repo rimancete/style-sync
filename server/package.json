@@ -15,8 +15,10 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "lint:check": "eslint \"{src,apps,libs,test}/**/*.ts\"",
-    "test": "jest",
-    "test:ci": "jest --coverage",
+    "test:unit": "jest --testPathPattern='\\.spec\\.ts$' --passWithNoTests",
+    "test:contract": "jest --testPathPattern='\\.contract\\.test\\.ts$' --runInBand",
+    "test": "npm run test:unit; npm run test:contract",
+    "test:ci": "npm run test:unit && npm run test:contract -- --coverage",
     "validate:commit": "commitlint --from HEAD~1 --to HEAD --verbose",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
@@ -91,23 +93,6 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.(spec|test)\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

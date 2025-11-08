@@ -77,7 +77,7 @@ TASK_WORKFLOW: |
      - Track completion of sub-tasks
      - Document any blockers
   
-  4. CHECK and FIX implementation: 
+  4. TEST implementation:
      - Create contract test files
      - Implement to pass tests
   

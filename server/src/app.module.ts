@@ -12,6 +12,7 @@ import { BranchesModule } from './branches/branches.module';
 import { CountriesModule } from './countries/countries.module';
 import { CustomersModule } from './customers/customers.module';
 import { ProfessionalsModule } from './professionals/professionals.module';
+import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ProfessionalsModule } from './professionals/professionals.module';
     BranchesModule,
     CustomersModule,
     ProfessionalsModule,
+    ServicesModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1752,30 +1752,130 @@ DELETE /api/professionals/:id
 ### Services Module
 
 **Features**:
-- Service catalog management
+- Service catalog management (CRUD operations)
 - Location-based pricing via ServicePricing entity
 - Customer-scoped service definitions
 - Service duration tracking (minutes)
 - Service descriptions and metadata
+- Soft delete with `isActive` boolean
+- Currency support (customer-level)
+- Dual controller pattern (Admin + Customer-scoped)
 
-**Endpoints** (planned):
+**Endpoints** (14 total):
+
+**Admin Endpoints**:
 ```
-GET  /api/salon/:customerSlug/services
-POST /api/salon/:customerSlug/services
-GET  /api/salon/:customerSlug/services/:id
-PATCH /api/salon/:customerSlug/services/:id
-DELETE /api/salon/:customerSlug/services/:id
-
-# Branch-specific pricing
-GET  /api/salon/:customerSlug/branches/:branchId/services
-POST /api/salon/:customerSlug/services/:serviceId/pricing
+GET    /api/services                    # List all services (cross-customer)
+POST   /api/services                    # Create service (admin only)
+GET    /api/services/:id                # Get service by ID
+PATCH  /api/services/:id                # Update service
+DELETE /api/services/:id                # Deactivate service (blocked if bookings exist)
 ```
 
-**Implementation Considerations**:
-- Services belong to customers (multi-tenant)
-- Pricing varies by branch location
-- Single pricing per service-branch combination
-- Duration affects availability calculation
+**Customer-Scoped Endpoints**:
+```
+GET    /api/salon/:customerSlug/services              # List customer services
+POST   /api/salon/:customerSlug/services              # Create service
+GET    /api/salon/:customerSlug/services/:id          # Get service
+PATCH  /api/salon/:customerSlug/services/:id          # Update service
+DELETE /api/salon/:customerSlug/services/:id          # Deactivate service
+```
+
+**Pricing Management**:
+```
+GET    /api/salon/:slug/branches/:branchId/services                      # Services with pricing
+POST   /api/salon/:slug/services/:serviceId/pricing                      # Set/update pricing
+GET    /api/salon/:slug/services/:serviceId/pricing/:branchId            # Get pricing
+DELETE /api/salon/:slug/services/:serviceId/pricing/:branchId            # Remove pricing
+```
+
+**Business Rules**:
+- **Service Name Uniqueness**: Active services must have unique names per customer (inactive services don't block name reuse)
+- Duration: 5-480 minutes (8 hours max)
+- Price: 0.01-9999.99 with 2 decimal places
+- **Soft Delete**: DELETE endpoint blocks if bookings exist, PATCH allows `isActive: false` anytime
+- **Currency**: Stored at customer level, automatically included in pricing responses
+- **Ordering**: Services sorted by displayId (primary), then name (secondary)
+- **Name Reuse**: Seasonal or temporary services can be deactivated and recreated with the same name
+
+**Key Implementation Details**:
+
+**Name Uniqueness Validation**:
+- Validation checks only active services (`isActive: true`)
+- Inactive services don't prevent creation of new services with same name
+- Use case: Seasonal services (e.g., "Summer Special 2024" → deactivate → "Summer Special 2025")
+- Multiple inactive services can share the same name
+- Each service has unique `id` and `displayId` for historical tracking
+- Historical bookings remain linked to original service via `serviceId`
+
+**Soft Delete Strategy**:
+- Uses `isActive` boolean (matches Professional pattern)
+- DELETE endpoint: Blocked if ANY bookings exist (returns HTTP 409)
+- PATCH endpoint: Can set `isActive: false` even with bookings (reversible)
+- Inactive services hidden from booking flows but preserve history
+
+**Currency Implementation**:
+- Currency stored in Customer model (ISO 4217 codes: USD, BRL, EUR, etc.)
+- All pricing responses include `currency` field
+- Currency is read-only via pricing endpoints (set at customer level)
+- Consistent across all services and branches for a customer
+
+**Pricing Model (v1 - Simplified)**:
+- One price per service-branch combination
+- Unique constraint on `serviceId + branchId`
+- No professional-level pricing (all professionals charge same price)
+- No time-based pricing (peak hours, weekends)
+- No promotional pricing periods
+
+**Authentication & Authorization**:
+- JWT authentication required for all endpoints
+- Role-based access: ADMIN (full access), CLIENT (read-only)
+- Customer context resolution via URL slug
+- Guards: JwtAuthGuard + CustomerContextGuard + RolesGuard
+
+**Response Format**:
+```typescript
+// Service Response
+{
+  id: string;
+  displayId: number;
+  name: string;
+  description: string | null;
+  duration: number;
+  isActive: boolean;
+  customerId: string;
+  customerName?: string;
+  createdAt: Date;
+  updatedAt: Date | null;  // Nullable: null until first update
+  pricing?: {              // When branchId filter provided
+    branchId: string;
+    branchName: string;
+    price: string;
+    currency: string;      // From customer.currency
+  };
+}
+
+// Pricing Response
+{
+  id: string;
+  displayId: number;
+  serviceId: string;
+  serviceName: string;
+  branchId: string;
+  branchName: string;
+  price: string;
+  currency: string;        // From customer.currency
+  createdAt: Date;
+  updatedAt: Date | null;
+}
+```
+
+**Future Enhancement Considerations**:
+- ServiceProfessional junction table (skill restrictions, certifications)
+- ServiceCategory model (grouping, organization)
+- ServicePricingRule model (conditional pricing by time/professional level)
+- Custom displayOrder field (drag-and-drop menu arrangement)
+- Service availability schedules (time/day restrictions)
 
 ### Bookings Module
 
