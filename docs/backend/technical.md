@@ -1153,6 +1153,7 @@ model Booking {
   id             String        @id @default(cuid())
   displayId      Int           @default(autoincrement()) @unique
   userId         String
+  customerId     String        // Added for query performance and multi-tenancy
   branchId       String
   serviceId      String
   professionalId String?       // NULL = "any available professional"
@@ -1160,8 +1161,9 @@ model Booking {
   status         BookingStatus @default(PENDING)
   totalPrice     Decimal       @db.Decimal(10, 2)
   createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  updatedAt      DateTime?     @updatedAt  // Nullable: null until first update
   
+  customer       Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
   professional   Professional? @relation(fields: [professionalId], references: [id])
   service        Service       @relation(fields: [serviceId], references: [id])
   branch         Branch        @relation(fields: [branchId], references: [id], onDelete: Cascade)
@@ -1195,6 +1197,130 @@ const branches = await this.db.branch.findMany({
     deletedAt: null,  // Only active branches
   },
 });
+```
+
+### Audit Timestamp Pattern
+
+**Standard Implementation**:
+
+All entities in the system follow a consistent audit timestamp pattern to track creation and modification history.
+
+**Schema Pattern**:
+```prisma
+model EntityName {
+  // ... other fields
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+}
+```
+
+**Key Rules**:
+- `createdAt`: **Required**, auto-populated with `@default(now())`
+- `updatedAt`: **Nullable** (`DateTime?`), auto-populated by Prisma's `@updatedAt`
+
+**Behavior**:
+- **On creation**: `updatedAt` is `null` (indicates never modified)
+- **On first update**: `updatedAt` is set to current timestamp
+- **On subsequent updates**: `updatedAt` is updated to current timestamp
+- **Prisma manages automatically**: No manual timestamp management needed
+
+**Why Nullable `updatedAt`?**
+
+1. **Semantic Clarity**: `null` explicitly means "never updated" vs. timestamp means "last modified at"
+2. **Data Integrity**: Can distinguish between "created and never modified" vs. "created and immediately modified"
+3. **Historical Analysis**: Enables queries like "show me records that were never modified"
+4. **Consistency**: Matches the pattern used in Services and ServicePricing modules
+
+**DTO Pattern**:
+```typescript
+export class EntityResponseDto {
+  // ... other fields
+  
+  @ApiProperty({
+    description: 'Creation timestamp',
+    example: '2025-11-15T10:00:00.000Z',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: 'Last update timestamp (null if never updated)',
+    example: '2025-11-15T14:30:00.000Z',
+    nullable: true,
+  })
+  updatedAt: Date | null;
+}
+```
+
+**Examples Across Modules**:
+- ✅ **Service**: `updatedAt DateTime?` - Correct implementation
+- ✅ **ServicePricing**: `updatedAt DateTime?` - Correct implementation
+- ✅ **Booking**: `updatedAt DateTime?` - Fixed in migration `20251115124422_make_booking_updated_at_nullable`
+- ❌ **Branch**: `updatedAt DateTime @updatedAt` - Non-nullable (legacy, to be migrated)
+- ❌ **Professional**: `updatedAt DateTime @updatedAt` - Non-nullable (legacy, to be migrated)
+
+**Migration Strategy for Legacy Entities**:
+
+When updating legacy entities (Branch, Professional, etc.) to follow this pattern:
+
+1. Create migration to make `updatedAt` nullable:
+   ```bash
+   npx prisma migrate dev --name make_entity_updated_at_nullable
+   ```
+
+2. Update corresponding DTO:
+   ```typescript
+   updatedAt: Date | null;  // Add nullable type
+   ```
+
+3. Update entity mapper if needed (usually no changes required)
+
+4. Verify tests pass (Prisma handles null correctly)
+
+**Query Examples**:
+```typescript
+// Find records never updated
+const neverUpdated = await db.service.findMany({
+  where: { updatedAt: null },
+});
+
+// Find recently updated records
+const recentlyUpdated = await db.service.findMany({
+  where: {
+    updatedAt: {
+      gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+    },
+  },
+});
+
+// Count modified vs. unmodified
+const stats = await db.service.groupBy({
+  by: ['customerId'],
+  _count: { id: true },
+  where: { updatedAt: { not: null } },
+});
+```
+
+**API Response Format**:
+```json
+{
+  "data": {
+    "id": "clg2a5d9i0002gtkb",
+    "displayId": 42,
+    "name": "Haircut Service",
+    "createdAt": "2025-11-15T10:00:00.000Z",
+    "updatedAt": null  // Never modified
+  }
+}
+
+{
+  "data": {
+    "id": "clg2a5d9i0003gtkb",
+    "displayId": 43,
+    "name": "Beard Trim",
+    "createdAt": "2025-11-15T10:00:00.000Z",
+    "updatedAt": "2025-11-15T14:30:00.000Z"  // Last modified
+  }
+}
 ```
 
 ## Configuration Management
@@ -1880,37 +2006,192 @@ DELETE /api/salon/:slug/services/:serviceId/pricing/:branchId            # Remov
 ### Bookings Module
 
 **Features**:
-- Appointment booking system
-- Professional selection (specific or "any available")
-- Time slot availability calculation
+- Appointment booking system with CRUD operations
+- Professional selection (specific or "any available" with auto-assignment)
+- Time slot availability calculation with conflict detection
 - Booking status lifecycle management
-- Price calculation based on branch-specific pricing
+- Price calculation from ServicePricing
+- Double-booking prevention
+- Cross-customer validation
+- Customer-scoped operations
+
+**Endpoints** (12 total):
+
+**Admin Endpoints**:
+```
+GET    /api/bookings                    # List all bookings (cross-customer)
+POST   /api/bookings                    # Create booking (admin only)
+GET    /api/bookings/:id                # Get booking by ID
+PATCH  /api/bookings/:id                # Update booking
+DELETE /api/bookings/:id                # Cancel booking
+```
+
+**Customer-Scoped Endpoints**:
+```
+GET    /api/salon/:customerSlug/bookings              # List customer bookings
+POST   /api/salon/:customerSlug/bookings              # Create booking
+GET    /api/salon/:customerSlug/bookings/:id          # Get booking
+PATCH  /api/salon/:customerSlug/bookings/:id          # Update booking (admin)
+DELETE /api/salon/:customerSlug/bookings/:id          # Cancel booking
+GET    /api/salon/:customerSlug/bookings/my           # User's bookings
+GET    /api/salon/:customerSlug/availability          # Check availability
+```
 
 **Business Rules**:
-- Single service per booking (simplified logic)
-- Optional professional selection (`professionalId: null` = any available)
-- Status progression: PENDING → CONFIRMED → COMPLETED
-- Cancellation support (CANCELLED status)
+- **Single service per booking**: Simplified logic for v1
+- **Optional professional selection**: `professionalId: null` triggers auto-assignment
+- **Auto-assignment logic**: Finds first available professional when not specified
+- **Status progression**: PENDING → CONFIRMED → COMPLETED or CANCELLED
+- **Cancellation**: Sets status to CANCELLED (soft delete)
+- **Future bookings only**: scheduledAt must be in the future
+- **No double-booking**: Professional cannot have overlapping bookings
+- **Price calculation**: Automatically calculated from ServicePricing
+- **Cross-customer validation**: All entities must belong to same customer
 
-**Endpoints** (planned):
+**Implementation Details**:
+
+**Schema Design**:
+```prisma
+model Booking {
+  id             String        @id @default(cuid())
+  displayId      Int           @default(autoincrement()) @unique
+  userId         String
+  customerId     String        // Added for query performance
+  branchId       String
+  serviceId      String
+  professionalId String?       // NULL = "any available"
+  scheduledAt    DateTime
+  status         BookingStatus @default(PENDING)
+  totalPrice     Decimal       @db.Decimal(10, 2)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime?     @updatedAt
+  
+  customer       Customer      @relation(fields: [customerId], references: [id])
+  professional   Professional? @relation(fields: [professionalId], references: [id])
+  service        Service       @relation(fields: [serviceId], references: [id])
+  branch         Branch        @relation(fields: [branchId], references: [id])
+  user           User          @relation(fields: [userId], references: [id])
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
 ```
-POST /api/salon/:customerSlug/bookings
-GET  /api/salon/:customerSlug/bookings/my
-GET  /api/salon/:customerSlug/bookings/:id
-PATCH /api/salon/:customerSlug/bookings/:id
-DELETE /api/salon/:customerSlug/bookings/:id
 
-# Availability
-GET  /api/salon/:customerSlug/branches/:branchId/availability
+**Auto-Assignment Algorithm**:
+1. Get all active professionals at the branch
+2. For each professional, check for scheduling conflicts
+3. Return first professional without conflicts at requested time
+4. Consider service duration when checking overlaps
+5. Throw ConflictException if no professionals available
+
+**Availability Calculation**:
+- **Operating Hours**: 09:00-18:00 (hardcoded for v1)
+- **Slot Interval**: 30 minutes
+- **Slot Generation**: Generates all possible slots within operating hours
+- **Conflict Detection**: Checks existing bookings for overlaps
+- **Service Duration**: Considers duration when calculating slot availability
+- **Aggregated View**: When no professionalId specified, shows merged availability
+- **Specific Professional**: When professionalId provided, shows only that professional's slots
+
+**Response Format**:
+```typescript
+// Booking Response
+{
+  id: string;
+  displayId: number;
+  userId: string;
+  userName: string;
+  customerId: string;
+  branchId: string;
+  branchName: string;
+  serviceId: string;
+  serviceName: string;
+  professionalId: string | null;
+  professionalName: string | null;
+  scheduledAt: Date;
+  status: BookingStatus;
+  totalPrice: string;        // Formatted as "25.00"
+  currency: string;          // From customer.currency
+  createdAt: Date;
+  updatedAt: Date | null;    // Null if never updated
+}
+
+// Availability Response
+{
+  date: string;              // YYYY-MM-DD
+  branch: {
+    id: string;
+    name: string;
+  };
+  service: {
+    id: string;
+    name: string;
+    duration: number;
+  };
+  availableSlots: [
+    {
+      time: string;          // HH:mm format
+      available: boolean;
+      professionalId?: string;
+    }
+  ];
+}
 ```
 
-**Implementation Considerations**:
-- Complex availability calculation logic
-- Professional scheduling conflicts
-- Branch operating hours (future)
-- Time zone handling
-- Concurrent booking prevention
-- Booking confirmation workflows
+**Authentication & Authorization**:
+- JWT authentication required for all endpoints
+- Role-based access:
+  - ADMIN: Full access to all operations
+  - CLIENT: Can create and view own bookings
+- Customer context resolution via URL slug
+- Guards: JwtAuthGuard + CustomerContextGuard + RolesGuard
+
+**Key Implementation Details**:
+
+**Conflict Detection**:
+- Checks for time slot overlaps using interval comparison
+- Formula: `slotStart < existingEnd && slotEnd > existingStart`
+- Only considers PENDING and CONFIRMED bookings (excludes CANCELLED and COMPLETED)
+- Accounts for service duration when calculating end times
+
+**Price Calculation**:
+- Automatically fetches price from ServicePricing table
+- Uses `serviceId + branchId` unique constraint
+- Throws NotFoundException if pricing not configured
+- Stores calculated price at booking creation (price snapshot)
+
+**Cross-Customer Validation**:
+- Validates branch.customerId === service.customerId
+- Validates professional.customerId === branch.customerId
+- Validates user has access to customer (via JWT customerIds)
+- Prevents accidental cross-customer booking attempts
+
+**Testing**:
+- Comprehensive contract test suite (50+ test cases)
+- Tests cover:
+  - All CRUD operations
+  - Auto-assignment scenarios
+  - Double-booking prevention
+  - Cross-customer validation
+  - Availability calculation
+  - Error cases (404, 409, 400, 422)
+- TODO comments added for Phase 4 property-based tests
+
+**Future Enhancement Considerations (Phase 4 - ADV-001)**:
+- Professional schedule management (working hours, days off)
+- Branch operating hours configuration (database-driven)
+- Buffer times between appointments
+- Timezone handling for multi-region support
+- Concurrent booking race condition handling
+- Advanced availability algorithms
+- Recurring appointments
+- Waitlist functionality
+- Booking reminders (SMS/Email)
+- Payment integration
 
 ## Scaling Considerations
 

@@ -1,89 +1,21 @@
 # Current Sprint Tasks
 
 ## Phase 3 (Business Logic)
-### SER-001: Implement Service Module
-Status: ✅ COMPLETE (November 2025)
-Priority: High
-Dependencies: Branches Module, Professionals Module, Customers Module
-
-#### Planning Complete ✅
-- [x] Design decisions documented
-- [x] Database schema changes defined
-- [x] API endpoints specified
-- [x] Implementation plan created
-- [x] Testing strategy defined
-
-#### Requirements
-- [X] Service catalog management
-- [X] Location-based pricing implementation
-   - [X] Make currency configurable per customer
-- [X] Service duration configuration (5-480 minutes validation)
-- [X] **Soft Delete**: isActive boolean field (matching Professional pattern)
-- [X] **Business Rule**: DELETE blocked if bookings exist; PATCH allows isActive=false anytime
-- [X] **Ordering**: Sort by displayId (primary), name (secondary)
-- [X] **Tests**: 40+ contract tests for service catalog and pricing APIs (45 delivered)
-
-#### Implementation Phases
-1. **Database & Core Setup** (2 hours)
-   - [X] Add isActive field to Service model
-   - [X] Run database migration
-   - [X] Update seed data
-   - [X] Create DTOs (8 files)
-   - [X] Create Entity classes (2 files)
-
-2. **Service Layer** (4 hours)
-   - [X] Implement core service methods (8 methods)
-   - [X] Implement pricing methods (5 methods)
-   - [X] Add business logic validation (6 validations)
-
-3. **Controller Layer** (3 hours)
-   - [X] Admin endpoints (5 routes)
-   - [X] Customer-scoped endpoints (5 routes)
-   - [X] Branch-specific endpoints (4 routes)
-   - [X] Configure guards and decorators
-
-4. **Documentation** (1 hour)
-   - [X] Add Swagger decorators
-   - [X] Document request/response examples
-   - [X] Add validation descriptions
-
-5. **Testing** (5 hours)
-   - [X] Write 40+ contract tests
-   - [X] Test authentication/authorization
-   - [X] Test CRUD operations
-   - [X] Test pricing management
-   - [X] Test edge cases
-
-6. **Finalization** (2 hours)
-   - [X] Update Postman collection
-   - [X] Update technical documentation
-   - [X] Code quality checks
-   - [X] Manual testing
-
-#### Bonus Deliverables (Completed)
-- [X] Service name uniqueness fix (inactive services don't block name reuse)
-- [X] Test infrastructure optimization (sequential execution via --runInBand)
-- [X] Test split into maintainable files (services: 28 tests, pricing: 17 tests)
-- [X] `updatedAt` field nullable behavior (null until first update)
-- [X] Compilation error fixes (non-null assertion removal)
-
-#### Resources & Documentation
-- [Technical Specification](../docs/backend/technical.md#services-module) - Complete API documentation
-- [Implementation History](../docs/backend/implementationHistory.md) - Step 3.3: Services Module Implementation
-- [Postman Collection](../docs/backend/postman-collection.json) - All 14 endpoints with examples
-- [Test Files](../server/src/services/) - 45 contract tests with full coverage
-- [Status Tracking](../docs/backend/status.md) - Current progress and completions
-
 ### BOO-001: Booking Module Foundation
-Status: In Backlog
-Priority: Medium
-Dependencies: None
+Status: ✅ COMPLETE (November 15, 2025)
+Priority: High
+Dependencies: ✅ Branches Module, Professionals Module, Services Module
 
 #### Requirements
-- [ ] Basic booking CRUD
-- [ ] Availability query structure
-- [ ] Simple time slot logic
-- [ ] **Tests**: Contract tests for booking APIs + property-based tests for availability logic
+- [X] Basic booking CRUD (create, read, update, cancel)
+- [X] Availability query structure (time slot generation API)
+- [X] Simple time slot logic (30-minute intervals, 09:00-18:00)
+- [X] **Tests**: Contract tests for booking APIs (completed)
+- [X] Auto-assignment logic for "any professional" bookings
+- [X] Dual endpoint pattern (Admin + Customer-scoped)
+- [X] Double-booking prevention
+- [X] Cross-customer validation
+- [X] Price calculation from ServicePricing
 
 
 # Next Sprint Tasks
@@ -91,12 +23,23 @@ Dependencies: None
 
 ### ADV-001: Complete booking flow
 Status: In Backlog
-Priority: Low
-Dependencies: None
+Priority: Medium
+Dependencies: ✅ BOO-001 (Booking Module Foundation)
 
 #### Requirements
 
-- [ ] Professional availability calculation
-- [ ] "Any professional" slot aggregation
-- [ ] Service duration slot blocking
+- [ ] Professional availability calculation (schedule-aware)
+- [ ] "Any professional" slot aggregation (merged availability)
+- [ ] Service duration slot blocking (overlap detection)
+- [ ] Branch operating hours configuration (database-driven)
+- [ ] Professional working hours/schedules
+- [ ] Buffer times between appointments
+- [ ] Concurrent booking race condition handling
+- [ ] Booking flow
+   - [ ] 1. User can confirm service booking whether or not logged in
+   - [ ] 2. Generate a confimation URL
+   - [ ] 3. One day before the booking, send a confirmation link to the user WhatsApp
+      - [ ] Evaluate if this implementation is so much complex. If so, just generate a URL that could be sent to user manually
+   - [ ] 4. If the user confirms it (via a screen button), the customer will be able to check the confirmed bookings in yours customer panel
+      
 - [ ] **Tests**: Property-based tests for complex availability algorithms

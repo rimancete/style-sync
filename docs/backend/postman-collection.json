@@ -4352,6 +4352,984 @@
 				}
 			],
 			"description": "Complete service management with admin, customer, and pricing operations"
+		},
+		{
+			"name": "Bookings Management",
+			"item": [
+				{
+					"name": "Bookings - Admin",
+					"item": [
+						{
+							"name": "List All Bookings",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/bookings?page=1&limit=50",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "Page number"
+										},
+										{
+											"key": "limit",
+											"value": "50",
+											"description": "Items per page"
+										}
+									]
+								},
+								"description": "Retrieves all bookings across all customers. ⚠️ ADMIN ROLE REQUIRED ⚠️ Only ADMIN users can access this endpoint."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/bookings?page=1&limit=50",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bookings"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "1"
+												},
+												{
+													"key": "limit",
+													"value": "50"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"bookings\": [\n      {\n        \"id\": \"booking-id\",\n        \"displayId\": 1,\n        \"userId\": \"user-id\",\n        \"userName\": \"John Doe\",\n        \"customerId\": \"customer-id\",\n        \"branchId\": \"branch-id\",\n        \"branchName\": \"Downtown Branch\",\n        \"serviceId\": \"service-id\",\n        \"serviceName\": \"Haircut\",\n        \"professionalId\": \"professional-id\",\n        \"professionalName\": \"Jane Smith\",\n        \"scheduledAt\": \"2025-12-25T10:00:00Z\",\n        \"status\": \"CONFIRMED\",\n        \"totalPrice\": \"25.00\",\n        \"currency\": \"USD\",\n        \"createdAt\": \"2025-11-15T10:00:00Z\",\n        \"updatedAt\": \"2025-11-15T10:00:00Z\"\n      }\n    ],\n    \"total\": 1,\n    \"page\": 1,\n    \"limit\": 50\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Create Booking",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const json = pm.response.json();",
+											"    pm.collectionVariables.set('bookingId', json.data.id);",
+											"    console.log('Booking created, ID saved:', json.data.id);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"customerId\": \"{{customerId}}\",\n  \"branchId\": \"{{branchId}}\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"professionalId\": \"{{professionalId}}\",\n  \"scheduledAt\": \"2025-12-25T10:00:00Z\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bookings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings"
+									]
+								},
+								"description": "Creates a new booking. ⚠️ ADMIN ROLE REQUIRED ⚠️ Requires all entity IDs including customerId. Use null for professionalId to auto-assign."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"userId\": \"user-id\",\n  \"customerId\": \"customer-id\",\n  \"branchId\": \"branch-id\",\n  \"serviceId\": \"service-id\",\n  \"professionalId\": \"professional-id\",\n  \"scheduledAt\": \"2025-12-25T10:00:00Z\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/bookings",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bookings"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"booking-new-id\",\n    \"displayId\": 5,\n    \"userId\": \"user-id\",\n    \"userName\": \"John Doe\",\n    \"customerId\": \"customer-id\",\n    \"branchId\": \"branch-id\",\n    \"branchName\": \"Downtown Branch\",\n    \"serviceId\": \"service-id\",\n    \"serviceName\": \"Haircut\",\n    \"professionalId\": \"professional-id\",\n    \"professionalName\": \"Jane Smith\",\n    \"scheduledAt\": \"2025-12-25T10:00:00Z\",\n    \"status\": \"PENDING\",\n    \"totalPrice\": \"25.00\",\n    \"currency\": \"USD\",\n    \"createdAt\": \"2025-11-15T10:00:00Z\",\n    \"updatedAt\": \"2025-11-15T10:00:00Z\"\n  }\n}"
+								},
+								{
+									"name": "Conflict Response (Double Booking)",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"userId\": \"user-id\",\n  \"customerId\": \"customer-id\",\n  \"branchId\": \"branch-id\",\n  \"serviceId\": \"service-id\",\n  \"professionalId\": \"professional-id\",\n  \"scheduledAt\": \"2025-12-25T10:00:00Z\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/bookings",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bookings"
+											]
+										}
+									},
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": 409,\n  \"message\": \"Professional is already booked for this time slot\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Booking by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}"
+									]
+								},
+								"description": "Retrieves detailed information about a specific booking by its ID. ⚠️ ADMIN ROLE REQUIRED ⚠️"
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/bookings/booking-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bookings",
+												"booking-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"booking-id\",\n    \"displayId\": 1,\n    \"userId\": \"user-id\",\n    \"userName\": \"John Doe\",\n    \"customerId\": \"customer-id\",\n    \"branchId\": \"branch-id\",\n    \"branchName\": \"Downtown Branch\",\n    \"serviceId\": \"service-id\",\n    \"serviceName\": \"Haircut\",\n    \"professionalId\": \"professional-id\",\n    \"professionalName\": \"Jane Smith\",\n    \"scheduledAt\": \"2025-12-25T10:00:00Z\",\n    \"status\": \"CONFIRMED\",\n    \"totalPrice\": \"25.00\",\n    \"currency\": \"USD\",\n    \"createdAt\": \"2025-11-15T10:00:00Z\",\n    \"updatedAt\": \"2025-11-15T10:00:00Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Booking",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"scheduledAt\": \"2025-12-25T14:00:00Z\",\n  \"status\": \"CONFIRMED\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}"
+									]
+								},
+								"description": "Updates booking information (reschedule, status change, etc.). ⚠️ ADMIN ROLE REQUIRED ⚠️"
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"scheduledAt\": \"2025-12-25T14:00:00Z\",\n  \"status\": \"CONFIRMED\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/bookings/booking-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bookings",
+												"booking-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"booking-id\",\n    \"displayId\": 1,\n    \"userId\": \"user-id\",\n    \"userName\": \"John Doe\",\n    \"customerId\": \"customer-id\",\n    \"branchId\": \"branch-id\",\n    \"branchName\": \"Downtown Branch\",\n    \"serviceId\": \"service-id\",\n    \"serviceName\": \"Haircut\",\n    \"professionalId\": \"professional-id\",\n    \"professionalName\": \"Jane Smith\",\n    \"scheduledAt\": \"2025-12-25T14:00:00Z\",\n    \"status\": \"CONFIRMED\",\n    \"totalPrice\": \"25.00\",\n    \"currency\": \"USD\",\n    \"createdAt\": \"2025-11-15T10:00:00Z\",\n    \"updatedAt\": \"2025-11-15T11:00:00Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Cancel Booking",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}"
+									]
+								},
+								"description": "Cancels a booking (sets status to CANCELLED). ⚠️ ADMIN ROLE REQUIRED ⚠️"
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/bookings/booking-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"bookings",
+												"booking-id"
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Admin-only booking management endpoints"
+				},
+				{
+					"name": "Bookings - Customer",
+					"item": [
+						{
+							"name": "Create Customer Booking",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const json = pm.response.json();",
+											"    pm.collectionVariables.set('bookingId', json.data.id);",
+											"    console.log('Customer booking created, ID saved:', json.data.id);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"branchId\": \"{{branchId}}\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"professionalId\": null,\n  \"scheduledAt\": \"2025-12-25T10:00:00Z\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/bookings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"bookings"
+									]
+								},
+								"description": "Creates a new booking for the current customer. Customer ID and User ID are automatically determined from context. Set professionalId to null for auto-assignment."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"branchId\": \"branch-id\",\n  \"serviceId\": \"service-id\",\n  \"professionalId\": null,\n  \"scheduledAt\": \"2025-12-25T10:00:00Z\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/bookings",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"bookings"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"booking-new-id\",\n    \"displayId\": 5,\n    \"userId\": \"user-id\",\n    \"userName\": \"John Doe\",\n    \"customerId\": \"customer-id\",\n    \"branchId\": \"branch-id\",\n    \"branchName\": \"Downtown Branch\",\n    \"serviceId\": \"service-id\",\n    \"serviceName\": \"Haircut\",\n    \"professionalId\": \"professional-id\",\n    \"professionalName\": \"Jane Smith (Auto-assigned)\",\n    \"scheduledAt\": \"2025-12-25T10:00:00Z\",\n    \"status\": \"PENDING\",\n    \"totalPrice\": \"25.00\",\n    \"currency\": \"USD\",\n    \"createdAt\": \"2025-11-15T10:00:00Z\",\n    \"updatedAt\": \"2025-11-15T10:00:00Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "List Customer Bookings",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/bookings?page=1&limit=50",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"bookings"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "Page number"
+										},
+										{
+											"key": "limit",
+											"value": "50",
+											"description": "Items per page"
+										}
+									]
+								},
+								"description": "Retrieves all bookings for the current customer. ⚠️ ADMIN/STAFF ROLE REQUIRED ⚠️"
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/bookings",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"bookings"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"bookings\": [\n      {\n        \"id\": \"booking-id\",\n        \"displayId\": 1,\n        \"userId\": \"user-id\",\n        \"userName\": \"John Doe\",\n        \"customerId\": \"customer-id\",\n        \"branchId\": \"branch-id\",\n        \"branchName\": \"Downtown Branch\",\n        \"serviceId\": \"service-id\",\n        \"serviceName\": \"Haircut\",\n        \"professionalId\": \"professional-id\",\n        \"professionalName\": \"Jane Smith\",\n        \"scheduledAt\": \"2025-12-25T10:00:00Z\",\n        \"status\": \"CONFIRMED\",\n        \"totalPrice\": \"25.00\",\n        \"currency\": \"USD\",\n        \"createdAt\": \"2025-11-15T10:00:00Z\",\n        \"updatedAt\": \"2025-11-15T10:00:00Z\"\n      }\n    ],\n    \"total\": 1,\n    \"page\": 1,\n    \"limit\": 50\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "List My Bookings",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/bookings/my?page=1&limit=50",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"bookings",
+										"my"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "Page number"
+										},
+										{
+											"key": "limit",
+											"value": "50",
+											"description": "Items per page"
+										}
+									]
+								},
+								"description": "Retrieves all bookings for the authenticated user within the customer context. Available to all authenticated users."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/bookings/my",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"bookings",
+												"my"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"bookings\": [\n      {\n        \"id\": \"booking-id\",\n        \"displayId\": 1,\n        \"userId\": \"user-id\",\n        \"userName\": \"John Doe\",\n        \"customerId\": \"customer-id\",\n        \"branchId\": \"branch-id\",\n        \"branchName\": \"Downtown Branch\",\n        \"serviceId\": \"service-id\",\n        \"serviceName\": \"Haircut\",\n        \"professionalId\": \"professional-id\",\n        \"professionalName\": \"Jane Smith\",\n        \"scheduledAt\": \"2025-12-25T10:00:00Z\",\n        \"status\": \"PENDING\",\n        \"totalPrice\": \"25.00\",\n        \"currency\": \"USD\",\n        \"createdAt\": \"2025-11-15T10:00:00Z\",\n        \"updatedAt\": \"2025-11-15T10:00:00Z\"\n      }\n    ],\n    \"total\": 1,\n    \"page\": 1,\n    \"limit\": 50\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Customer Booking by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/bookings/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"bookings",
+										"{{bookingId}}"
+									]
+								},
+								"description": "Retrieves a specific booking within the customer context."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/bookings/booking-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"bookings",
+												"booking-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"booking-id\",\n    \"displayId\": 1,\n    \"userId\": \"user-id\",\n    \"userName\": \"John Doe\",\n    \"customerId\": \"customer-id\",\n    \"branchId\": \"branch-id\",\n    \"branchName\": \"Downtown Branch\",\n    \"serviceId\": \"service-id\",\n    \"serviceName\": \"Haircut\",\n    \"professionalId\": \"professional-id\",\n    \"professionalName\": \"Jane Smith\",\n    \"scheduledAt\": \"2025-12-25T10:00:00Z\",\n    \"status\": \"CONFIRMED\",\n    \"totalPrice\": \"25.00\",\n    \"currency\": \"USD\",\n    \"createdAt\": \"2025-11-15T10:00:00Z\",\n    \"updatedAt\": \"2025-11-15T10:00:00Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Customer Booking",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"scheduledAt\": \"2025-12-25T14:00:00Z\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/bookings/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"bookings",
+										"{{bookingId}}"
+									]
+								},
+								"description": "Updates a booking within the customer context (reschedule, etc.)."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"scheduledAt\": \"2025-12-25T14:00:00Z\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/bookings/booking-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"bookings",
+												"booking-id"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"id\": \"booking-id\",\n    \"displayId\": 1,\n    \"userId\": \"user-id\",\n    \"userName\": \"John Doe\",\n    \"customerId\": \"customer-id\",\n    \"branchId\": \"branch-id\",\n    \"branchName\": \"Downtown Branch\",\n    \"serviceId\": \"service-id\",\n    \"serviceName\": \"Haircut\",\n    \"professionalId\": \"professional-id\",\n    \"professionalName\": \"Jane Smith\",\n    \"scheduledAt\": \"2025-12-25T14:00:00Z\",\n    \"status\": \"PENDING\",\n    \"totalPrice\": \"25.00\",\n    \"currency\": \"USD\",\n    \"createdAt\": \"2025-11-15T10:00:00Z\",\n    \"updatedAt\": \"2025-11-15T11:00:00Z\"\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Cancel Customer Booking",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/bookings/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"bookings",
+										"{{bookingId}}"
+									]
+								},
+								"description": "Cancels a booking within the customer context (sets status to CANCELLED)."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{authToken}}"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/bookings/booking-id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"bookings",
+												"booking-id"
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					],
+					"description": "Customer-scoped booking management (ADMIN/STAFF: Full access, CLIENT: Own bookings only)"
+				},
+				{
+					"name": "Availability",
+					"item": [
+						{
+							"name": "Check Availability",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/salon/{{customerSlug}}/availability?branchId={{branchId}}&serviceId={{serviceId}}&date=2025-12-25&professionalId={{professionalId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"salon",
+										"{{customerSlug}}",
+										"availability"
+									],
+									"query": [
+										{
+											"key": "branchId",
+											"value": "{{branchId}}",
+											"description": "Branch ID (required)"
+										},
+										{
+											"key": "serviceId",
+											"value": "{{serviceId}}",
+											"description": "Service ID (required)"
+										},
+										{
+											"key": "date",
+											"value": "2025-12-25",
+											"description": "Date in YYYY-MM-DD format (required)"
+										},
+										{
+											"key": "professionalId",
+											"value": "{{professionalId}}",
+											"description": "Professional ID (optional, for specific professional)",
+											"disabled": true
+										}
+									]
+								},
+								"description": "🌐 PUBLIC ENDPOINT - No authentication required. Returns available time slots for a service at a branch on a specific date. Omit professionalId to see aggregated availability across all professionals."
+							},
+							"response": [
+								{
+									"name": "Success Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/availability?branchId=branch-id&serviceId=service-id&date=2025-12-25",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"availability"
+											],
+											"query": [
+												{
+													"key": "branchId",
+													"value": "branch-id"
+												},
+												{
+													"key": "serviceId",
+													"value": "service-id"
+												},
+												{
+													"key": "date",
+													"value": "2025-12-25"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"data\": {\n    \"date\": \"2025-12-25\",\n    \"branch\": {\n      \"id\": \"branch-id\",\n      \"name\": \"Downtown Branch\"\n    },\n    \"service\": {\n      \"id\": \"service-id\",\n      \"name\": \"Haircut\",\n      \"duration\": 30\n    },\n    \"availableSlots\": [\n      {\n        \"time\": \"09:00\",\n        \"available\": true,\n        \"professionalId\": \"professional-id\",\n        \"professionalName\": \"Jane Smith\"\n      },\n      {\n        \"time\": \"09:30\",\n        \"available\": true,\n        \"professionalId\": \"professional-id\",\n        \"professionalName\": \"Jane Smith\"\n      },\n      {\n        \"time\": \"10:00\",\n        \"available\": false\n      },\n      {\n        \"time\": \"10:30\",\n        \"available\": true,\n        \"professionalId\": \"professional-id-2\",\n        \"professionalName\": \"John Doe\"\n      }\n    ]\n  }\n}"
+								},
+								{
+									"name": "Bad Request (Invalid Date)",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/salon/acme/availability?branchId=branch-id&serviceId=service-id&date=invalid-date",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"salon",
+												"acme",
+												"availability"
+											],
+											"query": [
+												{
+													"key": "branchId",
+													"value": "branch-id"
+												},
+												{
+													"key": "serviceId",
+													"value": "service-id"
+												},
+												{
+													"key": "date",
+													"value": "invalid-date"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": 400,\n  \"message\": \"Date must be in YYYY-MM-DD format\"\n}"
+								}
+							]
+						}
+					],
+					"description": "Public availability checking for booking interface (no authentication required)"
+				}
+			],
+			"description": "Complete booking management with admin, customer-scoped operations, and public availability checking"
 		}
 	],
 	"variable": [
@@ -4391,6 +5369,10 @@
 		},
 		{
 			"key": "serviceId",
+			"value": ""
+		},
+		{
+			"key": "bookingId",
 			"value": ""
 		}
 	]

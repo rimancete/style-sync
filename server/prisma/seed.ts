@@ -563,6 +563,7 @@ async function main() {
     prisma.booking.create({
       data: {
         userId: users[1].id, // client user
+        customerId: customer1.id, // Acme Barbershop
         branchId: branch1.id,
         serviceId: services[0].id, // Social + Barba
         professionalId: professionals[0].id, // Michel
@@ -574,6 +575,7 @@ async function main() {
     prisma.booking.create({
       data: {
         userId: users[1].id, // client user
+        customerId: customer1.id, // Acme Barbershop
         branchId: branch2.id,
         serviceId: services[1].id, // Corte Social
         professionalId: null, // Any professional
@@ -586,6 +588,7 @@ async function main() {
     prisma.booking.create({
       data: {
         userId: users[5].id, // Elite Beauty client
+        customerId: customer2.id, // Elite Beauty
         branchId: branch3.id,
         serviceId: services2[0].id, // Manicure & Pedicure
         professionalId: professionals[4].id, // Sarah
@@ -597,6 +600,7 @@ async function main() {
     prisma.booking.create({
       data: {
         userId: users[5].id, // Elite Beauty client
+        customerId: customer2.id, // Elite Beauty
         branchId: branch3.id,
         serviceId: services2[2].id, // Facial Treatment
         professionalId: null, // Any professional

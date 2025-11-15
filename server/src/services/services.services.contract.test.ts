@@ -491,6 +491,7 @@ describe('Services - Service Management (Contract Tests)', () => {
         await db.booking.create({
           data: {
             userId: testUser.id,
+            customerId: testCustomer.id,
             branchId: testBranch1.id,
             serviceId: testService1.id,
             scheduledAt: new Date('2025-12-01T10:00:00Z'),

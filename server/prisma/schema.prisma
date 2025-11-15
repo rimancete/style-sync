@@ -60,6 +60,7 @@ model Customer {
   services      Service[]
   users         UserCustomer[]
   professionals Professional[]
+  bookings      Booking[]
 
   @@map("customers")
 }
@@ -190,6 +191,7 @@ model Booking {
   id             String        @id @default(cuid())
   displayId      Int           @default(autoincrement()) @unique
   userId         String
+  customerId     String
   branchId       String
   serviceId      String
   professionalId String?
@@ -197,7 +199,8 @@ model Booking {
   status         BookingStatus @default(PENDING)
   totalPrice     Decimal       @db.Decimal(10, 2)
   createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  updatedAt      DateTime?     @updatedAt
+  customer       Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
   professional   Professional? @relation(fields: [professionalId], references: [id])
   service        Service       @relation(fields: [serviceId], references: [id])
   branch         Branch        @relation(fields: [branchId], references: [id], onDelete: Cascade)

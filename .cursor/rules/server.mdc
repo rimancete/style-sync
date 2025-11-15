@@ -80,9 +80,13 @@ TASK_WORKFLOW: |
   4. TEST implementation:
      - Create contract test files
      - Implement to pass tests
+     - UPDATE docs/backend/postman-collection.json for manual tests
   
   5. UPDATE docs/backend/implementationHistory.md: 
      - Document implementation
+   
+  6. UPDATE docs/backend/architecture.mermaid: 
+     - Keep the consistence and just add / check important features at the mermaid.
 
 # Error Prevention
 VALIDATION_RULES: |
