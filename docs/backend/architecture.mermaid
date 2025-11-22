@@ -29,12 +29,15 @@ graph TB
             AuthC["AuthController<br/>POST /auth/login<br/>POST /auth/refresh"]
             CustomerAuthC["CustomerAuthController<br/>POST /salon/:slug/auth/register"]
             CustomerBrandingC["CustomersController<br/>GET /customers/branding/:slug"]
+            PublicAvailabilityC["BookingsController<br/>GET /salon/:slug/availability"]
         end
 
         subgraph AdminC["Admin Endpoints (Global)"]
             AdminBranchC["BranchesController<br/>CRUD /branches"]
             AdminCountryC["CountriesController<br/>CRUD /countries"]
             AdminProfC["ProfessionalsController<br/>CRUD /professionals"]
+            AdminServiceC["ServicesController<br/>CRUD /services"]
+            AdminBookingC["BookingsController<br/>CRUD /bookings"]
         end
 
         subgraph CustomerC["Customer-Scoped Endpoints"]
@@ -42,6 +45,8 @@ graph TB
             CSProfC["CustomerProfessionalsController<br/>CRUD /salon/:slug/professionals"]
             CSBranchProfC["CustomerBranchProfessionalsController<br/>GET /salon/:slug/branches/:id/professionals"]
             CustomerContextC["CustomersController<br/>GET /customers/context/:slug<br/>GET /customers/my-customers"]
+            CSServiceC["ServicesController<br/>CRUD /salon/:slug/services"]
+            CSBookingC["BookingsController<br/>CRUD /salon/:slug/bookings"]
         end
     end
 
@@ -65,6 +70,8 @@ graph TB
         CustomerS["CustomersService<br/>(Branding management)<br/>(File upload handling)"]
         ProfS["ProfessionalsService<br/>(Photo uploads)<br/>(Branch association)"]
         FileS["FileService<br/>(Multer integration)<br/>(File validation)"]
+        ServicesS["ServicesService<br/>(Pricing logic)<br/>(Branch association)"]
+        BookingsS["BookingsService<br/>(Availability checks)<br/>(Status management)"]
     end
 
     %% Data Access Layer
@@ -124,6 +131,11 @@ graph TB
     ThrottleG --> CSProfC
     ThrottleG --> CSBranchProfC
     ThrottleG --> CustomerContextC
+    ThrottleG --> PublicAvailabilityC
+    ThrottleG --> AdminServiceC
+    ThrottleG --> AdminBookingC
+    ThrottleG --> CSServiceC
+    ThrottleG --> CSBookingC
 
     %% Public endpoints
     HealthC --> HealthS
@@ -133,6 +145,8 @@ graph TB
     CustomerAuthC --> AuthS
     CustomerBrandingC --> PublicDecorator
     CustomerBrandingC --> CustomerS
+    PublicAvailabilityC --> PublicDecorator
+    PublicAvailabilityC --> BookingsS
 
     %% Admin endpoints with guards
     AdminBranchC --> JWTGuard
@@ -144,6 +158,12 @@ graph TB
     AdminProfC --> JWTGuard
     AdminProfC --> GlobalAdminGuard
     AdminProfC --> ProfS
+    AdminServiceC --> JWTGuard
+    AdminServiceC --> RolesGuard
+    AdminServiceC --> ServicesS
+    AdminBookingC --> JWTGuard
+    AdminBookingC --> RolesGuard
+    AdminBookingC --> BookingsS
 
     %% Customer-scoped endpoints with guards
     CSBranchC --> JWTGuard
@@ -160,6 +180,14 @@ graph TB
     CustomerContextC --> JWTGuard
     CustomerContextC --> CustomerGuard
     CustomerContextC --> CustomerS
+    CSServiceC --> JWTGuard
+    CSServiceC --> CustomerGuard
+    CSServiceC --> RolesGuard
+    CSServiceC --> ServicesS
+    CSBookingC --> JWTGuard
+    CSBookingC --> CustomerGuard
+    CSBookingC --> RolesGuard
+    CSBookingC --> BookingsS
 
     %% Guard dependencies
     JWTGuard --> JWTStrategy
@@ -176,6 +204,8 @@ graph TB
     CustomerS --> FileS
     ProfS --> DatabaseService
     ProfS --> FileS
+    ServicesS --> DatabaseService
+    BookingsS --> DatabaseService
 
     %% Data Access to Database
     DatabaseService --> PrismaClient
@@ -214,6 +244,8 @@ graph TB
     CountryS --> ResponseInterceptor
     CustomerS --> ResponseInterceptor
     ProfS --> ResponseInterceptor
+    ServicesS --> ResponseInterceptor
+    BookingsS --> ResponseInterceptor
     ResponseInterceptor --> Client
     ResponseInterceptor --> AdminClient
     ExceptionFilter --> Client
@@ -235,8 +267,8 @@ graph TB
 
     class Client,AdminClient external
     class JWTGuard,JWTStrategy,CustomerGuard,RolesGuard,CustomerAccessGuard,GlobalAdminGuard,PublicDecorator security
-    class HealthS,AuthS,BranchS,CountryS,CustomerS,ProfS,FileS service
+    class HealthS,AuthS,BranchS,CountryS,CustomerS,ProfS,FileS,ServicesS,BookingsS service
     class DatabaseService,PrismaClient,User,Customer,UserCustomer,Country,Branch,Professional,ProfBranch,Service,ServicePricing,Booking data
-    class HealthC,AuthC,CustomerAuthC,CustomerBrandingC,AdminBranchC,AdminCountryC,AdminProfC,CSBranchC,CSProfC,CSBranchProfC,CustomerContextC controller
+    class HealthC,AuthC,CustomerAuthC,CustomerBrandingC,AdminBranchC,AdminCountryC,AdminProfC,AdminServiceC,AdminBookingC,CSBranchC,CSProfC,CSBranchProfC,CustomerContextC,CSServiceC,CSBookingC,PublicAvailabilityC controller
     class Decorators,Filters,Interceptors,Pipes,Utils,Types,ConfigModule infrastructure
 ```

@@ -7,18 +7,21 @@ StyleSync uses a three-tier environment approach designed for portfolio projects
 ## Environment Tiers
 
 ### 🔧 Development (`.env`)
+
 - **Purpose**: Local development
 - **Security**: Not committed to git (gitignored)
 - **Access**: Individual developer
 - **Secrets**: Safe development placeholders only
 
 ### 🎭 Staging (`.env.staging`)
+
 - **Purpose**: Demo environment, testing, portfolio showcase
 - **Security**: Plain text in git (safe demo values)
 - **Access**: Public (portfolio viewers)
 - **Secrets**: Non-sensitive staging configurations
 
 ### 🔐 Production (`.env.production`)
+
 - **Purpose**: Live deployment with real users
 - **Security**: **Encrypted with git-crypt**
 - **Access**: Deployment systems only
@@ -27,6 +30,21 @@ StyleSync uses a three-tier environment approach designed for portfolio projects
 ## Quick Start
 
 ### 1. Development Setup
+
+#### Database Setup (Docker)
+
+To run the development database using Docker:
+
+```bash
+# Start the database
+docker compose -f docker/docker-compose.yml -p stylesync up -d
+
+# Stop the database
+docker compose -f docker/docker-compose.yml -p stylesync down
+```
+
+#### Server Setup
+
 ```bash
 # Navigate to server directory
 cd server
@@ -39,7 +57,8 @@ cp env.template .env
 npm run start:dev
 ```
 
-### 2. Staging Environment  
+### 2. Staging Environment
+
 ```bash
 # Staging config already exists in repo
 NODE_ENV=staging npm start
@@ -49,6 +68,7 @@ npm run env:validate staging
 ```
 
 ### 3. Production Setup
+
 ```bash
 # One-time git-crypt setup
 ./server/scripts/setup-git-crypt.sh
@@ -64,12 +84,14 @@ NODE_ENV=production npm start
 ## Security Architecture
 
 ### 🛡️ What's Protected
+
 - **Production database credentials** (encrypted in git)
-- **Production JWT secrets** (encrypted in git)  
+- **Production JWT secrets** (encrypted in git)
 - **Production API keys** (encrypted in git)
 - **Production service credentials** (encrypted in git)
 
 ### 🎯 What's Portfolio-Safe
+
 - **Staging configurations** (visible, demonstrates architecture)
 - **Development templates** (no real secrets)
 - **Environment structure** (shows best practices)
@@ -77,30 +99,32 @@ NODE_ENV=production npm start
 
 ## Environment Variables Reference
 
-| Variable | Development | Staging | Production |
-|----------|-------------|---------|------------|
-| `NODE_ENV` | `development` | `staging` | `production` |
-| `PORT` | `3001` | `3001` | `3001` |
-| `DATABASE_URL` | Local Docker | Demo DB | 🔒 Encrypted |
-| `CLIENT_ORIGIN` | `localhost:3000` | `staging.stylesync.com` | `stylesync.com` |
-| `JWT_SECRET` | Dev placeholder | Demo secret | 🔒 Encrypted |
-| `JWT_EXPIRES_IN` | `1d` | `1h` | `15m` |
-| `SWAGGER_ENABLED` | `true` | `true` | `false` |
+| Variable          | Development      | Staging                 | Production      |
+| ----------------- | ---------------- | ----------------------- | --------------- |
+| `NODE_ENV`        | `development`    | `staging`               | `production`    |
+| `PORT`            | `3001`           | `3001`                  | `3001`          |
+| `DATABASE_URL`    | Local Docker     | Demo DB                 | 🔒 Encrypted    |
+| `CLIENT_ORIGIN`   | `localhost:3000` | `staging.stylesync.com` | `stylesync.com` |
+| `JWT_SECRET`      | Dev placeholder  | Demo secret             | 🔒 Encrypted    |
+| `JWT_EXPIRES_IN`  | `1d`             | `1h`                    | `15m`           |
+| `SWAGGER_ENABLED` | `true`           | `true`                  | `false`         |
 
 ## Git-Crypt Setup
 
 ### Installation
+
 ```bash
 # macOS
 brew install git-crypt
 
-# Ubuntu/Debian  
+# Ubuntu/Debian
 sudo apt-get install git-crypt
 
 # Windows (use WSL or download binary)
 ```
 
 ### Initialize (One-time setup)
+
 ```bash
 # Run setup script
 ./server/scripts/setup-git-crypt.sh
@@ -112,6 +136,7 @@ git commit -m "Configure git-crypt for production secrets"
 ```
 
 ### Key Management
+
 ```bash
 # Export key for deployment
 git-crypt export-key ../stylesync-production.key
@@ -119,7 +144,7 @@ git-crypt export-key ../stylesync-production.key
 # Lock repository (encrypt files)
 git-crypt lock
 
-# Unlock for deployment  
+# Unlock for deployment
 git-crypt unlock ../stylesync-production.key
 
 # Check encryption status
@@ -129,19 +154,24 @@ git-crypt status
 ## Deployment Strategy
 
 ### Free Hosting Compatible
+
 This setup works perfectly with:
+
 - **Railway**: Supports environment variables + git integration
 - **Render**: Environment variables from dashboard
 - **Fly.io**: Secrets management + git deploy
 - **Heroku**: Config vars + git deploy
 
 ### Cloud Provider Ready
+
 Easy migration to:
+
 - **AWS**: Secrets Manager + ECS/Lambda
-- **GCP**: Secret Manager + Cloud Run  
+- **GCP**: Secret Manager + Cloud Run
 - **Azure**: Key Vault + Container Instances
 
 ### Deployment Process
+
 1. **Set up git-crypt** in CI/CD environment
 2. **Unlock production secrets** during deployment
 3. **Set NODE_ENV=production**
@@ -150,13 +180,14 @@ Easy migration to:
 ## Validation & Testing
 
 ### Environment Validation
+
 ```bash
 # Validate current environment
 npm run env:validate
 
 # Validate specific environment
 npm run env:validate development
-npm run env:validate staging  
+npm run env:validate staging
 npm run env:validate production
 
 # Check configuration loading
@@ -164,6 +195,7 @@ npm run config:show
 ```
 
 ### Security Validation
+
 ```bash
 # Check git-crypt status
 git-crypt status
@@ -178,6 +210,7 @@ NODE_ENV=staging npm run start:dev
 ## Scripts Reference
 
 ### Environment Scripts
+
 ```bash
 # Setup git-crypt (one-time)
 ./server/scripts/setup-git-crypt.sh
@@ -187,7 +220,7 @@ NODE_ENV=staging npm run start:dev
 
 # Package.json scripts
 npm run env:validate [env]     # Validate environment
-npm run config:show           # Show loaded configuration  
+npm run config:show           # Show loaded configuration
 npm run start:staging         # Start with staging config
 npm run start:prod           # Start with production config
 ```
@@ -197,11 +230,12 @@ npm run start:prod           # Start with production config
 ### Common Issues
 
 #### "Environment file not found"
+
 ```bash
 # For development
 cp server/env.template server/.env
 
-# For staging  
+# For staging
 # File already exists in repo
 
 # For production
@@ -210,6 +244,7 @@ git-crypt unlock /path/to/key
 ```
 
 #### "Git-crypt not working"
+
 ```bash
 # Check installation
 git-crypt --version
@@ -223,6 +258,7 @@ rm -rf .git-crypt
 ```
 
 #### "Configuration validation failed"
+
 ```bash
 # Run validation with details
 npm run env:validate development
@@ -235,18 +271,21 @@ echo $DATABASE_URL
 ## Portfolio Benefits
 
 ### 🎯 Demonstrates Knowledge
+
 - **Security best practices**: Production secret encryption
 - **Environment management**: Multi-tier configuration
 - **DevOps readiness**: Deployment-agnostic approach
 - **Enterprise patterns**: Proper secret handling
 
 ### 🚀 Deployment Ready
+
 - **Free hosting compatible**: Works with Railway, Render, etc.
-- **Cloud provider ready**: Easy migration to AWS/GCP/Azure  
+- **Cloud provider ready**: Easy migration to AWS/GCP/Azure
 - **CI/CD friendly**: Git-based deployment workflow
 - **Scalable architecture**: Grows from demo to production
 
 ### 📚 Learning Value
+
 - **Git-crypt usage**: Industry-standard secret management
 - **Environment patterns**: Real-world configuration management
 - **Security mindset**: Production vs. development considerations
