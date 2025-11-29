@@ -3,8 +3,10 @@ import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 import { DatabaseModule } from '../database/database.module';
 
+import { SchedulesModule } from '../schedules/schedules.module';
+
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, SchedulesModule],
   controllers: [BookingsController],
   providers: [BookingsService],
   exports: [BookingsService],

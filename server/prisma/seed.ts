@@ -8,6 +8,8 @@ async function main() {
 
   // Clean up existing data
   await prisma.booking.deleteMany({});
+  await prisma.branchSchedule.deleteMany({});
+  await prisma.professionalSchedule.deleteMany({});
   await prisma.servicePricing.deleteMany({});
   await prisma.professional.deleteMany({});
   await prisma.service.deleteMany({});
@@ -233,6 +235,46 @@ async function main() {
 
   console.log('✅ Created branches');
 
+  // Create branch schedules (Mon-Fri 09:00-18:00, Sat 09:00-14:00, Sun Closed)
+  const branches = [branch1, branch2, branch3];
+  for (const branch of branches) {
+    const schedules = [];
+    // Mon(1) to Fri(5)
+    for (let day = 1; day <= 5; day++) {
+      schedules.push({
+        branchId: branch.id,
+        dayOfWeek: day,
+        startTime: '09:00',
+        endTime: '18:00',
+        isClosed: false,
+      });
+    }
+    // Sat(6)
+    schedules.push({
+      branchId: branch.id,
+      dayOfWeek: 6,
+      startTime: '09:00',
+      endTime: '14:00',
+      isClosed: false,
+    });
+    // Sun(0)
+    schedules.push({
+      branchId: branch.id,
+      dayOfWeek: 0,
+      startTime: '00:00',
+      endTime: '00:00',
+      isClosed: true,
+    });
+
+    await Promise.all(
+      schedules.map(schedule =>
+        prisma.branchSchedule.create({ data: schedule }),
+      ),
+    );
+  }
+
+  console.log('✅ Created branch schedules');
+
   // Create services
   const services = await Promise.all([
     prisma.service.create({
@@ -429,6 +471,47 @@ async function main() {
   ]);
 
   console.log('✅ Created professionals');
+
+  // Create professional schedules (Same as branches but with lunch break 12:00-13:00)
+  for (const professional of professionals) {
+    const schedules = [];
+    // Mon(1) to Fri(5)
+    for (let day = 1; day <= 5; day++) {
+      schedules.push({
+        professionalId: professional.id,
+        dayOfWeek: day,
+        startTime: '09:00',
+        endTime: '18:00',
+        isClosed: false,
+        breakStartTime: '12:00',
+        breakEndTime: '13:00',
+      });
+    }
+    // Sat(6) - No break
+    schedules.push({
+      professionalId: professional.id,
+      dayOfWeek: 6,
+      startTime: '09:00',
+      endTime: '14:00',
+      isClosed: false,
+    });
+    // Sun(0)
+    schedules.push({
+      professionalId: professional.id,
+      dayOfWeek: 0,
+      startTime: '00:00',
+      endTime: '00:00',
+      isClosed: true,
+    });
+
+    await Promise.all(
+      schedules.map(schedule =>
+        prisma.professionalSchedule.create({ data: schedule }),
+      ),
+    );
+  }
+
+  console.log('✅ Created professional schedules');
 
   // Create users
   const hashedPassword = await bcrypt.hash('123456', 10);

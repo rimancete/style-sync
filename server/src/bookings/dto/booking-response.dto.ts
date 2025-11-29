@@ -83,6 +83,12 @@ export class BookingResponseDto {
   })
   status: BookingStatus;
 
+  @ApiPropertyOptional({
+    description: 'Confirmation token (only visible to owner/admin)',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  confirmationToken?: string | null;
+
   @ApiProperty({
     description: 'Total price (formatted as string)',
     example: '25.00',

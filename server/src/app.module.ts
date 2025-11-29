@@ -14,6 +14,7 @@ import { CustomersModule } from './customers/customers.module';
 import { ProfessionalsModule } from './professionals/professionals.module';
 import { ServicesModule } from './services/services.module';
 import { BookingsModule } from './bookings/bookings.module';
+import { SchedulesModule } from './schedules/schedules.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { BookingsModule } from './bookings/bookings.module';
     ProfessionalsModule,
     ServicesModule,
     BookingsModule,
+    SchedulesModule,
   ],
   controllers: [AppController],
   providers: [

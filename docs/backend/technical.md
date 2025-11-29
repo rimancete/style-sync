@@ -634,6 +634,45 @@ Country and address format management for international support.
 - Used by Branches for address validation
 - Supports multiple address formats (US, BR, etc.)
 
+### 7. Bookings Module
+
+The booking system implements a secure, token-based confirmation flow with robust race condition handling.
+
+**Key Features**:
+- **Token-Based Confirmation**: Secure email verification flow
+- **Race Condition Prevention**: Double-check availability at confirmation
+- **User Conflict Prevention**: Prevents users from double-booking themselves
+- **Multi-Tenant**: Customer-scoped bookings
+
+**⚠️ Timezone Considerations**:
+- **Current Implementation**: All times stored in UTC, assumes server timezone = branch timezone
+- **Frontend Requirement**: Must send booking times as ISO strings with timezone offset (e.g., `2025-12-25T11:00:00-03:00`)
+- **Limitation**: Multi-timezone deployments require explicit timezone support (see Future Enhancements)
+- **Availability Response**: Returns time slots as strings ("09:00", "09:30") without timezone context
+
+**Booking Flow Architecture**:
+
+1.  **Creation (`POST /api/salon/:customerSlug/bookings`)**:
+    - Validates professional availability
+    - **Validates user availability** (prevents double-booking)
+    - Creates `PENDING` booking with `confirmationToken`
+    - Sends email with frontend confirmation link
+
+2.  **Confirmation (`POST /api/salon/:customerSlug/bookings/confirm`)**:
+    - Validates token
+    - **Re-validates professional availability** (Race condition check)
+    - **Re-validates user availability**
+    - Updates status to `CONFIRMED`
+
+**Conflict Prevention Implementation**:
+The system enforces a strict "one place at a time" rule for users by checking for overlapping bookings (PENDING or CONFIRMED) both at creation and confirmation time.
+
+**Frontend Integration Flow**:
+1. User receives email with link: `https://<FRONTEND>/salon/:slug/bookings/confirm?token=...`
+2. Frontend fetches branding (`GET /api/salon/:slug`) and booking details (`GET /api/salon/:slug/bookings/token/:token`)
+3. **Confirm**: User clicks Confirm -> Frontend calls `POST /api/salon/:slug/bookings/confirm` (Body: `{ token }`)
+4. **Cancel**: User clicks Cancel -> Frontend calls `DELETE /api/salon/:slug/bookings/cancel/:token`
+
 ## Multi-Tenant Architecture
 
 ### Customer Context Resolution Flow

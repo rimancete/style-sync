@@ -28,6 +28,7 @@ import { AvailabilityQueryDto } from './dto/availability-query.dto';
 import { BookingResponseDto } from './dto/booking-response.dto';
 import { BookingsListResponseDto } from './dto/bookings-list-response.dto';
 import { AvailabilityResponseDto } from './dto/availability-response.dto';
+import { ConfirmBookingDto } from './dto/confirm-booking.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { CustomerContextGuard } from '../common/guards/customer-context.guard';
@@ -552,5 +553,105 @@ export class BookingsController {
     // Note: customerSlug is in URL for consistency but not used in logic
     // Service validates branch/service belong to same customer internally
     return this.bookingsService.checkAvailability(query);
+  }
+  @Get('salon/:customerSlug/bookings/token/:token')
+  @Public()
+  @ApiOperation({
+    summary: 'Get booking by token (Public)',
+    description:
+      'Retrieve booking details using a confirmation token. Used for the confirmation page.',
+  })
+  @ApiParam({
+    name: 'customerSlug',
+    description: 'Customer URL slug',
+    example: 'acme',
+  })
+  @ApiParam({
+    name: 'token',
+    description: 'Confirmation token',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Booking retrieved successfully',
+    type: BookingResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Invalid token or booking not found',
+  })
+  async getBookingByToken(
+    @Param('customerSlug') customerSlug: string,
+    @Param('token') token: string,
+  ): Promise<BookingResponseDto> {
+    return this.bookingsService.getBookingByToken(token, customerSlug);
+  }
+
+  @Post('salon/:customerSlug/bookings/confirm')
+  @HttpCode(HttpStatus.OK)
+  @Public()
+  @ApiOperation({
+    summary: 'Confirm booking (Public)',
+    description: 'Confirm a booking using a confirmation token.',
+  })
+  @ApiParam({
+    name: 'customerSlug',
+    description: 'Customer URL slug',
+    example: 'acme',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Booking confirmed successfully',
+    type: BookingResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Invalid token or booking not found',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Booking already confirmed/cancelled',
+  })
+  async confirmBooking(
+    @Param('customerSlug') customerSlug: string,
+    @Body() confirmBookingDto: ConfirmBookingDto,
+  ): Promise<BookingResponseDto> {
+    return this.bookingsService.confirmBooking(
+      confirmBookingDto.token,
+      customerSlug,
+    );
+  }
+
+  @Delete('salon/:customerSlug/bookings/cancel/:token')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Public()
+  @ApiOperation({
+    summary: 'Cancel booking via token (Public)',
+    description: 'Cancel a booking using a confirmation token.',
+  })
+  @ApiParam({
+    name: 'customerSlug',
+    description: 'Customer URL slug',
+    example: 'acme',
+  })
+  @ApiParam({
+    name: 'token',
+    description: 'Confirmation token',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({ status: 204, description: 'Booking cancelled successfully' })
+  @ApiResponse({
+    status: 404,
+    description: 'Invalid token or booking not found',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Booking already confirmed/cancelled',
+  })
+  async cancelBookingByToken(
+    @Param('customerSlug') customerSlug: string,
+    @Param('token') token: string,
+  ): Promise<void> {
+    return this.bookingsService.cancelBookingByToken(token, customerSlug);
   }
 }

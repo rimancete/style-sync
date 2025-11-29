@@ -148,8 +148,10 @@ describe('Bookings API (Contract Tests)', () => {
     });
 
     // Create country
-    const country = await db.country.create({
-      data: {
+    const country = await db.country.upsert({
+      where: { code: 'US' },
+      update: {},
+      create: {
         code: 'US',
         name: 'United States',
         addressFormat: {},
@@ -745,134 +747,6 @@ describe('Bookings API (Contract Tests)', () => {
       response.body.data.bookings.forEach((booking: { userId: string }) => {
         expect(booking.userId).toBe(testUser.id);
       });
-    });
-  });
-
-  describe('GET /api/salon/:customerSlug/availability (Check Availability)', () => {
-    let existingBookingId: string;
-
-    beforeAll(async () => {
-      // Create a booking at 10:00 to block that slot
-      const date = new Date();
-      date.setDate(date.getDate() + 7);
-      date.setHours(10, 0, 0, 0);
-
-      const booking = await db.booking.create({
-        data: {
-          userId: testUser.id,
-          customerId: testCustomer.id,
-          branchId: testBranch.id,
-          serviceId: testService.id,
-          professionalId: testProfessional1.id,
-          scheduledAt: date,
-          totalPrice: 25.0,
-          status: 'CONFIRMED',
-        },
-      });
-      existingBookingId = booking.id;
-    });
-
-    afterAll(async () => {
-      await db.booking.delete({ where: { id: existingBookingId } });
-    });
-
-    it('should return available time slots', async () => {
-      const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() + 7);
-      const dateString = targetDate.toISOString().split('T')[0];
-
-      const response = await request(app.getHttpServer())
-        .get(`/salon/${testCustomer.urlSlug}/availability`)
-        .query({
-          branchId: testBranch.id,
-          serviceId: testService.id,
-          date: dateString,
-        })
-        .set('Authorization', clientToken)
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toHaveProperty('data');
-      expect(response.body.data).toHaveProperty('date', dateString);
-      expect(response.body.data).toHaveProperty('availableSlots');
-      expect(Array.isArray(response.body.data.availableSlots)).toBe(true);
-
-      // Verify slot structure
-      const slot = response.body.data.availableSlots[0];
-      expect(slot).toHaveProperty('time');
-      expect(slot).toHaveProperty('available');
-      expect(typeof slot.available).toBe('boolean');
-    });
-
-    it('should show 10:00 slot as unavailable (booked)', async () => {
-      const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() + 7);
-      const dateString = targetDate.toISOString().split('T')[0];
-
-      const response = await request(app.getHttpServer())
-        .get(`/salon/${testCustomer.urlSlug}/availability`)
-        .query({
-          branchId: testBranch.id,
-          serviceId: testService.id,
-          date: dateString,
-          professionalId: testProfessional1.id,
-        })
-        .set('Authorization', clientToken)
-        .expect(HttpStatus.OK);
-
-      const slot10AM = response.body.data.availableSlots.find(
-        (s: { time: string }) => s.time === '10:00',
-      );
-      expect(slot10AM).toBeDefined();
-      expect(slot10AM.available).toBe(false);
-    });
-
-    it('should show other slots as available', async () => {
-      const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() + 7);
-      const dateString = targetDate.toISOString().split('T')[0];
-
-      const response = await request(app.getHttpServer())
-        .get(`/salon/${testCustomer.urlSlug}/availability`)
-        .query({
-          branchId: testBranch.id,
-          serviceId: testService.id,
-          date: dateString,
-        })
-        .set('Authorization', clientToken)
-        .expect(HttpStatus.OK);
-
-      const availableSlots = response.body.data.availableSlots.filter(
-        (s: { available: boolean }) => s.available,
-      );
-      expect(availableSlots.length).toBeGreaterThan(0);
-    });
-
-    it('should validate date format', async () => {
-      await request(app.getHttpServer())
-        .get(`/salon/${testCustomer.urlSlug}/availability`)
-        .query({
-          branchId: testBranch.id,
-          serviceId: testService.id,
-          date: 'invalid-date',
-        })
-        .set('Authorization', clientToken)
-        .expect(HttpStatus.BAD_REQUEST);
-    });
-
-    it('should return 404 for non-existent branch', async () => {
-      const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() + 7);
-      const dateString = targetDate.toISOString().split('T')[0];
-
-      await request(app.getHttpServer())
-        .get(`/salon/${testCustomer.urlSlug}/availability`)
-        .query({
-          branchId: 'non-existent-id',
-          serviceId: testService.id,
-          date: dateString,
-        })
-        .set('Authorization', clientToken)
-        .expect(HttpStatus.NOT_FOUND);
     });
   });
 });

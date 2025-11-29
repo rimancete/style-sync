@@ -18,6 +18,8 @@ import {
 } from './dto/availability-response.dto';
 import { BookingEntity } from './entities/booking.entity';
 import { BookingStatus } from '@prisma/client';
+import { SchedulesService } from '../schedules/schedules.service';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class BookingsService {
@@ -26,7 +28,10 @@ export class BookingsService {
   private readonly DEFAULT_END_HOUR = 18;
   private readonly SLOT_INTERVAL_MINUTES = 30;
 
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly schedulesService: SchedulesService,
+  ) {}
 
   /**
    * Find all bookings (admin operation, cross-customer)
@@ -234,6 +239,7 @@ export class BookingsService {
         scheduledAt,
         totalPrice,
         status: BookingStatus.PENDING,
+        confirmationToken: randomUUID(),
       },
       include: {
         user: true,
@@ -273,6 +279,9 @@ export class BookingsService {
       customerId,
     );
 
+    // Validate user doesn't have overlapping bookings
+    await this.validateUserNoConflict(userId, scheduledAt, service.duration);
+
     // If professionalId is null, auto-assign first available
     let assignedProfessionalId = professional?.id ?? null;
     if (!assignedProfessionalId) {
@@ -307,6 +316,7 @@ export class BookingsService {
         scheduledAt,
         totalPrice,
         status: BookingStatus.PENDING,
+        confirmationToken: randomUUID(),
       },
       include: {
         user: true,
@@ -475,6 +485,129 @@ export class BookingsService {
   }
 
   /**
+   * Get booking by confirmation token
+   */
+  async getBookingByToken(
+    token: string,
+    customerSlug: string,
+  ): Promise<BookingResponseDto> {
+    const booking = await this.db.booking.findUnique({
+      where: { confirmationToken: token },
+      include: {
+        user: true,
+        customer: true,
+        branch: true,
+        service: true,
+        professional: true,
+      },
+    });
+
+    if (!booking) {
+      throw new NotFoundException('Invalid confirmation token');
+    }
+
+    if (booking.customer.urlSlug !== customerSlug) {
+      throw new NotFoundException('Booking not found for this customer');
+    }
+
+    return BookingEntity.fromPrisma(booking);
+  }
+
+  /**
+   * Confirm booking by token
+   */
+  async confirmBooking(
+    token: string,
+    customerSlug: string,
+  ): Promise<BookingResponseDto> {
+    const booking = await this.db.booking.findUnique({
+      where: { confirmationToken: token },
+      include: { customer: true, service: true },
+    });
+
+    if (!booking) {
+      throw new NotFoundException('Invalid confirmation token');
+    }
+
+    if (booking.customer.urlSlug !== customerSlug) {
+      throw new NotFoundException('Booking not found for this customer');
+    }
+
+    if (booking.status !== BookingStatus.PENDING) {
+      throw new ConflictException(`Booking is already ${booking.status}`);
+    }
+
+    // IMPORTANT: Re-validate availability before confirming to prevent race conditions
+    // This ensures that if two bookings were created for the same slot,
+    // only the first one to be confirmed will succeed
+
+    // 1. Check professional availability
+    if (booking.professionalId) {
+      await this.validateNoConflict(
+        booking.professionalId,
+        booking.scheduledAt,
+        booking.service.duration,
+        booking.id, // Exclude this booking from conflict check
+      );
+    }
+
+    // 2. Check user availability (prevent double booking for same user)
+    await this.validateUserNoConflict(
+      booking.userId,
+      booking.scheduledAt,
+      booking.service.duration,
+      booking.id, // Exclude this booking
+    );
+
+    const updatedBooking = await this.db.booking.update({
+      where: { id: booking.id },
+      data: { status: BookingStatus.CONFIRMED },
+      include: {
+        user: true,
+        customer: true,
+        branch: true,
+        service: true,
+        professional: true,
+      },
+    });
+
+    return BookingEntity.fromPrisma(updatedBooking);
+  }
+
+  /**
+   * Cancel booking by token
+   */
+  async cancelBookingByToken(
+    token: string,
+    customerSlug: string,
+  ): Promise<void> {
+    const booking = await this.db.booking.findUnique({
+      where: { confirmationToken: token },
+      include: { customer: true },
+    });
+
+    if (!booking) {
+      throw new NotFoundException('Invalid confirmation token');
+    }
+
+    if (booking.customer.urlSlug !== customerSlug) {
+      throw new NotFoundException('Booking not found for this customer');
+    }
+
+    if (
+      booking.status !== BookingStatus.PENDING &&
+      booking.status !== BookingStatus.CONFIRMED
+    ) {
+      throw new ConflictException(`Booking is already ${booking.status}`);
+    }
+
+    await this.db.booking.update({
+      where: { id: booking.id },
+      data: { status: BookingStatus.CANCELLED },
+    });
+  }
+
+  /**
    * Check availability and generate time slots
    * @param query - Availability query parameters
    */
@@ -550,9 +683,19 @@ export class BookingsService {
 
   /**
    * HELPER: Generate available time slots for a given date
+   *
+   * ⚠️ TIMEZONE ASSUMPTION: This implementation assumes the server timezone
+   * matches the branch timezone. All times are processed in UTC for consistency.
+   *
+   * FUTURE ENHANCEMENT: Add explicit timezone support by:
+   * 1. Adding timezone field to branches table (e.g., 'America/Sao_Paulo')
+   * 2. Using timezone library (date-fns-tz or luxon) for proper conversion
+   * 3. Converting UTC times to branch timezone for slot generation
+   * 4. Including timezone info in API responses
+   *
    * @param branchId - Branch ID
    * @param serviceId - Service ID
-   * @param date - Date in YYYY-MM-DD format
+   * @param date - Date in YYYY-MM-DD format (interpreted as UTC date)
    * @param duration - Service duration in minutes
    * @param professionalId - Optional professional ID for specific professional
    * @returns Array of time slots
@@ -565,11 +708,36 @@ export class BookingsService {
     professionalId?: string,
   ): Promise<TimeSlotDto[]> {
     const slots: TimeSlotDto[] = [];
-    // Parse date string as local time (not UTC) to avoid timezone issues
+    // Parse date string as UTC to match database booking times
+    // NOTE: This assumes bookings are created with proper timezone offset
+    // e.g., "2025-12-25T11:00:00-03:00" (Brazil time) -> stored as UTC
     const [year, month, day] = date.split('-').map(Number);
-    const targetDate = new Date(year, month - 1, day);
+    const targetDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+    const dayOfWeek = targetDate.getUTCDay(); // 0-6 (Sunday-Saturday)
 
-    // Get professionals for this branch
+    // 1. Get Branch Schedule
+    const branchSchedule = await this.schedulesService.getBranchScheduleForDay(
+      branchId,
+      dayOfWeek,
+    );
+
+    // If branch is closed or no schedule defined, return empty
+    if (!branchSchedule || branchSchedule.isClosed) {
+      return [];
+    }
+
+    // Parse branch hours
+    const [branchStartHour, branchStartMinute] = branchSchedule.startTime
+      .split(':')
+      .map(Number);
+    const [branchEndHour, branchEndMinute] = branchSchedule.endTime
+      .split(':')
+      .map(Number);
+
+    const branchStartMinutes = branchStartHour * 60 + branchStartMinute;
+    const branchEndMinutes = branchEndHour * 60 + branchEndMinute;
+
+    // 2. Get Professionals
     let professionals: { id: string }[];
     if (professionalId) {
       // Check specific professional
@@ -611,10 +779,24 @@ export class BookingsService {
       }));
     }
 
-    // Get all bookings for the date
-    // Use the already parsed date components for start/end of day
-    const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
-    const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+    // 3. Get Professional Schedules
+    const professionalSchedules = await Promise.all(
+      professionals.map(async p => {
+        const schedule =
+          await this.schedulesService.getProfessionalScheduleForDay(
+            p.id,
+            dayOfWeek,
+          );
+        return {
+          professionalId: p.id,
+          schedule,
+        };
+      }),
+    );
+
+    // 4. Get Existing Bookings (use UTC to match database times)
+    const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
     const bookings = await this.db.booking.findMany({
       where: {
@@ -635,44 +817,100 @@ export class BookingsService {
       },
     });
 
-    // Generate slots at 30-minute intervals
+    // 5. Generate Slots
+    // Iterate from branch start to branch end
     for (
-      let hour = this.DEFAULT_START_HOUR;
-      hour < this.DEFAULT_END_HOUR;
-      hour++
+      let currentMinutes = branchStartMinutes;
+      currentMinutes < branchEndMinutes;
+      currentMinutes += this.SLOT_INTERVAL_MINUTES
     ) {
-      for (let minute = 0; minute < 60; minute += this.SLOT_INTERVAL_MINUTES) {
-        const slotTime = new Date(targetDate);
-        slotTime.setHours(hour, minute, 0, 0);
+      // Calculate slot time in UTC to match database booking times
+      const hour = Math.floor(currentMinutes / 60);
+      const minute = currentMinutes % 60;
+      const slotTime = new Date(
+        Date.UTC(year, month - 1, day, hour, minute, 0, 0),
+      );
 
-        // Format time as HH:mm
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      // Check if slot + duration exceeds branch closing time
+      if (currentMinutes + duration > branchEndMinutes) {
+        continue;
+      }
 
-        // Check if any professional is available for this slot
-        let anyAvailable = false;
-        let availableProfessionalId: string | undefined;
+      // Format time as HH:mm
+      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
 
-        for (const prof of professionals) {
-          const hasConflict = this.checkTimeSlotConflict(
-            prof.id,
-            slotTime,
-            duration,
-            bookings,
-          );
+      // Check availability for each professional
+      let anyAvailable = false;
+      let availableProfessionalId: string | undefined;
 
-          if (!hasConflict) {
-            anyAvailable = true;
-            availableProfessionalId = prof.id;
-            break;
+      for (const p of professionals) {
+        const pSchedule = professionalSchedules.find(
+          ps => ps.professionalId === p.id,
+        )?.schedule;
+
+        // If professional has no schedule or is closed, they are not available
+        // If professional has no schedule, we assume they follow branch hours?
+        // Let's assume strict: no schedule = not working.
+        // Or maybe default to branch hours?
+        // For now, let's assume if no schedule record, they are NOT working (safe default).
+        // But in seed we created schedules for all.
+        if (!pSchedule || pSchedule.isClosed) {
+          continue;
+        }
+
+        // Check professional hours
+        const [pStartH, pStartM] = pSchedule.startTime.split(':').map(Number);
+        const [pEndH, pEndM] = pSchedule.endTime.split(':').map(Number);
+        const pStartMinutes = pStartH * 60 + pStartM;
+        const pEndMinutes = pEndH * 60 + pEndM;
+
+        if (
+          currentMinutes < pStartMinutes ||
+          currentMinutes + duration > pEndMinutes
+        ) {
+          continue;
+        }
+
+        // Check break
+        if (pSchedule.breakStartTime && pSchedule.breakEndTime) {
+          const [bStartH, bStartM] = pSchedule.breakStartTime
+            .split(':')
+            .map(Number);
+          const [bEndH, bEndM] = pSchedule.breakEndTime.split(':').map(Number);
+          const bStartMinutes = bStartH * 60 + bStartM;
+          const bEndMinutes = bEndH * 60 + bEndM;
+
+          // If slot overlaps with break
+          // Slot interval: [current, current + duration]
+          // Break interval: [bStart, bEnd]
+          if (
+            currentMinutes < bEndMinutes &&
+            currentMinutes + duration > bStartMinutes
+          ) {
+            continue;
           }
         }
 
-        slots.push({
-          time: timeString,
-          available: anyAvailable,
-          professionalId: professionalId || availableProfessionalId,
-        });
+        // Check booking conflicts
+        const hasConflict = this.checkTimeSlotConflict(
+          p.id,
+          slotTime,
+          duration,
+          bookings,
+        );
+
+        if (!hasConflict) {
+          anyAvailable = true;
+          availableProfessionalId = p.id;
+          break; // Found one available professional, that's enough for "any"
+        }
       }
+
+      slots.push({
+        time: timeString,
+        available: anyAvailable,
+        professionalId: professionalId || availableProfessionalId,
+      });
     }
 
     return slots;
@@ -775,6 +1013,54 @@ export class BookingsService {
     throw new ConflictException(
       'No professionals available at the requested time',
     );
+  }
+
+  /**
+   * HELPER: Validate no scheduling conflict exists for the USER
+   * @param userId - User ID
+   * @param scheduledAt - Scheduled time
+   * @param duration - Service duration in minutes
+   * @param excludeBookingId - Optional booking ID to exclude (for updates)
+   */
+  private async validateUserNoConflict(
+    userId: string,
+    scheduledAt: Date,
+    duration: number,
+    excludeBookingId?: string,
+  ): Promise<void> {
+    const bookingEnd = new Date(scheduledAt.getTime() + duration * 60000);
+    // Look back 24 hours to be safe and avoid scanning entire history
+    const searchStart = new Date(scheduledAt.getTime() - 24 * 60 * 60 * 1000);
+
+    // Find overlapping bookings for this USER
+    const conflictingBookings = await this.db.booking.findMany({
+      where: {
+        userId,
+        id: excludeBookingId ? { not: excludeBookingId } : undefined,
+        status: {
+          in: [BookingStatus.PENDING, BookingStatus.CONFIRMED],
+        },
+        scheduledAt: {
+          gte: searchStart,
+          lt: bookingEnd,
+        },
+      },
+      include: {
+        service: true,
+      },
+    });
+
+    for (const booking of conflictingBookings) {
+      const existingStart = booking.scheduledAt;
+      const existingEnd = new Date(
+        existingStart.getTime() + booking.service.duration * 60000,
+      );
+
+      // Check for overlap
+      if (scheduledAt < existingEnd && bookingEnd > existingStart) {
+        throw new ConflictException('You already have a booking at this time');
+      }
+    }
   }
 
   /**

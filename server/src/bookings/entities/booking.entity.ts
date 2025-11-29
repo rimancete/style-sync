@@ -37,6 +37,7 @@ export class BookingEntity {
       professionalName: booking.professional?.name ?? null,
       scheduledAt: booking.scheduledAt,
       status: booking.status,
+      confirmationToken: booking.confirmationToken,
       totalPrice: booking.totalPrice.toFixed(2),
       currency: booking.customer.currency,
       createdAt: booking.createdAt,

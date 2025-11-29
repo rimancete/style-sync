@@ -14,3 +14,14 @@ StyleSync is a multi-location barbershop booking system with the following key r
 2. **Service Combinations**: Single service per booking (no complex multi-service logic)
 3. **Pricing Strategy**: Location-specific pricing for services
 4. **Cancellation Rules**: Deferred to future implementation
+
+## 1.2 Booking Rules
+
+1. **Double-Booking Prevention**: A client cannot have two overlapping bookings (PENDING or CONFIRMED) at the same time. This enforces a "one place at a time" rule.
+2. **Booking Lifecycle**:
+   - Bookings are created with `PENDING` status.
+   - Users receive a secure confirmation link via email.
+   - Bookings must be explicitly confirmed to reach `CONFIRMED` status.
+3. **Race Condition Handling**: Availability is checked twice:
+   - At creation time.
+   - At confirmation time (to handle simultaneous requests).
