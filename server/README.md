@@ -46,16 +46,54 @@ $ npm run start:prod
 
 ## Run tests
 
-```bash
-# unit tests
-$ npm run test
+### Quick Start
 
-# e2e tests
-$ npm run test:e2e
+```bash
+# Automated testing (recommended for CI/CD)
+$ npm run test:contract:managed
+# Automatically: starts test DB → runs tests → stops DB
+
+# Manual development workflow
+$ npm run db:test:setup    # Start test database once
+$ npm test                 # Run all tests
+$ npm test -- bookings     # Run specific test pattern
+$ npm run db:test:down     # Stop test database
+```
+
+### Test Types
+
+```bash
+# unit tests (.spec.ts files)
+$ npm run test:unit
+
+# contract tests (.contract.test.ts files) - requires database
+$ npm run test:contract
+
+# all tests
+$ npm test
 
 # test coverage
-$ npm run test:cov
+$ npm run test:ci
 ```
+
+### Test Database
+
+Contract tests require a PostgreSQL database. Use the automated test database:
+
+```bash
+# Automated lifecycle (one command)
+$ npm run test:contract:managed
+
+# Manual control (for iterative testing)
+$ npm run db:test:setup    # Start + migrate + seed
+$ npm run test:contract    # Run tests (can run multiple times)
+$ npm run db:test:down     # Cleanup when done
+
+# Reset test database
+$ npm run db:test:reset
+```
+
+**Test database runs on port 5434** (separate from development on 5433)
 
 ## Deployment
 

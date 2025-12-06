@@ -37,10 +37,49 @@ To run the development database using Docker:
 
 ```bash
 # Start the database
-docker compose -f docker/docker-compose.yml -p stylesync up -d
+cd docker
+docker compose up -d
 
 # Stop the database
-docker compose -f docker/docker-compose.yml -p stylesync down
+docker compose down
+```
+
+> **Note**: Docker Compose automatically uses the project name `stylesync` from the config. Containers will appear in Docker Desktop under the "stylesync" group.
+
+#### Test Database Setup (Automated)
+
+For running contract tests with isolated test data:
+
+```bash
+# Option 1: Automated (RECOMMENDED for one-time test runs)
+cd server
+npm run test:contract:managed
+# Automatically: starts test DB → runs tests → stops DB
+
+# Option 2: Manual control (for iterative testing)
+npm run db:test:setup    # Start test database (port 5434)
+npm run test:contract    # Run tests multiple times
+npm run db:test:down     # Stop test database
+
+# Option 3: Reset test database
+npm run db:test:reset    # Down → Up → Migrate → Seed
+```
+
+**Test Database Features**:
+
+- ✅ Isolated from development data (separate database on port 5434)
+- ✅ Automated lifecycle management
+- ✅ CI/CD ready
+
+**Available Test Scripts**:
+
+```bash
+npm run db:test:up       # Start container + wait for readiness
+npm run db:test:migrate  # Sync schema (prisma db push)
+npm run db:test:seed     # Seed test data
+npm run db:test:setup    # All of the above
+npm run db:test:down     # Stop and remove container
+npm run db:test:reset    # Full reset cycle
 ```
 
 #### Server Setup

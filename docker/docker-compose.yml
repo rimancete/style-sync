@@ -1,32 +1,33 @@
-version: '3.7'
+name: stylesync
 
-# Project name will be set via -p flag: docker-compose -p stylesync
+version: '3.8'
+
 services:
-  postgres:
+  postgres-dev:
     image: postgres:15
-    container_name: stylesync-postgres-dev  # Clearer service identification
-    restart: "no"  # Manual startup only - no auto-restart on Docker Desktop
+    container_name: postgres-dev
+    restart: "no"
     environment:
-      POSTGRES_DB: stylesync
+      POSTGRES_DB: stylesync_dev
       POSTGRES_USER: stylesync
       POSTGRES_PASSWORD: 5&cT_5;j!c
     ports:
       - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # Will become stylesync_postgres_data
+      - postgres_dev_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - stylesync-network
+      - network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U stylesync -d stylesync"]
+      test: ["CMD-SHELL", "pg_isready -U stylesync -d stylesync_dev"]
       interval: 30s
       timeout: 10s
       retries: 3
 
 volumes:
-  postgres_data:  # Will become stylesync_postgres_data with -p flag
+  postgres_dev_data:
     driver: local
 
 networks:
-  stylesync-network:
+  network:
     driver: bridge

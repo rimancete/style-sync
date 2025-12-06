@@ -1,0 +1,32 @@
+name: stylesync
+
+version: '3.8'
+
+services:
+  postgres-test:
+    image: postgres:15
+    container_name: postgres-test
+    restart: "no"
+    environment:
+      POSTGRES_DB: stylesync_test
+      POSTGRES_USER: stylesync
+      POSTGRES_PASSWORD: 5&cT_5;j!c
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    networks:
+      - network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stylesync -d stylesync_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres_test_data:
+    driver: local
+
+networks:
+  network:
+    driver: bridge

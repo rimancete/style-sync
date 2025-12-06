@@ -264,3 +264,4 @@ For questions or issues related to timezone handling:
 - Code: `server/src/bookings/bookings.service.ts` → `generateTimeSlots()`
 - Changelog: `docs/backend/CHANGELOG-2025-11-29.md`
 
+
