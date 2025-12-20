@@ -132,6 +132,7 @@ describe('Bookings Flow (Contract Tests)', () => {
         stateProvince: 'FL',
         postalCode: '12345',
         formattedAddress: '123 Flow St, Flow City, FL 12345',
+        timezone: 'UTC', // Explicitly set timezone for consistent testing
         countryId: country.id,
         customerId: testCustomer.id,
       },

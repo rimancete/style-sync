@@ -20,6 +20,8 @@ import { BookingEntity } from './entities/booking.entity';
 import { BookingStatus } from '@prisma/client';
 import { SchedulesService } from '../schedules/schedules.service';
 import { randomUUID } from 'crypto';
+import { format } from 'date-fns';
+import { TZDate, tzOffset } from '@date-fns/tz';
 
 @Injectable()
 export class BookingsService {
@@ -684,21 +686,15 @@ export class BookingsService {
   /**
    * HELPER: Generate available time slots for a given date
    *
-   * ⚠️ TIMEZONE ASSUMPTION: This implementation assumes the server timezone
-   * matches the branch timezone. All times are processed in UTC for consistency.
-   *
-   * FUTURE ENHANCEMENT: Add explicit timezone support by:
-   * 1. Adding timezone field to branches table (e.g., 'America/Sao_Paulo')
-   * 2. Using timezone library (date-fns-tz or luxon) for proper conversion
-   * 3. Converting UTC times to branch timezone for slot generation
-   * 4. Including timezone info in API responses
+   * ✅ TIMEZONE SUPPORT: This implementation uses the branch's configured timezone
+   * for slot generation while maintaining UTC for database comparisons.
    *
    * @param branchId - Branch ID
    * @param serviceId - Service ID
-   * @param date - Date in YYYY-MM-DD format (interpreted as UTC date)
+   * @param date - Date in YYYY-MM-DD format (interpreted in branch timezone)
    * @param duration - Service duration in minutes
    * @param professionalId - Optional professional ID for specific professional
-   * @returns Array of time slots
+   * @returns Array of time slots with timezone information
    */
   private async generateTimeSlots(
     branchId: string,
@@ -708,14 +704,34 @@ export class BookingsService {
     professionalId?: string,
   ): Promise<TimeSlotDto[]> {
     const slots: TimeSlotDto[] = [];
-    // Parse date string as UTC to match database booking times
-    // NOTE: This assumes bookings are created with proper timezone offset
-    // e.g., "2025-12-25T11:00:00-03:00" (Brazil time) -> stored as UTC
-    const [year, month, day] = date.split('-').map(Number);
-    const targetDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
-    const dayOfWeek = targetDate.getUTCDay(); // 0-6 (Sunday-Saturday)
 
-    // 1. Get Branch Schedule
+    // 1. Get branch timezone from database
+    const branch = await this.db.branch.findUnique({
+      where: { id: branchId },
+      select: { timezone: true },
+    });
+
+    if (!branch) {
+      throw new NotFoundException(`Branch with ID ${branchId} not found`);
+    }
+
+    const branchTimezone = branch.timezone; // e.g., 'America/Sao_Paulo'
+
+    // 2. Parse date string in branch timezone
+    const [year, month, day] = date.split('-').map(Number);
+
+    // Create a date in the branch timezone at midnight
+    const targetDate = new TZDate(year, month - 1, day, branchTimezone);
+    const dayOfWeek = targetDate.getDay(); // 0-6 (Sunday-Saturday)
+
+    // Calculate UTC offset for this date using tzOffset (handles DST automatically)
+    const offsetMinutes = tzOffset(branchTimezone, targetDate);
+    const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
+    const offsetMins = Math.abs(offsetMinutes) % 60;
+    const offsetSign = offsetMinutes >= 0 ? '+' : '-';
+    const utcOffset = `${offsetSign}${offsetHours.toString().padStart(2, '0')}:${offsetMins.toString().padStart(2, '0')}`;
+
+    // 3. Get Branch Schedule
     const branchSchedule = await this.schedulesService.getBranchScheduleForDay(
       branchId,
       dayOfWeek,
@@ -737,7 +753,7 @@ export class BookingsService {
     const branchStartMinutes = branchStartHour * 60 + branchStartMinute;
     const branchEndMinutes = branchEndHour * 60 + branchEndMinute;
 
-    // 2. Get Professionals
+    // 4. Get Professionals
     let professionals: { id: string }[];
     if (professionalId) {
       // Check specific professional
@@ -779,7 +795,7 @@ export class BookingsService {
       }));
     }
 
-    // 3. Get Professional Schedules
+    // 5. Get Professional Schedules
     const professionalSchedules = await Promise.all(
       professionals.map(async p => {
         const schedule =
@@ -794,16 +810,34 @@ export class BookingsService {
       }),
     );
 
-    // 4. Get Existing Bookings (use UTC to match database times)
-    const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
-    const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+    // 6. Get Existing Bookings
+    // Create start and end of day in branch timezone
+    // TZDate will automatically convert to UTC internally for database comparison
+    const startOfDayInBranchTZ = new TZDate(
+      year,
+      month - 1,
+      day,
+      0,
+      0,
+      0,
+      branchTimezone,
+    );
+    const endOfDayInBranchTZ = new TZDate(
+      year,
+      month - 1,
+      day,
+      23,
+      59,
+      59,
+      branchTimezone,
+    );
 
     const bookings = await this.db.booking.findMany({
       where: {
         branchId,
         scheduledAt: {
-          gte: startOfDay,
-          lte: endOfDay,
+          gte: startOfDayInBranchTZ,
+          lte: endOfDayInBranchTZ,
         },
         status: {
           in: [BookingStatus.PENDING, BookingStatus.CONFIRMED],
@@ -817,18 +851,26 @@ export class BookingsService {
       },
     });
 
-    // 5. Generate Slots
+    // 7. Generate Slots
     // Iterate from branch start to branch end
     for (
       let currentMinutes = branchStartMinutes;
       currentMinutes < branchEndMinutes;
       currentMinutes += this.SLOT_INTERVAL_MINUTES
     ) {
-      // Calculate slot time in UTC to match database booking times
+      // Calculate slot time in branch timezone
       const hour = Math.floor(currentMinutes / 60);
       const minute = currentMinutes % 60;
-      const slotTime = new Date(
-        Date.UTC(year, month - 1, day, hour, minute, 0, 0),
+
+      // Create slot time in branch timezone
+      const slotTimeInBranchTZ = new TZDate(
+        year,
+        month - 1,
+        day,
+        hour,
+        minute,
+        0,
+        branchTimezone,
       );
 
       // Check if slot + duration exceeds branch closing time
@@ -838,6 +880,12 @@ export class BookingsService {
 
       // Format time as HH:mm
       const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+
+      // Format ISO timestamp
+      const isoTimestamp = format(
+        slotTimeInBranchTZ,
+        "yyyy-MM-dd'T'HH:mm:ssxxx",
+      );
 
       // Check availability for each professional
       let anyAvailable = false;
@@ -891,10 +939,10 @@ export class BookingsService {
           }
         }
 
-        // Check booking conflicts
+        // Check booking conflicts (using Date objects for proper UTC comparison)
         const hasConflict = this.checkTimeSlotConflict(
           p.id,
-          slotTime,
+          slotTimeInBranchTZ,
           duration,
           bookings,
         );
@@ -910,6 +958,9 @@ export class BookingsService {
         time: timeString,
         available: anyAvailable,
         professionalId: professionalId || availableProfessionalId,
+        timezone: branchTimezone,
+        utcOffset: utcOffset,
+        isoTimestamp: isoTimestamp,
       });
     }
 

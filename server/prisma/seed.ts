@@ -162,6 +162,7 @@ async function main() {
       documentTitle: 'Acme Barbershop - Professional Haircuts',
       logoAlt: 'Acme Barbershop Logo',
       currency: 'BRL',
+      defaultTimezone: 'America/Sao_Paulo', // Brazil timezone
       isActive: true,
     },
   });
@@ -173,6 +174,7 @@ async function main() {
       documentTitle: 'Elite Beauty Salon - Premium Beauty Services',
       logoAlt: 'Elite Beauty Salon Logo',
       currency: 'USD',
+      defaultTimezone: 'America/New_York', // US East timezone
       isActive: true,
     },
   });
@@ -192,6 +194,7 @@ async function main() {
       postalCode: '01234-567',
       formattedAddress:
         'Rua das Flores, 123, Centro, São Paulo, SP 01234-567, BR',
+      timezone: 'America/Sao_Paulo', // São Paulo timezone (UTC-3)
       phone: '(11) 98765-4321',
       countryId: countries[0].id, // Brazil
       customerId: customer1.id,
@@ -210,6 +213,7 @@ async function main() {
       postalCode: '01310-100',
       formattedAddress:
         'Av. Paulista, 456, Bela Vista, São Paulo, SP 01310-100, BR',
+      timezone: 'America/Sao_Paulo', // São Paulo timezone (UTC-3)
       phone: '(11) 99876-5432',
       countryId: countries[0].id, // Brazil
       customerId: customer1.id,
@@ -227,6 +231,7 @@ async function main() {
       stateProvince: 'NY',
       postalCode: '10001',
       formattedAddress: '5th Avenue, 1200, New York, NY 10001, US',
+      timezone: 'America/New_York', // New York timezone (UTC-5/UTC-4)
       phone: '(212) 555-0100',
       countryId: countries[1].id, // United States
       customerId: customer2.id,

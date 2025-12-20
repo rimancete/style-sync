@@ -113,6 +113,7 @@ describe('Bookings Race Condition Tests', () => {
         },
       }));
 
+    // Create branch
     testBranch = await db.branch.create({
       data: {
         name: 'Race Branch',
@@ -123,6 +124,7 @@ describe('Bookings Race Condition Tests', () => {
         stateProvince: 'RC',
         postalCode: '12345',
         formattedAddress: '123 Race St, Race City, RC 12345',
+        timezone: 'UTC', // Explicitly set timezone for consistent testing
         countryId: country.id,
         customerId: testCustomer.id,
       },

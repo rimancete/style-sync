@@ -50,6 +50,7 @@ model Customer {
   backgroundColor String @default("#F7F7F7FF")
 
   currency    String  @default("USD") // ISO 4217 currency code (USD, BRL, EUR, etc.)
+  defaultTimezone String @default("UTC") // IANA timezone (e.g., "America/Sao_Paulo", "America/New_York")
 
   isActive    Boolean @default(true)
   createdAt   DateTime @default(now())
@@ -81,6 +82,7 @@ model Branch {
   stateProvince    String
   postalCode       String
   formattedAddress String
+  timezone         String               @default("UTC") // IANA timezone (e.g., "America/Sao_Paulo")
   countryId        String
   customerId       String
   country          Country              @relation(fields: [countryId], references: [id])

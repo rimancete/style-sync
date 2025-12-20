@@ -80,6 +80,7 @@ describe('Bookings Availability (Contract Tests)', () => {
         stateProvince: 'AV',
         postalCode: '12345',
         formattedAddress: '123 Avail St, Avail City, AV 12345',
+        timezone: 'UTC', // Explicitly set timezone for consistent testing
         countryId: country.id,
         customerId: testCustomer.id,
       },
@@ -233,10 +234,11 @@ describe('Bookings Availability (Contract Tests)', () => {
       while (date.getDay() !== 2) {
         date.setDate(date.getDate() + 1);
       }
-      date.setHours(10, 0, 0, 0);
+      // Use UTC hours to match branch timezone (UTC)
+      date.setUTCHours(10, 0, 0, 0);
       const dateString = date.toISOString().split('T')[0];
 
-      // Create a booking at 10:00
+      // Create a booking at 10:00 UTC
       // We need a user for this, let's create a dummy one
       const user = await db.user.create({
         data: {

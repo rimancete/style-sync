@@ -17,8 +17,28 @@ export class TimeSlotDto {
     description:
       'Professional ID if specific professional, or "any" for aggregated',
     example: 'clg2a5d9i0004gtkb',
+    required: false,
   })
   professionalId?: string;
+
+  @ApiProperty({
+    description: 'IANA timezone identifier (e.g., America/Sao_Paulo)',
+    example: 'America/Sao_Paulo',
+  })
+  timezone: string;
+
+  @ApiProperty({
+    description: 'UTC offset in format +HH:mm or -HH:mm',
+    example: '-03:00',
+  })
+  utcOffset: string;
+
+  @ApiProperty({
+    description: 'Full ISO 8601 timestamp with timezone offset',
+    example: '2025-12-25T10:30:00-03:00',
+    required: false,
+  })
+  isoTimestamp?: string;
 }
 
 export class AvailabilityResponseDto {

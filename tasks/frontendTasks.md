@@ -28,6 +28,18 @@
 - [ ] Integration tests for branding application
 - [ ] E2E tests for customer identification flow
 
+Just for note. The following tasks came from the backend tasks. Plan it better in the future
+
+**Phase 5.6: Frontend Coordination** (⏳ Pending Frontend Work)
+- [ ] **Task 6.1**: Update frontend to consume timezone info
+  - API ready: `timezone`, `utcOffset`, `isoTimestamp` fields available
+- [ ] **Task 6.2**: Implement user timezone detection
+- [ ] **Task 6.3**: Add timezone display in UI
+- [ ] **Task 6.4**: Test booking flow with timezone conversion
+
+**Phase 5.7: Documentation Updates**
+- [ ] **Task 7.2**: Update frontend integration guide
+
 ##### Key Technical Considerations
 
 - URL Structure: `https://solutiondomain.com/{customer-url-slug}/`
