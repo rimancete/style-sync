@@ -1,34 +1,34 @@
 ---
-globs: server/**/*
+globs: client/**/*
 alwaysApply: false
 ---
 # Project Context and Architecture
 SYSTEM_CONTEXT: |
-  You are a senior developer working on a TypeScript/NestJS project.
+  You are a senior developer working on a TypeScript/React project.
   Required file reads on startup:  
-  - docs/backend/architecture.mermaid: Backend System architecture and component relationships
-  - docs/backend/architecture.md: Descriptive Backend System Architecture, guidelines and patterns
-  - docs/backend/technical.md: Technical specifications
-  - tasks/server/backendTasks.md: Current development tasks and requirements
-  - tasks/server/backlog.md: Future development tasks and requirements
-  - docs/backend/status.md: Backend progress and state
+  - docs/frontend/architecture.mermaid: Frontend System architecture and component relationships
+  - docs/frontend/architecture.md: Descriptive Frontend System Architecture, guidelines and patterns
+  - docs/frontend/technical.md: Technical specifications
+  - tasks/client/frontendTasks.md: Current development tasks and requirements
+  - tasks/client/backlog.md: Future development tasks and requirements
+  - docs/frontend/status.md: Frontend progress and state
 
   Before making any changes:
   1. Parse and understand system architecture from docs/architecture.mermaid
-  2. Check current task context from tasks/server/backendTasks.md
-  3. Update progress in docs/backend/status.md
-  4. Follow technical specifications from docs/backend/technical.md
+  2. Check current task context from tasks/client/frontendTasks.md
+  3. Update progress in docs/frontend/status.md
+  4. Follow technical specifications from docs/frontend/technical.md
 
 # File Management Rules
 ON_FILE_CHANGE: |
   Required actions after any code changes:
-  1. READ docs/backend/architecture.mermaid to verify architectural compliance
-  2. UPDATE docs/backend/status.md with:
+  1. READ docs/frontend/architecture.mermaid to verify architectural compliance
+  2. UPDATE docs/frontend/status.md with:
      - Current progress
      - Any new issues encountered
      - Completed items
-  3. VALIDATE changes against docs/backend/technical.md specifications
-  4. VERIFY task progress against tasks/server/backendTasks.md
+  3. VALIDATE changes against docs/frontend/technical.md specifications
+  4. VERIFY task progress against tasks/client/frontendTasks.md
 
 # Code Style and Patterns
 TYPESCRIPT_GUIDELINES: |
@@ -58,35 +58,34 @@ READ_ARCHITECTURE: |
 # Task Management
 TASK_WORKFLOW: |
   Required files:
-  - tasks/server/backendTasks.md: Source of task definitions
-  - docs/backend/status.md: Progress tracking
-  - docs/backend/technical.md: Implementation guidelines
-  - docs/backend/implementationHistory.md: Implementation history
+  - tasks/client/frontendTasks.md: Source of task definitions
+  - docs/frontend/status.md: Progress tracking
+  - docs/frontend/technical.md: Implementation guidelines
+  - docs/frontend/implementationHistory.md: Implementation history
   
   Workflow steps:
-  1. READ tasks/server/backendTasks.md:
+  1. READ tasks/client/frontendTasks.md:
      - Parse current task requirements
      - Extract acceptance criteria
      - Identify dependencies
   
-  2. VALIDATE against docs/architecture.mermaid:
+  2. VALIDATE against docs/frontend/architecture.mermaid:
      - Confirm architectural alignment
      - Check component interactions
   
-  3. UPDATE docs/backend/status.md:
+  3. UPDATE docs/frontend/status.md:
      - Mark task as in-progress
      - Track completion of sub-tasks
      - Document any blockers
   
   4. TEST implementation:
-     - Create contract test files
-     - Implement to pass tests
-     - UPDATE docs/backend/postman-collection.json for manual tests
+     - Create integration test files
+     - Implement to pass tests manually
   
-  5. UPDATE docs/backend/implementationHistory.md: 
+  5. UPDATE docs/frontend/implementationHistory.md: 
      - Document implementation
    
-  6. UPDATE docs/backend/architecture.mermaid: 
+  6. UPDATE docs/frontend/architecture.mermaid: 
      - Keep the consistence and just add / check important features at the mermaid.
 
 # Error Prevention

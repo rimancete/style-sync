@@ -37,10 +37,6 @@
 - None currently
 
 ### Next Up 📋
-- 📋 ADV-003: Buffer Times (low priority)
-- 📋 ADV-004: Property-Based Testing (medium priority)
-
-### Future Considerations 💡
 - Email/SMS notifications for bookings
 - Payment integration
 - Advanced cancellation policies
