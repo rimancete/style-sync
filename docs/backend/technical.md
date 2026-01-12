@@ -1612,52 +1612,113 @@ void bootstrap();
 
 StyleSync uses contract testing as the primary testing strategy to validate frontend-backend compatibility.
 
-**Test Statistics** (as of October 11, 2025):
-- ✅ 82 tests passing
-- ✅ 9 test suites
-- ✅ All modules covered
+**Test Statistics** (as of January 12, 2026):
+- ✅ 203+ tests across all modules
+- ✅ 15 test suites
+- ✅ Full coverage: Health, Auth, Multi-tenant, Services, Bookings, and Infrastructure
+- ✅ Docker-based test database with automated lifecycle management
+- ✅ Timezone-aware testing for booking system
 
-**Test Suites**:
-1. `health.contract.test.ts` - Health check API contracts
-2. `countries.contract.test.ts` - Countries API contracts
-3. `customers.contract.test.ts` - Customer branding API contracts
-4. `customers.rate-limit.test.ts` - Rate limiting validation
-5. `customers.upload.contract.test.ts` - File upload contracts
-6. `auth.contract.test.ts` - Authentication API contracts
-7. `branches.contract.test.ts` - Branch management contracts
-8. `professionals.contract.test.ts` - Professional management contracts (25 tests)
-9. `app.controller.test.ts` - Application controller tests
+**Test Suites** (15 total):
+
+**Core Infrastructure** (4 suites):
+1. `app.controller.test.ts` - Application controller tests
+2. `health.contract.test.ts` - Health check API contracts (9 tests)
+3. `countries.contract.test.ts` - Countries API contracts (8 tests)
+4. `auth.contract.test.ts` - Authentication API contracts (9 tests)
+
+**Multi-Tenant Features** (5 suites):
+5. `customers.contract.test.ts` - Customer branding API contracts (7 tests)
+6. `customers.rate-limit.test.ts` - Rate limiting validation (6 tests)
+7. `customers.upload.contract.test.ts` - File upload contracts (7 tests)
+8. `branches.contract.test.ts` - Branch management contracts (15 tests)
+9. `professionals.contract.test.ts` - Professional management contracts (33 tests)
+
+**Services Module** (2 suites):
+10. `services.services.contract.test.ts` - Service catalog API contracts (36 tests)
+11. `services.pricing.contract.test.ts` - Location-based pricing contracts (24 tests)
+
+**Bookings Module** (4 suites):
+12. `bookings-admin.contract.test.ts` - Admin booking operations (23 tests)
+13. `bookings-flow.contract.test.ts` - Token-based confirmation flow (12 tests)
+14. `bookings-availability.contract.test.ts` - Timezone-aware availability (7 tests)
+15. `bookings-race-condition.contract.test.ts` - Conflict prevention (7 tests)
 
 **Testing Principles**:
 - ✅ Contract testing over verbose unit tests
-- ✅ Deterministic over random test data
+- ✅ Deterministic over random test data (seed-based fixtures)
 - ✅ Frontend-focused: API contract validation over implementation details
 - ✅ Reusable test utilities: Centralized helpers in `src/testing/helpers/`
+- ✅ **Isolated test database**: Docker-managed PostgreSQL for reproducible tests
+- ✅ **Timezone testing**: Full coverage for multi-region booking scenarios
 - 🔄 Property-based testing: Reserved for complex booking logic (future)
 - 🔄 Mutation testing: Planned for CI/CD pipeline
 
+### Test Infrastructure
+
+**Docker Test Database**:
+- Dedicated PostgreSQL container (`postgres-test`) for contract tests
+- Automated lifecycle management (setup, migrate, seed, teardown)
+- Isolated from development database (port 5434)
+- Schema applied via `prisma db push` (fast, no migration history)
+- Clean state for every CI run
+
+**Test Database Commands**:
+```bash
+# Setup test database (start, migrate, seed)
+npm run db:test:setup
+
+# Run contract tests with managed database
+npm run test:contract:managed
+
+# CI/CD: Run with coverage + automatic cleanup
+npm run test:ci
+
+# Manual database management
+npm run db:test:up      # Start database
+npm run db:test:down    # Stop database
+npm run db:test:reset   # Destroy and recreate
+```
+
 ### Test File Naming Convention
 
-- `*.contract.test.ts` - API contract validation
-- `*.test.ts` - Unit tests
-- `*.integration.test.ts` - Integration tests
-- `*.e2e-spec.ts` - End-to-end tests
+- `*.contract.test.ts` - API contract validation (primary testing approach)
+- `*.test.ts` - Unit tests (rare, for utilities)
+- `*.integration.test.ts` - Integration tests (future)
+- `*.e2e-spec.ts` - End-to-end tests (future)
 
 ### Running Tests
 
 ```bash
-# Run all tests
+# Run all tests (unit + contract)
 npm test
 
-# Run tests with coverage
-npm test:ci
+# Run only contract tests
+npm run test:contract
+
+# Run contract tests with managed database + coverage (CI mode)
+npm run test:ci
 
 # Run specific test suite
 npm test -- branches.contract.test
 
-# Run tests in watch mode
-npm test -- --watch
+# Run tests in watch mode (requires manual db:test:setup)
+npm run test:contract -- --watch
+
+# Debug tests
+npm run test:debug
 ```
+
+### Test Coverage
+
+Contract tests validate:
+- ✅ **API contracts**: Request/response schemas, status codes, error handling
+- ✅ **Authentication**: JWT validation, role-based access control
+- ✅ **Multi-tenancy**: Customer context isolation, slug validation
+- ✅ **Business rules**: Uniqueness constraints, soft deletes, pricing validation
+- ✅ **Timezone handling**: Booking availability across time zones
+- ✅ **Race conditions**: Double-booking prevention, confirmation conflicts
+- ✅ **Data integrity**: Foreign key constraints, cascading updates
 
 ## Development Workflow
 
@@ -1715,10 +1776,19 @@ npm run format             # Run Prettier formatting
 npm run format:check       # Check formatting only
 
 # Testing
-npm test                   # Run all tests
-npm run test:ci            # Run with coverage
+npm test                   # Run all tests (unit + contract)
+npm run test:unit          # Run unit tests only
+npm run test:contract      # Run contract tests (requires manual db:test:setup)
+npm run test:contract:managed  # Run contract tests with auto database lifecycle
+npm run test:ci            # Run with coverage + auto database lifecycle (CI mode)
 npm run test:debug         # Debug tests
 npm run test:e2e           # Run E2E tests
+
+# Test Database (Docker)
+npm run db:test:setup      # Start, migrate, and seed test database
+npm run db:test:up         # Start test database container
+npm run db:test:down       # Stop test database container
+npm run db:test:reset      # Recreate test database from scratch
 
 # Git & Commits
 npm run commit             # Interactive commit with Commitizen
