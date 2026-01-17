@@ -4,7 +4,7 @@ alwaysApply: false
 ---
 # Project Context and Architecture
 SYSTEM_CONTEXT: |
-  You are a senior developer working on a TypeScript/React project.
+  You are a senior frontend developer working on a TypeScript/React project.
   Required file reads on startup:  
   - docs/frontend/architecture.mermaid: Frontend System architecture and component relationships
   - docs/frontend/architecture.md: Descriptive Frontend System Architecture, guidelines and patterns
