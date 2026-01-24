@@ -32,7 +32,16 @@ module.exports = {
       'core',     // Core functionality
       'test'      // Test related
     ]],
-    'subject-case': [2, 'always', 'lower-case'],
+    'subject-case': [2, 'always',
+      'lower-case',    // add new feature
+      'sentence-case', // Add new feature  
+      'start-case',    // Add New Feature
+      'pascal-case',   // AddNewFeature
+      'camel-case',    // addNewFeature
+      'kebab-case',    // add-new-feature
+      'snake-case'     // add_new_feature
+
+    ],
     'subject-max-length': [2, 'always', 50],
     'body-max-line-length': [2, 'always', 72],
     'header-max-length': [2, 'always', 72]
