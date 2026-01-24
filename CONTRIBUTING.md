@@ -15,11 +15,38 @@ Thank you for contributing to StyleSync! This guide will help you understand our
 
 All commits should be made from the **root directory** of the repository. Our unified Git hooks will automatically detect which parts of the codebase you're changing and run the appropriate validations.
 
+#### Interactive Commit (Recommended)
+
+When you run `git commit` without a message, you'll be prompted with an interactive wizard that guides you through creating a proper commit:
+
 ```bash
-# Always commit from the root directory
-cd /path/to/style-sync
+# Stage your changes
 git add .
+
+# Start interactive commit (no -m flag)
+git commit
+# You'll be prompted to:
+# 1. Select commit type (feat, fix, docs, etc.)
+# 2. Choose scope (api, client, ui, etc.)
+# 3. Write a short description
+# 4. Optionally add body and footer
+# 5. Confirm your commit
+```
+
+#### Manual Commit
+
+You can also provide the commit message directly:
+
+```bash
 git commit -m "type(scope): description"
+```
+
+#### Using npm script
+
+Alternatively, use the npm script for interactive commits:
+
+```bash
+npm run commit
 ```
 
 ### Smart Detection
@@ -203,22 +230,12 @@ Tests are **not** run automatically during commits. Always run tests manually be
 
 ### Commit Best Practices
 
-1. **Commit early and often**: Small, focused commits are easier to review
-2. **Write clear commit messages**: Explain *why*, not just *what*
-3. **One concern per commit**: Don't mix unrelated changes
-4. **Test before committing**: Make sure tests pass locally
-5. **Review staged changes**: Use `git diff --staged` before committing
-
-### Interactive Commits (Server Only)
-
-For interactive commit message creation (server-specific):
-
-```bash
-cd server
-npm run commit
-```
-
-This uses Commitizen for guided commit message creation.
+1. **Use interactive commits**: Let the wizard guide you (just run `git commit` without `-m`)
+2. **Commit early and often**: Small, focused commits are easier to review
+3. **Write clear commit messages**: Explain *why*, not just *what*
+4. **One concern per commit**: Don't mix unrelated changes
+5. **Test before committing**: Make sure tests pass locally
+6. **Review staged changes**: Use `git diff --staged` before committing
 
 ## 🐛 Troubleshooting
 

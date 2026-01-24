@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+# Skip if message already provided via -m
+if [ -n "$2" ]; then
+  exit 0
+fi
+
+echo "🎯 Starting interactive commit creation..."
+exec < /dev/tty && pnpm exec cz --hook || true
