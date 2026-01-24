@@ -46,15 +46,7 @@ module.exports = {
       'core',         // Core functionality
       'chore'         // General maintenance
     ]],
-    'subject-case': [2, 'always', [
-      'lower-case',    // add new feature
-      'sentence-case', // Add new feature
-      'start-case',    // Add New Feature
-      'pascal-case',   // AddNewFeature
-      'camel-case',    // addNewFeature
-      'kebab-case',    // add-new-feature
-      'snake-case'     // add_new_feature
-    ]],
+    'subject-case': [0], // Disable case checking to allow any case
     'subject-max-length': [2, 'always', 72],
     'body-max-line-length': [2, 'always', 100],
     'header-max-length': [2, 'always', 100]
