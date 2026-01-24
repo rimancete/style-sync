@@ -40,6 +40,8 @@ npm run install:all
 npm run start:dev
 ```
 
+**📖 Contributing**: See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for commit conventions and development workflow
+
 **📚 For project architecture overview, see [`docs/projectArchitecture.md`](./docs/projectArchitecture.md)**
 
 Access during development:
