@@ -1,0 +1,38 @@
+graph TD
+    subgraph "Client Layer (Browser)"
+        UI[React UI - shadcn/ui]
+        Router[TanStack Router]
+        Store[Zustand Store]
+        Context[Constate/Local Context]
+        Query[TanStack Query]
+    end
+
+    subgraph "Data & Logic Layer"
+        API[Domain API Hooks]
+        Fetch[Native Fetch API]
+        Mocks[MSW Mocks]
+    end
+
+    subgraph "External Services"
+        Backend[NestJS Backend API]
+        Storage[Local Storage]
+    end
+
+    %% UI interactions
+    UI --> Router
+    UI --> Store
+    UI --> Context
+    UI --> Query
+
+    %% Data flow
+    Query --> API
+    API --> Fetch
+    API --> Mocks
+
+    %% External communication
+    Fetch --> Backend
+    Store --> Storage
+    
+    %% Multi-tenant config
+    Backend -->|Theme Config| Store
+    Store -->|CSS Variables| UI

@@ -37,5 +37,3 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </React.StrictMode>
 );
-// Test comment
-// Updated validation

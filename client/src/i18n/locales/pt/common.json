@@ -1,0 +1,30 @@
+{
+  "app": {
+    "name": "Style Sync",
+    "tagline": "Reserve seu estilo"
+  },
+  "navigation": {
+    "home": "Início",
+    "bookings": "Agendamentos",
+    "club": "Clube",
+    "plan": "Plano",
+    "profile": "Perfil"
+  },
+  "actions": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "confirm": "Confirmar",
+    "close": "Fechar",
+    "next": "Próximo",
+    "back": "Voltar",
+    "submit": "Enviar"
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "success": "Sucesso",
+    "noData": "Nenhum dado disponível"
+  }
+}

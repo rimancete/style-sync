@@ -11,7 +11,7 @@ export class CustomerUrlService {
   static extractCustomerSlug(): string | null {
     const path = window.location.pathname;
     // Pattern: /salon/{customer-slug}/...
-    const match = path.match(/^\/salon\/([^\/]+)/);
+    const match = path.match(/^\/salon\/([^/]+)/);
     return match ? match[1] : null;
   }
 
@@ -39,5 +39,4 @@ export class CustomerUrlService {
   static hasCustomerContext(): boolean {
     return this.extractCustomerSlug() !== null;
   }
-
 }

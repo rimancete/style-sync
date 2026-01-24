@@ -1,0 +1,30 @@
+{
+  "app": {
+    "name": "Style Sync",
+    "tagline": "Book your style"
+  },
+  "navigation": {
+    "home": "Home",
+    "bookings": "Bookings",
+    "club": "Club",
+    "plan": "Plan",
+    "profile": "Profile"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "close": "Close",
+    "next": "Next",
+    "back": "Back",
+    "submit": "Submit"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "noData": "No data available"
+  }
+}
