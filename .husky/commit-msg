@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
 
 echo "🔍 Validating commit message format..."
-# Change to server directory and run commitlint
-cd server
 npx --no -- commitlint --edit "$1"
 
 if [ $? -eq 0 ]; then
@@ -10,7 +8,7 @@ if [ $? -eq 0 ]; then
 else
   echo "❌ Invalid commit message format!"
   echo "💡 Use format: type(scope): description"
-  echo "   Example: feat(auth): add JWT token validation"
-  echo "   Run 'npm run commit' for interactive commit creation"
+  echo "   Example: feat(booking): add appointment confirmation"
+  echo "   Available scopes: api, auth, booking, client, ui, docs, etc."
   exit 1
 fi

@@ -39,7 +39,6 @@
     "db:test:reset": "npm run db:test:down && npm run db:test:setup",
     "test:contract:managed": "npm run db:test:setup && npm run test:contract; TEST_EXIT=$?; npm run db:test:down; exit $TEST_EXIT",
     "test:ci": "npm run db:test:setup && npm run test:contract -- --coverage; TEST_EXIT=$?; npm run db:test:down; exit $TEST_EXIT",
-    "prepare": "husky",
     "commit": "cz",
     "commit:retry": "cz --retry"
   },

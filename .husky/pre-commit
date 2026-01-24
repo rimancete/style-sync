@@ -1,0 +1,62 @@
+#!/usr/bin/env sh
+
+echo "🔍 Detecting staged changes..."
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only)
+
+# Detect which directories have changes
+CLIENT_CHANGED=$(echo "$STAGED_FILES" | grep "^client/" || true)
+SERVER_CHANGED=$(echo "$STAGED_FILES" | grep "^server/" || true)
+
+# Run validations based on what changed
+if [ -n "$CLIENT_CHANGED" ] && [ -n "$SERVER_CHANGED" ]; then
+  echo "📦 Changes detected in BOTH client and server"
+  echo "🔍 Running client validation..."
+  cd client && npx lint-staged && pnpm test
+  CLIENT_EXIT=$?
+  cd ..
+  
+  if [ $CLIENT_EXIT -ne 0 ]; then
+    echo "❌ Client validation failed!"
+    exit 1
+  fi
+  
+  echo "🔍 Running server validation..."
+  cd server && npx lint-staged
+  SERVER_EXIT=$?
+  cd ..
+  
+  if [ $SERVER_EXIT -ne 0 ]; then
+    echo "❌ Server validation failed!"
+    exit 1
+  fi
+  
+  echo "✅ All validations passed!"
+elif [ -n "$CLIENT_CHANGED" ]; then
+  echo "🎨 Changes detected in client only"
+  cd client && npx lint-staged && pnpm test
+  EXIT_CODE=$?
+  cd ..
+  
+  if [ $EXIT_CODE -ne 0 ]; then
+    echo "❌ Client validation failed!"
+    exit 1
+  fi
+  
+  echo "✅ Client validation passed!"
+elif [ -n "$SERVER_CHANGED" ]; then
+  echo "⚙️  Changes detected in server only"
+  cd server && npx lint-staged
+  EXIT_CODE=$?
+  cd ..
+  
+  if [ $EXIT_CODE -ne 0 ]; then
+    echo "❌ Server validation failed!"
+    exit 1
+  fi
+  
+  echo "✅ Server validation passed!"
+else
+  echo "📝 Changes in other files (docs, config, etc.) - skipping validations"
+fi
