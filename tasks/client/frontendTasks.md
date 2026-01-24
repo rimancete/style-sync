@@ -457,8 +457,15 @@
 - Client can book appointments
 
 #### Implementation Checklist (based on the prototype)
-- [ ] Update the current client libraries to lastest stable versions, including React, Typescripts
+- [ ] Update the current client libraries to lastest stable versions, including React, Typescript
 - [ ] Setup the base libraries
-- [ ] Add the 'client' folder structure
+- [ ] Add the 'client' folder structure as needed
 
-##### Step 1: Implement the client base structure
+## 📊 Progress Tracking
+
+### In Progress 🚧
+- None currently
+
+### Next Up 📋
+- Create the Frontend documentation
+- Create Login page
