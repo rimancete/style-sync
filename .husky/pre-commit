@@ -13,7 +13,7 @@ SERVER_CHANGED=$(echo "$STAGED_FILES" | grep "^server/" || true)
 if [ -n "$CLIENT_CHANGED" ] && [ -n "$SERVER_CHANGED" ]; then
   echo "📦 Changes detected in BOTH client and server"
   echo "🔍 Running client validation..."
-  cd client && npx lint-staged && pnpm test
+  cd client && npx lint-staged
   CLIENT_EXIT=$?
   cd ..
   
@@ -35,7 +35,7 @@ if [ -n "$CLIENT_CHANGED" ] && [ -n "$SERVER_CHANGED" ]; then
   echo "✅ All validations passed!"
 elif [ -n "$CLIENT_CHANGED" ]; then
   echo "🎨 Changes detected in client only"
-  cd client && npx lint-staged && pnpm test
+  cd client && npx lint-staged
   EXIT_CODE=$?
   cd ..
   

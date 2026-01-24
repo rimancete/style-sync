@@ -26,8 +26,8 @@ git commit -m "type(scope): description"
 
 The pre-commit hook intelligently detects which parts of the codebase have changed:
 
-- **Client-only changes**: Runs client lint-staged + tests
-- **Server-only changes**: Runs server lint-staged only
+- **Client-only changes**: Runs client lint-staged (ESLint + Prettier)
+- **Server-only changes**: Runs server lint-staged (ESLint + Prettier)
 - **Both client & server**: Runs validations for both
 - **Documentation/config only**: Skips code validations
 
@@ -117,9 +117,11 @@ Automatically runs before each commit:
 
 1. **Detects changed files** in the staging area
 2. **Runs appropriate validations**:
-   - Client: ESLint + Prettier + Tests (vitest)
+   - Client: ESLint + Prettier
    - Server: ESLint + Prettier
 3. **Blocks commit** if any validation fails
+
+**Note**: Tests are not run automatically during commit. Run them manually before committing.
 
 ### Commit-msg Hook
 
@@ -182,7 +184,9 @@ npm test           # Run tests
 
 ### Testing Your Changes
 
-1. **Client tests**: Automatically run on client-related commits
+Tests are **not** run automatically during commits. Always run tests manually before committing.
+
+1. **Client tests**:
    ```bash
    cd client
    npm test          # Run all tests
