@@ -26,7 +26,10 @@ export class CustomerAccessGuard implements CanActivate {
     }
 
     // Extract customer ID from URL parameters
-    const customerId = request.params?.customerId;
+    const customerIdParam = request.params?.customerId;
+    const customerId = Array.isArray(customerIdParam)
+      ? customerIdParam[0]
+      : customerIdParam;
 
     if (!customerId) {
       throw new BadRequestException('Customer ID is required');

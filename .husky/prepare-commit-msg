@@ -6,4 +6,4 @@ if [ -n "$2" ]; then
 fi
 
 echo "🎯 Starting interactive commit creation..."
-exec < /dev/tty && pnpm exec cz --hook || true
+exec < /dev/tty && npx cz --hook || true

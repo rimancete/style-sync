@@ -11,7 +11,13 @@ export class RateLimitGuard extends ThrottlerGuard {
     // For branding endpoints, also consider the URL slug to prevent
     // targeted attacks on specific customers
     if (req.url.includes('/branding/')) {
-      const urlSlug = req.params?.urlSlug || 'unknown';
+      let urlSlug: string = 'unknown';
+      const param = req.params?.urlSlug;
+      if (Array.isArray(param)) {
+        urlSlug = param[0];
+      } else if (typeof param === 'string') {
+        urlSlug = param;
+      }
       return Promise.resolve(`${clientIp}:${urlSlug}`);
     }
 

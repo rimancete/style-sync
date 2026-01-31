@@ -4,13 +4,19 @@ This guide will help you get the StyleSync frontend up and running.
 
 ## 1. Prerequisites
 
-- **Node.js**: >= 20.x
+- **Node.js**: >= 24.13.0 (see `.nvmrc` at project root - use `nvm install && nvm use`)
 - **pnpm**: >= 9.x
 - **Backend**: Ensure the NestJS backend is running if you want to test with real data.
 
 ## 2. Installation
 
-Navigate to the `client/` directory and install dependencies:
+**From project root** (recommended for monorepo setup):
+
+```bash
+pnpm install  # Installs all dependencies for both client and server
+```
+
+**Or from client directory** (workspace-specific):
 
 ```bash
 cd client
@@ -28,13 +34,21 @@ VITE_ENABLE_MOCKS=true
 
 ## 4. Development
 
-Start the Vite development server:
+**From client directory**:
 
 ```bash
+cd client
 pnpm dev
 ```
 
-The app will be available at `http://localhost:5173`.
+**From project root**:
+
+```bash
+pnpm dev:client              # Start client only
+pnpm dev                     # Start both client & server in parallel
+```
+
+The app will be available at `http://localhost:3000`.
 
 ## 5. Key Scripts
 

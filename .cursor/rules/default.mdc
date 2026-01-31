@@ -9,3 +9,5 @@ SYSTEM_CONTEXT: |
 Required file reads on startup:
     - docs/businessRules.md: Business Rules
     - docs/projectArchitecture.md: General Project Archictecture
+    - docs/frontend/architecture.mermaid: Frontend System architecture and component relationships
+    - docs/backend/architecture.mermaid: Backend System architecture and component relationships

@@ -80,6 +80,8 @@ client/
 │   │   ├── login.tsx    # Login page
 │   │   └── register.tsx # Register page
 │   ├── store/           # Zustand global stores
+│   ├── screens/         # Screens
+
 │   │   ├── authStore.ts # Authentication state
 │   │   ├── themeStore.ts # Theme configuration
 │   │   └── bookingStore.ts # Booking state
@@ -101,28 +103,41 @@ client/
 
 ### Installation
 
+**From project root** (recommended for monorepo):
+
 ```bash
 # Use correct Node version
 nvm use
 
-# Install dependencies
+# Install all workspace dependencies
+pnpm install
+```
+
+**From client directory only**:
+
+```bash
+cd client
 pnpm install
 ```
 
 ### Development
 
+**From client directory**:
+
 ```bash
-# Start dev server (http://localhost:3000)
-pnpm dev
+cd client
+pnpm dev          # Start dev server (http://localhost:3000)
+pnpm type-check   # Type checking
+pnpm lint         # Lint code
+pnpm format       # Format code
+```
 
-# Type checking
-pnpm type-check
+**From project root**:
 
-# Lint code
-pnpm lint
-
-# Format code
-pnpm format
+```bash
+pnpm dev:client   # Start client only
+pnpm dev          # Start both client & server in parallel
+pnpm build:client # Build client
 ```
 
 ### Building

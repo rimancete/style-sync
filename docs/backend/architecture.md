@@ -39,8 +39,8 @@ Import the collection from `docs/postman-collection.json`:
 
 **Available Scripts**:
 
-- `npm test` - Run all tests
-- `npm test:ci` - Run all coverage tests
+- `pnpm test` - Run all tests (from server dir)
+- `pnpm test:ci` - Run all coverage tests (from server dir)
 
 **Testing Architecture Decisions**:
 
@@ -82,15 +82,18 @@ curl http://localhost:3001/api/health/detailed
 #### 1.3.2 Test Scripts
 
 ```bash
-npm run tst            # Run all tests
+cd server
+pnpm test            # Run all tests
 ```
 
 ```bash
-npm run lint            # Check for lint errors
+pnpm lint            # Check for lint errors
 ```
 
 ```bash
-npm run dev:server            # Run server
+# From project root
+pnpm dev:server      # Run server
+# Or from server directory: cd server && pnpm start:dev
 ```
 
 #### 1.3.3 Test Data
@@ -124,14 +127,16 @@ npm run dev:server            # Run server
 ```bash
 # 1. Modify schema in prisma/schema.prisma
 # 2. Create migration
-npm run prisma:migrate
+cd server
+pnpm prisma:migrate
 
 # 3. Update seed data if needed
 # Edit prisma/seed.ts
-npm run prisma:seed
+pnpm prisma:seed
 
 # 4. Test changes
-npm run start:dev
+pnpm start:dev
+# Or from project root: pnpm dev:server
 ```
 ### 1.5 Adding New Endpoints
 
@@ -168,19 +173,23 @@ src/
 ### 2.1 Build Process
 
 ```bash
-# 1. Build application
-npm run build
+# 1. Install dependencies
+pnpm install --frozen-lockfile
 
-# 2. Set production environment variables
+# 2. Build application
+cd server
+pnpm build
+
+# 3. Set production environment variables
 export NODE_ENV=production
 export DATABASE_URL="postgresql://..."
 export JWT_SECRET="secure-production-secret"
 
-# 3. Run migrations
-npm run prisma:migrate
+# 4. Run migrations
+pnpm prisma:migrate
 
-# 4. Start production server
-npm run start:prod
+# 5. Start production server
+pnpm start:prod
 ```
 
 ### 2.2 Environment Variables (Production)

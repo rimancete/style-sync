@@ -19,7 +19,10 @@ function createDynamicBrandingConfig() {
   return {
     storage: diskStorage({
       destination: (req, file, callback) => {
-        const customerId = req.params.customerId;
+        const customerIdParam = req.params.customerId;
+        const customerId = Array.isArray(customerIdParam)
+          ? customerIdParam[0]
+          : customerIdParam;
         if (!customerId) {
           return callback(
             new BadRequestException('Customer ID is required'),
@@ -39,7 +42,10 @@ function createDynamicBrandingConfig() {
         callback(null, uploadDir);
       },
       filename: (req, file, callback) => {
-        const customerId = req.params.customerId;
+        const customerIdParam = req.params.customerId;
+        const customerId = Array.isArray(customerIdParam)
+          ? customerIdParam[0]
+          : customerIdParam;
         const ext = extname(file.originalname).toLowerCase();
         const timestamp = Date.now();
         const sanitizedFieldname = file.fieldname.replace(/[^a-zA-Z0-9]/g, '_');

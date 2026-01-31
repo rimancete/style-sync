@@ -4,10 +4,10 @@
 
 ### 1.1. Prerequisites
 
-- **Node.js** (v18.x or higher)
+- **Node.js** >= 24.13.0 (see `.nvmrc` at project root)
+- **pnpm** >= 9.x (`npm install -g pnpm`)
 - **Docker** and **Docker Compose**
 - **Git**
-- **npm** (comes with Node.js)
 
 ### 1.2. Environment Setup
 
@@ -17,26 +17,47 @@
    cd style-sync
    ```
 
-2. **Start the database:**
+2. **Install Node.js version:**
+   ```bash
+   nvm install  # Installs version from .nvmrc
+   nvm use      # Activates the correct version
+   ```
+
+3. **Install dependencies (from project root):**
+   ```bash
+   pnpm install  # Installs all workspace dependencies
+   ```
+
+4. **Start the database:**
    ```bash
    docker compose -f docker/docker-compose.yml up -d
    ```
 
-3. **Set up the backend:**
+5. **Set up the backend:**
    ```bash
    cd server
-   cp env.template .env  # Customize as needed
-   npm install
-   npm run prisma:migrate  # Run database migrations
-   npm run prisma:seed     # Seed development data
-   npm run start:dev       # Start development server
+   cp env.template .env        # Customize as needed
+   pnpm prisma:generate        # Generate Prisma Client
+   pnpm prisma:migrate         # Run database migrations
+   pnpm prisma:seed            # Seed development data
+   pnpm start:dev              # Start development server
+   ```
+   
+   Or from project root:
+   ```bash
+   pnpm dev:server             # Start server from root
    ```
 
-4. **Set up the frontend:** (when implemented)
+6. **Set up the frontend:**
    ```bash
    cd client
-   npm install
-   npm start
+   pnpm dev                    # Start client dev server
+   ```
+   
+   Or from project root:
+   ```bash
+   pnpm dev:client             # Start client from root
+   pnpm dev                    # Start both client & server in parallel
    ```
 
 ## 🛠️ 2. Development Environment
@@ -56,36 +77,42 @@ docker compose -f docker/docker-compose.yml down
 **Reset Database:**
 ```bash
 cd server
-npm run db:reset  # ⚠️ This will delete all data!
+pnpm db:reset  # ⚠️ This will delete all data!
 ```
 
 **View Database:**
 ```bash
 cd server
-npm run prisma:studio  # Opens Prisma Studio at http://localhost:5555
+pnpm prisma:studio  # Opens Prisma Studio at http://localhost:5555
 ```
 
 ### 2.2 Server Development
 
 **Available Commands:**
 ```bash
-# Development
-npm run start:dev      # Start with hot-reload
-npm run start:debug    # Start with debugger
+# Development (from server directory)
+pnpm start:dev      # Start with hot-reload
+pnpm start:debug    # Start with debugger
+
+# Or from project root
+pnpm dev:server     # Start server
+pnpm dev            # Start both client & server
 
 # Building
-npm run build          # Build for production
-npm run start:prod     # Run production build
+pnpm build          # Build for production (from server dir)
+pnpm build:server   # Build server (from root)
+pnpm start:prod     # Run production build
 
 # Database
-npm run prisma:generate  # Generate Prisma client
-npm run prisma:migrate   # Create and apply migrations
-npm run prisma:seed      # Seed development data
+pnpm prisma:generate  # Generate Prisma client
+pnpm prisma:migrate   # Create and apply migrations
+pnpm prisma:seed      # Seed development data
 
 # Code Quality
-npm run lint           # Run ESLint with auto-fix
-npm run format         # Run Prettier formatting
-npm run test           # Run tests (unit / contract / integration)
+pnpm lint           # Run ESLint with auto-fix (from server dir)
+pnpm lint:fix       # Run linting across all workspaces (from root)
+pnpm format         # Run Prettier formatting
+pnpm test           # Run tests (unit / contract / integration)
 ```
 
 ### 2.3 Environment Configuration
@@ -125,14 +152,15 @@ SWAGGER_VERSION="1.0"
 # 1. Create feature branch
 git checkout -b feature/user-authentication
 
-# 2. Start development server
-cd server
-npm run start:dev
+# 2. Start development server (from project root)
+pnpm dev:server
+# Or from server directory: cd server && pnpm start:dev
 
 # 3. Make changes, test endpoints
 # 4. Run tests
-npm run test
-npm run lint
+cd server
+pnpm test
+pnpm lint
 
 # 5. Commit and push
 git add .
@@ -189,20 +217,22 @@ PORT=3002
 **Prisma Client Out of Sync:**
 ```bash
 # Regenerate client
-npm run prisma:generate
+cd server
+pnpm prisma:generate
 
 # Reset and reseed database
-npm run db:reset
+pnpm db:reset
 ```
 
 **TypeScript Compilation Errors:**
 ```bash
 # Clean build
+cd server
 rm -rf dist/
-npm run build
+pnpm build
 
 # Check for linting issues
-npm run lint
+pnpm lint
 ```
 
 ### 4.2 Port Conflicts

@@ -6,15 +6,15 @@
   "email": "osvaldo.costajr@gmail.com",
   "license": "UNLICENSED",
   "scripts": {
-    "install:all": "npm-run-all install:client install:server",
-    "install:client": "cd client && npm install",
-    "install:server": "cd server && npm install",
-    "start:dev": "npm-run-all --parallel dev:client dev:server",
-    "dev:client": "cd client && pnpm dev",
-    "dev:server": "cd server && npm run start:dev",
-    "build:all": "npm-run-all build:client build:server",
-    "build:client": "cd client && pnpm run build",
-    "build:server": "cd server && npm run build",
+    "dev": "pnpm --filter style-sync-client dev & pnpm --filter server start:dev",
+    "dev:client": "pnpm --filter style-sync-client dev",
+    "dev:server": "pnpm --filter style-sync-server start:dev",
+    "build": "pnpm -r build",
+    "build:client": "pnpm --filter style-sync-client build",
+    "build:server": "pnpm --filter style-sync-server build",
+    "lint": "pnpm -r lint:check",
+    "lint:fix": "pnpm -r lint",
+    "test": "pnpm -r test",
     "prepare": "husky",
     "commit": "cz",
     "commit:retry": "cz --retry"
@@ -25,8 +25,7 @@
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.5",
-    "npm-run-all": "^4.1.5"
+    "lint-staged": "^16.1.5"
   },
   "lint-staged": {
     "client/**/*.{ts,tsx}": [
@@ -46,5 +45,5 @@
       "path": "cz-conventional-changelog"
     }
   },
-  "packageManager": "pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa"
+  "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264"
 }

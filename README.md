@@ -8,9 +8,11 @@ StyleSync is a fullstack SaaS solution for modern salons to enable online bookin
 - Target markets: USA ($46B) and Europe (€35B). Mobile-first, GDPR-ready.
 
 ## Tech Stack
-- Frontend: React + TypeScript
-- Backend: NestJS (TypeScript)
-- Database: PostgreSQL (configure in `server/.env`)
+- **Frontend**: React + TypeScript + Vite
+- **Backend**: NestJS (TypeScript)
+- **Database**: PostgreSQL
+- **Package Manager**: pnpm (workspace monorepo)
+- **Node.js**: >= 24.13.0 (see `.nvmrc`)
 
 ## Monorepo Structure
 ```
@@ -28,17 +30,40 @@ style-sync/
 
 ## Quick Start
 
+### Prerequisites
+
+- **Node.js** >= 24.13.0 (use `nvm install && nvm use` to auto-install from `.nvmrc`)
+- **pnpm** >= 9.x (`npm install -g pnpm`)
+- **Docker** and **Docker Compose**
+
+### Setup
+
 ```bash
-# 1. Install dependencies
-npm run install:all
+# 1. Clone repository
+git clone <repository-url>
+cd style-sync
 
-# 2. Set up development environment
-# See docs/backend/setup.md for detailed backend instructions
-# Frontend side will have its detailed instructions as well.
+# 2. Install dependencies (from project root)
+pnpm install
 
-# 3. Start development servers
-npm run start:dev
+# 3. Start database
+docker compose -f docker/docker-compose.yml up -d
+
+# 4. Configure backend
+cd server
+cp env.template .env  # Edit with your settings
+
+# 5. Setup database
+pnpm prisma:generate  # Generate Prisma Client
+pnpm prisma:migrate   # Run migrations
+pnpm prisma:seed      # Seed development data
+
+# 6. Start development servers
+cd ..
+pnpm dev              # Starts both client & server in parallel
 ```
+
+**📖 Detailed Setup**: See [`docs/backend/setup.md`](./docs/backend/setup.md) and [`docs/frontend/setup.md`](./docs/frontend/setup.md)
 
 **📖 Contributing**: See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for commit conventions and development workflow
 
@@ -49,10 +74,29 @@ Access during development:
 - Backend: http://localhost:3001
 - Database: localhost:5433
 
-## Root Scripts
-- `install:all`: install dependencies for client and server
-- `start:dev`: run both apps concurrently
-- `build:all`: build both applications
+## Available Commands
+
+### From Project Root
+
+```bash
+pnpm install          # Install all dependencies
+pnpm dev              # Start both client & server
+pnpm dev:client       # Start client only
+pnpm dev:server       # Start server only
+pnpm build            # Build all workspaces
+pnpm build:client     # Build client only
+pnpm build:server     # Build server only
+pnpm lint             # Lint all workspaces
+pnpm lint:fix         # Lint and fix all workspaces
+pnpm test             # Test all workspaces
+```
+
+### Workspace-Specific
+
+```bash
+cd client && pnpm <command>     # Client commands
+cd server && pnpm <command>     # Server commands
+```
 
 ## Highlight (Backend)
 - Customer-based context

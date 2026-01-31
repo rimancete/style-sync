@@ -236,11 +236,13 @@ export class AuthService {
       defaultCustomerId,
     };
 
+    // @ts-expect-error - JWT options type mismatch between @nestjs/jwt and underlying library
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.getOrThrow<string>('jwt.secret'),
       expiresIn: this.configService.getOrThrow<string>('jwt.expiresIn'),
     });
 
+    // @ts-expect-error - JWT options type mismatch between @nestjs/jwt and underlying library
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.getOrThrow<string>('jwt.refreshSecret'),
       expiresIn: this.configService.getOrThrow<string>('jwt.refreshExpiresIn'),

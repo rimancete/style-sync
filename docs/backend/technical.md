@@ -18,8 +18,8 @@ StyleSync is a multi-tenant barbershop booking system built with a modular monol
 ### Core Framework & Language
 - **Backend Framework**: NestJS v11.0.1
 - **Language**: TypeScript v5.7.3
-- **Runtime**: Node.js v18+
-- **Package Manager**: npm
+- **Runtime**: Node.js >= 24.13.0
+- **Package Manager**: pnpm
 
 ### Database & ORM
 - **Database**: PostgreSQL 15
@@ -1666,18 +1666,19 @@ StyleSync uses contract testing as the primary testing strategy to validate fron
 **Test Database Commands**:
 ```bash
 # Setup test database (start, migrate, seed)
-npm run db:test:setup
+cd server
+pnpm db:test:setup
 
 # Run contract tests with managed database
-npm run test:contract:managed
+pnpm test:contract:managed
 
 # CI/CD: Run with coverage + automatic cleanup
-npm run test:ci
+pnpm test:ci
 
 # Manual database management
-npm run db:test:up      # Start database
-npm run db:test:down    # Stop database
-npm run db:test:reset   # Destroy and recreate
+pnpm db:test:up      # Start database
+pnpm db:test:down    # Stop database
+pnpm db:test:reset   # Destroy and recreate
 ```
 
 ### Test File Naming Convention
@@ -1691,22 +1692,23 @@ npm run db:test:reset   # Destroy and recreate
 
 ```bash
 # Run all tests (unit + contract)
-npm test
+cd server
+pnpm test
 
 # Run only contract tests
-npm run test:contract
+pnpm test:contract
 
 # Run contract tests with managed database + coverage (CI mode)
-npm run test:ci
+pnpm test:ci
 
 # Run specific test suite
-npm test -- branches.contract.test
+pnpm test -- branches.contract.test
 
 # Run tests in watch mode (requires manual db:test:setup)
-npm run test:contract -- --watch
+pnpm test:contract -- --watch
 
 # Debug tests
-npm run test:debug
+pnpm test:debug
 ```
 
 ### Test Coverage
@@ -1733,70 +1735,94 @@ cd style-sync
 # 2. Start database
 docker compose -f docker/docker-compose.yml up -d
 
-# 3. Install dependencies
-cd server
-npm install
+# 3. Install dependencies (from project root)
+pnpm install
 
 # 4. Configure environment
+cd server
 cp env.template .env
 # Edit .env with your settings
 
-# 5. Run migrations
-npm run prisma:migrate
+# 5. Generate Prisma Client
+pnpm prisma:generate
 
-# 6. Seed development data
-npm run prisma:seed
+# 6. Run migrations
+pnpm prisma:migrate
 
-# 7. Start development server
-npm run start:dev
+# 7. Seed development data
+pnpm prisma:seed
+
+# 8. Start development server
+cd server
+pnpm start:dev
+# Or from project root: pnpm dev:server
 ```
 
-**Available Commands** (`server/package.json`):
+**Available Commands**:
 
+**From server directory** (`cd server && pnpm <command>`):
 ```bash
 # Development
-npm run start:dev          # Start with hot-reload
-npm run start:debug        # Start with debugger
+pnpm start:dev          # Start with hot-reload
+pnpm start:debug        # Start with debugger
 
 # Building
-npm run build              # Build for production
-npm run start:prod         # Run production build
+pnpm build              # Build for production
+pnpm start:prod         # Run production build
 
 # Database
-npm run prisma:generate    # Generate Prisma client
-npm run prisma:migrate     # Create and apply migrations
-npm run prisma:seed        # Seed development data
-npm run prisma:studio      # Open Prisma Studio (GUI)
-npm run db:reset          # Reset database (⚠️ deletes all data)
+pnpm prisma:generate    # Generate Prisma client
+pnpm prisma:migrate     # Create and apply migrations
+pnpm prisma:seed        # Seed development data
+pnpm prisma:studio      # Open Prisma Studio (GUI)
+pnpm db:reset           # Reset database (⚠️ deletes all data)
 
 # Code Quality
-npm run lint               # Run ESLint with auto-fix
-npm run lint:check         # Check lint errors only
-npm run format             # Run Prettier formatting
-npm run format:check       # Check formatting only
+pnpm lint               # Run ESLint with auto-fix
+pnpm lint:check         # Check lint errors only
+pnpm format             # Run Prettier formatting
+pnpm format:check       # Check formatting only
 
 # Testing
-npm test                   # Run all tests (unit + contract)
-npm run test:unit          # Run unit tests only
-npm run test:contract      # Run contract tests (requires manual db:test:setup)
-npm run test:contract:managed  # Run contract tests with auto database lifecycle
-npm run test:ci            # Run with coverage + auto database lifecycle (CI mode)
-npm run test:debug         # Debug tests
-npm run test:e2e           # Run E2E tests
+pnpm test               # Run all tests (unit + contract)
+pnpm test:unit          # Run unit tests only
+pnpm test:contract      # Run contract tests (requires manual db:test:setup)
+pnpm test:contract:managed  # Run contract tests with auto database lifecycle
+pnpm test:ci            # Run with coverage + auto database lifecycle (CI mode)
+pnpm test:debug         # Debug tests
+pnpm test:e2e           # Run E2E tests
 
 # Test Database (Docker)
-npm run db:test:setup      # Start, migrate, and seed test database
-npm run db:test:up         # Start test database container
-npm run db:test:down       # Stop test database container
-npm run db:test:reset      # Recreate test database from scratch
+pnpm db:test:setup      # Start, migrate, and seed test database
+pnpm db:test:up         # Start test database container
+pnpm db:test:down       # Stop test database container
+pnpm db:test:reset      # Recreate test database from scratch
 
 # Git & Commits
-npm run commit             # Interactive commit with Commitizen
-npm run commit:retry       # Retry last commit
-npm run validate:commit    # Validate commit message
+pnpm commit             # Interactive commit with Commitizen
+pnpm commit:retry       # Retry last commit
+pnpm validate:commit    # Validate commit message
 
 # Environment
-npm run env:validate       # Validate .env file
+pnpm env:validate       # Validate .env file
+```
+
+**From project root** (`pnpm <command>`):
+```bash
+# Development
+pnpm dev                # Start both client & server in parallel
+pnpm dev:server         # Start server only
+pnpm dev:client         # Start client only
+
+# Building
+pnpm build              # Build all workspaces
+pnpm build:server       # Build server only
+pnpm build:client       # Build client only
+
+# Code Quality
+pnpm lint               # Lint all workspaces
+pnpm lint:fix           # Lint and fix all workspaces
+pnpm test               # Test all workspaces
 ```
 
 ### Database Migration Workflow
@@ -1805,12 +1831,13 @@ npm run env:validate       # Validate .env file
 ```bash
 # 1. Modify schema in prisma/schema.prisma
 # 2. Create migration
-npm run prisma:migrate
+cd server
+pnpm prisma:migrate
 
 # 3. Migration will be created in prisma/migrations/
 # 4. Update seed data if needed (prisma/seed.ts)
 # 5. Re-seed database
-npm run prisma:seed
+pnpm prisma:seed
 ```
 
 **Migration Best Practices**:
@@ -2560,8 +2587,12 @@ const testUser = {
 
 **Commitizen Integration**:
 ```bash
-# Use interactive commit tool
-npm run commit
+# Use interactive commit tool (from project root)
+pnpm commit
+
+# Or from server directory
+cd server
+pnpm commit
 
 # Or use git commit directly (triggers Commitizen)
 git commit
@@ -2598,20 +2629,21 @@ chore(deps): update NestJS to v11.0.1
 
 **Production Build**:
 ```bash
-# 1. Install dependencies
-npm ci  # Clean install from package-lock.json
+# 1. Install dependencies (frozen lockfile for reproducibility)
+pnpm install --frozen-lockfile
 
 # 2. Generate Prisma Client
-npm run prisma:generate
+cd server
+pnpm prisma:generate
 
 # 3. Build TypeScript
-npm run build
+pnpm build
 
 # 4. Run database migrations
-DATABASE_URL="postgresql://..." npm run prisma:migrate
+DATABASE_URL="postgresql://..." pnpm prisma:migrate
 
 # 5. Start production server
-NODE_ENV=production npm run start:prod
+NODE_ENV=production pnpm start:prod
 ```
 
 **Build Artifacts**:
@@ -2702,7 +2734,7 @@ postgresql://user:pass@host:5432/db?connection_limit=20&pool_timeout=30
 - Business Rules: `docs/businessRules.md`
 
 **Development Tools**:
-- Prisma Studio: `npm run prisma:studio`
+- Prisma Studio: `cd server && pnpm prisma:studio`
 - Database logs: `docker logs stylesync-postgres-dev`
 - Coverage reports: `server/coverage/lcov-report/index.html`
 
