@@ -9,18 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root';
-import { Route as RegisterRouteImport } from './routes/register';
-import { Route as LoginRouteImport } from './routes/login';
+import { Route as PublicRouteImport } from './routes/_public';
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated';
 import { Route as IndexRouteImport } from './routes/index';
+import { Route as PublicRegisterRouteImport } from './routes/_public/register';
+import { Route as PublicLoginRouteImport } from './routes/_public/login';
+import { Route as AuthenticatedUserRouteRouteImport } from './routes/_authenticated/user/route';
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route';
+import { Route as AuthenticatedUserProfileRouteImport } from './routes/_authenticated/user/profile';
+import { Route as AuthenticatedAdminProfileRouteImport } from './routes/_authenticated/admin/profile';
+import { Route as AuthenticatedAdminPlanRouteImport } from './routes/_authenticated/admin/plan';
+import { Route as AuthenticatedAdminClubRouteImport } from './routes/_authenticated/admin/club';
+import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authenticated/admin/bookings';
 
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
+const PublicRoute = PublicRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRouteImport,
 } as any);
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any);
 const IndexRoute = IndexRouteImport.update({
@@ -28,51 +35,152 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any);
+const PublicRegisterRoute = PublicRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => PublicRoute,
+} as any);
+const PublicLoginRoute = PublicLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => PublicRoute,
+} as any);
+const AuthenticatedUserRouteRoute = AuthenticatedUserRouteRouteImport.update({
+  id: '/user',
+  path: '/user',
+  getParentRoute: () => AuthenticatedRoute,
+} as any);
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRoute,
+} as any);
+const AuthenticatedUserProfileRoute = AuthenticatedUserProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedUserRouteRoute,
+} as any);
+const AuthenticatedAdminProfileRoute = AuthenticatedAdminProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any);
+const AuthenticatedAdminPlanRoute = AuthenticatedAdminPlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any);
+const AuthenticatedAdminClubRoute = AuthenticatedAdminClubRouteImport.update({
+  id: '/club',
+  path: '/club',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any);
+const AuthenticatedAdminBookingsRoute = AuthenticatedAdminBookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
-  '/login': typeof LoginRoute;
-  '/register': typeof RegisterRoute;
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren;
+  '/user': typeof AuthenticatedUserRouteRouteWithChildren;
+  '/login': typeof PublicLoginRoute;
+  '/register': typeof PublicRegisterRoute;
+  '/admin/bookings': typeof AuthenticatedAdminBookingsRoute;
+  '/admin/club': typeof AuthenticatedAdminClubRoute;
+  '/admin/plan': typeof AuthenticatedAdminPlanRoute;
+  '/admin/profile': typeof AuthenticatedAdminProfileRoute;
+  '/user/profile': typeof AuthenticatedUserProfileRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
-  '/login': typeof LoginRoute;
-  '/register': typeof RegisterRoute;
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren;
+  '/user': typeof AuthenticatedUserRouteRouteWithChildren;
+  '/login': typeof PublicLoginRoute;
+  '/register': typeof PublicRegisterRoute;
+  '/admin/bookings': typeof AuthenticatedAdminBookingsRoute;
+  '/admin/club': typeof AuthenticatedAdminClubRoute;
+  '/admin/plan': typeof AuthenticatedAdminPlanRoute;
+  '/admin/profile': typeof AuthenticatedAdminProfileRoute;
+  '/user/profile': typeof AuthenticatedUserProfileRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   '/': typeof IndexRoute;
-  '/login': typeof LoginRoute;
-  '/register': typeof RegisterRoute;
+  '/_authenticated': typeof AuthenticatedRouteWithChildren;
+  '/_public': typeof PublicRouteWithChildren;
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren;
+  '/_authenticated/user': typeof AuthenticatedUserRouteRouteWithChildren;
+  '/_public/login': typeof PublicLoginRoute;
+  '/_public/register': typeof PublicRegisterRoute;
+  '/_authenticated/admin/bookings': typeof AuthenticatedAdminBookingsRoute;
+  '/_authenticated/admin/club': typeof AuthenticatedAdminClubRoute;
+  '/_authenticated/admin/plan': typeof AuthenticatedAdminPlanRoute;
+  '/_authenticated/admin/profile': typeof AuthenticatedAdminProfileRoute;
+  '/_authenticated/user/profile': typeof AuthenticatedUserProfileRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/login' | '/register';
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/user'
+    | '/login'
+    | '/register'
+    | '/admin/bookings'
+    | '/admin/club'
+    | '/admin/plan'
+    | '/admin/profile'
+    | '/user/profile';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/login' | '/register';
-  id: '__root__' | '/' | '/login' | '/register';
+  to:
+    | '/'
+    | '/admin'
+    | '/user'
+    | '/login'
+    | '/register'
+    | '/admin/bookings'
+    | '/admin/club'
+    | '/admin/plan'
+    | '/admin/profile'
+    | '/user/profile';
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/_public'
+    | '/_authenticated/admin'
+    | '/_authenticated/user'
+    | '/_public/login'
+    | '/_public/register'
+    | '/_authenticated/admin/bookings'
+    | '/_authenticated/admin/club'
+    | '/_authenticated/admin/plan'
+    | '/_authenticated/admin/profile'
+    | '/_authenticated/user/profile';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
-  LoginRoute: typeof LoginRoute;
-  RegisterRoute: typeof RegisterRoute;
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren;
+  PublicRoute: typeof PublicRouteWithChildren;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/register': {
-      id: '/register';
-      path: '/register';
-      fullPath: '/register';
-      preLoaderRoute: typeof RegisterRouteImport;
+    '/_public': {
+      id: '/_public';
+      path: '';
+      fullPath: '/';
+      preLoaderRoute: typeof PublicRouteImport;
       parentRoute: typeof rootRouteImport;
     };
-    '/login': {
-      id: '/login';
-      path: '/login';
-      fullPath: '/login';
-      preLoaderRoute: typeof LoginRouteImport;
+    '/_authenticated': {
+      id: '/_authenticated';
+      path: '';
+      fullPath: '/';
+      preLoaderRoute: typeof AuthenticatedRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/': {
@@ -82,13 +190,132 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/_public/register': {
+      id: '/_public/register';
+      path: '/register';
+      fullPath: '/register';
+      preLoaderRoute: typeof PublicRegisterRouteImport;
+      parentRoute: typeof PublicRoute;
+    };
+    '/_public/login': {
+      id: '/_public/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof PublicLoginRouteImport;
+      parentRoute: typeof PublicRoute;
+    };
+    '/_authenticated/user': {
+      id: '/_authenticated/user';
+      path: '/user';
+      fullPath: '/user';
+      preLoaderRoute: typeof AuthenticatedUserRouteRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin';
+      path: '/admin';
+      fullPath: '/admin';
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
+    '/_authenticated/user/profile': {
+      id: '/_authenticated/user/profile';
+      path: '/profile';
+      fullPath: '/user/profile';
+      preLoaderRoute: typeof AuthenticatedUserProfileRouteImport;
+      parentRoute: typeof AuthenticatedUserRouteRoute;
+    };
+    '/_authenticated/admin/profile': {
+      id: '/_authenticated/admin/profile';
+      path: '/profile';
+      fullPath: '/admin/profile';
+      preLoaderRoute: typeof AuthenticatedAdminProfileRouteImport;
+      parentRoute: typeof AuthenticatedAdminRouteRoute;
+    };
+    '/_authenticated/admin/plan': {
+      id: '/_authenticated/admin/plan';
+      path: '/plan';
+      fullPath: '/admin/plan';
+      preLoaderRoute: typeof AuthenticatedAdminPlanRouteImport;
+      parentRoute: typeof AuthenticatedAdminRouteRoute;
+    };
+    '/_authenticated/admin/club': {
+      id: '/_authenticated/admin/club';
+      path: '/club';
+      fullPath: '/admin/club';
+      preLoaderRoute: typeof AuthenticatedAdminClubRouteImport;
+      parentRoute: typeof AuthenticatedAdminRouteRoute;
+    };
+    '/_authenticated/admin/bookings': {
+      id: '/_authenticated/admin/bookings';
+      path: '/bookings';
+      fullPath: '/admin/bookings';
+      preLoaderRoute: typeof AuthenticatedAdminBookingsRouteImport;
+      parentRoute: typeof AuthenticatedAdminRouteRoute;
+    };
   }
 }
 
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminBookingsRoute: typeof AuthenticatedAdminBookingsRoute;
+  AuthenticatedAdminClubRoute: typeof AuthenticatedAdminClubRoute;
+  AuthenticatedAdminPlanRoute: typeof AuthenticatedAdminPlanRoute;
+  AuthenticatedAdminProfileRoute: typeof AuthenticatedAdminProfileRoute;
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren = {
+  AuthenticatedAdminBookingsRoute: AuthenticatedAdminBookingsRoute,
+  AuthenticatedAdminClubRoute: AuthenticatedAdminClubRoute,
+  AuthenticatedAdminPlanRoute: AuthenticatedAdminPlanRoute,
+  AuthenticatedAdminProfileRoute: AuthenticatedAdminProfileRoute,
+};
+
+const AuthenticatedAdminRouteRouteWithChildren = AuthenticatedAdminRouteRoute._addFileChildren(
+  AuthenticatedAdminRouteRouteChildren
+);
+
+interface AuthenticatedUserRouteRouteChildren {
+  AuthenticatedUserProfileRoute: typeof AuthenticatedUserProfileRoute;
+}
+
+const AuthenticatedUserRouteRouteChildren: AuthenticatedUserRouteRouteChildren = {
+  AuthenticatedUserProfileRoute: AuthenticatedUserProfileRoute,
+};
+
+const AuthenticatedUserRouteRouteWithChildren = AuthenticatedUserRouteRoute._addFileChildren(
+  AuthenticatedUserRouteRouteChildren
+);
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren;
+  AuthenticatedUserRouteRoute: typeof AuthenticatedUserRouteRouteWithChildren;
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedUserRouteRoute: AuthenticatedUserRouteRouteWithChildren,
+};
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren
+);
+
+interface PublicRouteChildren {
+  PublicLoginRoute: typeof PublicLoginRoute;
+  PublicRegisterRoute: typeof PublicRegisterRoute;
+}
+
+const PublicRouteChildren: PublicRouteChildren = {
+  PublicLoginRoute: PublicLoginRoute,
+  PublicRegisterRoute: PublicRegisterRoute,
+};
+
+const PublicRouteWithChildren = PublicRoute._addFileChildren(PublicRouteChildren);
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  LoginRoute: LoginRoute,
-  RegisterRoute: RegisterRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  PublicRoute: PublicRouteWithChildren,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

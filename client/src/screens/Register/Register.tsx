@@ -1,16 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
-export const Route = createFileRoute('/register')({
-  component: RegisterPage,
-});
-
-function RegisterPage() {
+export function RegisterScreen() {
   const { t } = useTranslation('auth');
 
   return (
     <div className="flex h-screen">
-      {/* Left side - Welcome message */}
       <div className="hidden lg:flex lg:w-1/2 bg-primary items-center justify-center p-12">
         <div className="max-w-md text-primary-foreground">
           <h1 className="text-5xl font-bold mb-6">Join Our Community</h1>
@@ -34,7 +29,6 @@ function RegisterPage() {
         </div>
       </div>
 
-      {/* Right side - Register form */}
       <div className="flex w-full lg:w-1/2 items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="mb-8">
@@ -115,9 +109,9 @@ function RegisterPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
               {t('register.alreadyHaveAccount')}{' '}
-              <a href="/login" className="text-primary hover:underline font-medium">
+              <Link to="/login" className="text-primary hover:underline font-medium">
                 {t('register.signIn')}
-              </a>
+              </Link>
             </p>
           </div>
         </div>

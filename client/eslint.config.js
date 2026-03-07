@@ -7,7 +7,7 @@ import prettier from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ['dist', 'node_modules', '*.gen.ts'],
+    ignores: ['dist', 'node_modules', '*.gen.ts', 'public/mockServiceWorker.js'],
   },
   {
     files: ['**/*.{ts,tsx}'],

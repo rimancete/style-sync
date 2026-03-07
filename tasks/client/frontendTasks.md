@@ -2,470 +2,110 @@
 
 ## Phase 1 (Project structure)
 
-### FFU-001: Create the Frontend architecture
+### FFU-003: Tanstack router
+**Status**: 📋 Backlog  
+**Priority**: High
+**Dependencies**: NA
+
+#### References
+##### Tanstack Router routing
+- [Tanstack Router Routing Concepts](https://tanstack.com/router/latest/docs/routing/routing-concepts)
+
+##### Initial screens
+
+- [X] Create a consistent structure for the system screens
+   - [X] Screen components must be in 'client/src/screens'
+      ├── routes
+      │   ├── public
+      │   |   ├── login.tsx
+      │   |   ├── register.tsx
+      │   ├── private
+      │   |   ├── admin
+      │   |   |   ├── index.tsx
+      │   |   |   ├── bookings.tsx
+      │   |   |   ├── club.tsx
+      │   |   |   ├── plan.tsx
+      │   |   |   ├── profile.tsx
+      │   |   ├── user
+      │   |   |   ├── index.tsx
+      │   |   |   ├── profile.tsx
+      ├── screens
+      │   ├── Login
+      │   |   ├── Login.tsx
+      │   |   ├── index.tsx
+      │   |   ├── components
+      │   |   |   ├── components
+      │   |   |   |   ├── Banner.tsx
+      │   ├── Register
+      │   |   ├── Register.tsx
+      │   |   ├── index.tsx
+      │   ├── Admin
+      │   |   ├── Home
+      │   |   |   ├── Home.tsx
+      │   |   |   ├── index.tsx
+      │   |   |   ├── components
+      │   |   |   |   ├── BookingSummary
+      │   |   |   |   |   ├── BookingSummary.tsx
+      │   |   |   |   |   ├── NextSummaries.tsx
+      │   |   |   |   |   ├── EstimatedProfit.tsx
+      │   |   |   |   ├── Table.tsx
+      │   |   ├── Bookings
+      │   |   |   ├── Bookings.tsx
+      │   |   |   ├── index.tsx
+      │   |   |   ├── components
+      │   |   |   |   ├── SelectedItem
+      │   |   |   |   |   ├── SelectedItem.tsx
+      ├── components
+      │   ├── DateTime
+      │   |   ├── DateTime.tsx
+      │   |   ├── index.tsx
+      │   ├── TextField
+      │   |   ├── TextField.tsx
+      │   |   ├── index.tsx
+      │   ├── Button
+      │   |   ├── Button.tsx
+      │   |   ├── index.tsx
+
+Where:
+- '/' > [Home screen folder](client/src/screens/Home)
+- '/login' > [Login screen folder](client/src/screens/Login)
+- '/register' > [Register screen folder](client/src/screens/Register)
+
+#### Implementation Checklist (based on the prototype)
+- [X] Update the 'routes' folder structure to match with 'screens' folder
+- [X] Move current screens components inside 'routes' folder to 'screens' folder. The 'routes' must be used only to manage routes
+- [X] Setup the route settings if needed
+
+#### 📊 Progress Tracking
+
+##### In Progress 🚧
+- None currently
+
+#### Next Up 📋
+- Review Code linter
+- Improve tests structure
+
+### FFU-004: Review Code linter
+
 **Status**: 📋 Backlog  
 **Priority**: High  
 **Estimated Effort**: EVALUATE
 **Dependencies**: EVALUATE
 
 #### References
+...
 
-##### Prototype
-- [Lovable](https://style-station-pro.lovable.app/)
+#### Feature goals
 
-##### Initial screens
+#### Implementation Checklist
+- [ ] Runtime lint
+- [ ] Fix or find code issues on commit
 
-- [ ] Screens
-  - [ ] Login (with socials like gmail / instagram and account)
-  - [ ] Register (user create account)
-  - [ ] Confirm booking: page for service booking confirmation by the user
-  - [ ] User area
-      - Home:  Listing current user bookings
-      - Bookings: Book a service
-      - Club (for future): Salon plans like pay once a month and cut hair / beard 3 times during this period
-      - Plan (for future): Evolve idea
-      - Profile (Manage personal account [update password | name | phone number | end account])
-  - [ ] Customer (salons)
-      - [ ] Home               
-        - Listing next salon bookings
-          - Filters
-            - Date
-            - Branch
-            - Professional
-          - Table: Booking list
-            - Summaritize finantial operations [Booked earned | Incoming earnings]
-      - [ ] Bookings (Menu): Follow the server implementation services
-         - Branches
-         - Services
-         - Professionals
-         - Availability
+#### 📊 Progress Tracking
 
-
-
-##### Folder structure suggestion (inside 'client' folder)
-```
-├── .husky
-│   ├── commit-msg
-│   ├── post-merge
-│   ├── pre-commit
-│   └── prepare-commit-msg
-├── public
-│   ├── favicon
-│   │   ├── apple-touch-icon.png
-│   │   ├── favicon-96x96.png
-│   │   ├── favicon.ico
-│   │   ├── favicon.svg
-│   │   ├── site.webmanifest
-│   │   ├── web-app-manifest-192x192.png
-│   │   └── web-app-manifest-512x512.png
-│   ├── logo
-│   │   ├── logo_tp_green_main.svg
-│   │   └── logo_tp_white.svg
-│   ├── arrow-group-1-2.svg
-│   ├── bg-topography.svg
-│   ├── chart-group-1-1.svg
-│   ├── chat-group-4-2.svg
-│   ├── check-group-3-3.svg
-│   ├── code-group-2-1.svg
-│   ├── code-group-2-3.svg
-│   ├── code-group-2-4.svg
-│   ├── data-group-2-2.svg
-│   ├── engine-group-1-3.svg
-│   ├── field-group-3-1.svg
-│   ├── fields-group-3-2.svg
-│   ├── hands-group-4-1.svg
-│   ├── logo-background.svg
-│   ├── logo-bg-dark.svg
-│   ├── phone-group-4-3.svg
-│   ├── thumb.png
-│   ├── topography-half-bg-bottom-darken.svg
-│   ├── topography-half-bg-bottom.svg
-│   ├── topography-half-bg-top-darken.svg
-│   └── topography-half-bg-top.svg
-├── src
-│   ├── @types
-│   │   └── global.d.ts
-│   ├── api
-│   │   ├── bancos
-│   │   │   ├── types.ts
-│   │   │   └── useGetBancos.ts
-│   │   ├── empresas
-│   │   │   ├── useGetEmpresaIndicadora.ts
-│   │   │   └── useGetEmpresasIndicadoras.ts
-│   │   ├── favoritos
-│   │   │   └── useGetFavoritePages.ts
-│   │   ├── grupoEmpresas
-│   │   │   ├── types.ts
-│   │   │   ├── useGetConsultar.ts
-│   │   │   └── useGetGrupoEmpresas.ts
-│   │   ├── notificacoes
-│   │   │   └── useGetNotifications.ts
-│   │   ├── api.ts
-│   │   └── index.ts
-│   ├── components
-│   │   ├── App
-│   │   │   ├── App.tsx
-│   │   │   ├── global.css
-│   │   │   └── index.ts
-│   │   ├── Copyright
-│   │   ├── CustomTooltip
-│   │   ├── DataTable
-│   │   │   ├── components
-│   │   │   │   ├── DataTableColumnHeader.tsx
-│   │   │   │   ├── DataTableExport.tsx
-│   │   │   │   ├── DataTableMoreFilters.tsx
-│   │   │   │   ├── DataTablePagination.tsx
-│   │   │   │   ├── DataTableSearchInput.tsx
-│   │   │   │   ├── DataTableSkeleton.tsx
-│   │   │   │   ├── DataTableToolbar.tsx
-│   │   │   │   ├── DataTableViewOptions.tsx
-│   │   │   │   ├── GenericShortFilters.tsx
-│   │   │   │   └── index.ts
-│   │   │   ├── utils
-│   │   │   │   ├── columnHelpers.tsx
-│   │   │   │   └── index.ts
-│   │   │   ├── DataTable.tsx
-│   │   │   └── index.ts
-│   │   ├── Environment
-│   │   ├── FilterBuilder
-│   │   ├── FormBuilder
-│   │   ├── FormElements
-│   │   │   ├── FormCombobox.tsx
-│   │   │   ├── FormInput.tsx
-│   │   │   ├── FormSelect.tsx
-│   │   │   └── index.ts
-│   │   ├── Icons
-│   │   │   ├── ListIcons
-│   │   │   │   ├── Ban.tsx
-│   │   │   │   ├── Check.tsx
-│   │   │   │   ├── ChevronLeft.tsx
-│   │   │   │   ├── ChevronRight.tsx
-│   │   │   │   ├── ChevronsUpDown.tsx
-│   │   │   │   ├── CircleAlert.tsx
-│   │   │   │   ├── Clock.tsx
-│   │   │   │   ├── Contact.tsx
-│   │   │   │   ├── Database.tsx
-│   │   │   │   ├── Download.tsx
-│   │   │   │   ├── Eye.tsx
-│   │   │   │   ├── EyeClosed.tsx
-│   │   │   │   ├── Filter.tsx
-│   │   │   │   ├── Trash2.tsx
-│   │   │   │   ├── Whatsapp.tsx
-│   │   │   │   ├── X.tsx
-│   │   │   │   └── index.tsx
-│   │   │   ├── Icon.tsx
-│   │   │   ├── IconProvider.tsx
-│   │   │   └── index.ts
-│   │   ├── InlineFilter
-│   │   │   ├── Combobox
-│   │   │   │   ├── Combobox.tsx
-│   │   │   │   └── index.ts
-│   │   │   ├── Input
-│   │   │   │   ├── Input.tsx
-│   │   │   │   └── index.ts
-│   │   │   ├── Select
-│   │   │   │   ├── Select.tsx
-│   │   │   │   └── index.ts
-│   │   │   └── index.ts
-│   │   ├── Layout
-│   │   │   ├── components
-│   │   │   │   ├── FeedbackUser
-│   │   │   │   ├── Header
-│   │   │   │   │   ├── components
-│   │   │   │   │   │   ├── Company
-│   │   │   │   │   │   │   ├── Company.tsx
-│   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   ├── Notification
-│   │   │   │   │   │   │   ├── components
-│   │   │   │   │   │   │   │   ├── NotificationContent.tsx
-│   │   │   │   │   │   │   │   ├── NotificationIcon.tsx
-│   │   │   │   │   │   │   │   ├── NotificationItem.tsx
-│   │   │   │   │   │   │   │   ├── NotificationList.tsx
-│   │   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   │   ├── Notification.tsx
-│   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   ├── Search
-│   │   │   │   │   │   │   ├── components
-│   │   │   │   │   │   │   │   ├── Favorites
-│   │   │   │   │   │   │   │   │   ├── Favorites.tsx
-│   │   │   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   │   │   ├── Menus
-│   │   │   │   │   │   │   │   │   ├── MenuGroup.tsx
-│   │   │   │   │   │   │   │   │   ├── MenuItem.tsx
-│   │   │   │   │   │   │   │   │   ├── Menus.tsx
-│   │   │   │   │   │   │   │   │   ├── SubMenuItem.tsx
-│   │   │   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   │   │   ├── Recent.tsx
-│   │   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   │   ├── Search.tsx
-│   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   ├── User
-│   │   │   │   │   │   │   ├── User.tsx
-│   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   ├── UsernameInitials
-│   │   │   │   │   │   │   ├── UsernameInitials.tsx
-│   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   └── index.ts
-│   │   │   │   │   ├── Header.tsx
-│   │   │   │   │   └── index.ts
-│   │   │   │   ├── Sidebar
-│   │   │   │   │   ├── components
-│   │   │   │   │   │   ├── Menu
-│   │   │   │   │   │   │   ├── Menu.tsx
-│   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   ├── RecentPages
-│   │   │   │   │   │   │   ├── RecentPages.tsx
-│   │   │   │   │   │   │   └── index.ts
-│   │   │   │   │   │   └── index.ts
-│   │   │   │   │   ├── Sidebar.tsx
-│   │   │   │   │   └── index.ts
-│   │   │   │   └── index.ts
-│   │   │   ├── Layout.tsx
-│   │   │   └── index.ts
-│   │   ├── Logo
-│   │   │   ├── Logo.tsx
-│   │   │   └── index.ts
-│   │   ├── PageTitle
-│   │   │   ├── PageTitle.tsx
-│   │   │   └── index.ts
-│   │   ├── RouteProvider
-│   │   │   ├── components
-│   │   │   │   └── PrivateRoute.tsx
-│   │   │   ├── RouteProvider.tsx
-│   │   │   └── index.ts
-│   │   ├── Title
-│   │   │   ├── Dialog.tsx
-│   │   │   ├── Page.tsx
-│   │   │   └── index.ts
-│   │   ├── TopBanner
-│   │   │   ├── TopBanner.tsx
-│   │   │   └── index.ts
-│   │   ├── Version
-│   │   │   ├── Version.tsx
-│   │   │   └── index.ts
-│   │   ├── Wrapper
-│   │   │   ├── PageWrapper.tsx
-│   │   │   ├── TitleWrapper.tsx
-│   │   │   └── index.ts
-│   │   ├── ui
-│   │   │   ├── accordion.tsx
-│   │   │   ├── alert.tsx
-│   │   │   ├── badge.tsx
-│   │   │   ├── button.tsx
-│   │   │   ├── calendar.tsx
-│   │   │   ├── card.tsx
-│   │   │   ├── checkbox.tsx
-│   │   │   ├── command.tsx
-│   │   │   ├── context-menu.tsx
-│   │   │   ├── dialog.tsx
-│   │   │   ├── dropdown-menu.tsx
-│   │   │   ├── form.tsx
-│   │   │   ├── hover-card.tsx
-│   │   │   ├── input.tsx
-│   │   │   ├── label.tsx
-│   │   │   ├── menubar.tsx
-│   │   │   ├── navigation-menu.tsx
-│   │   │   ├── popover.tsx
-│   │   │   ├── resizable.tsx
-│   │   │   ├── scroll-area.tsx
-│   │   │   ├── select.tsx
-│   │   │   ├── separator.tsx
-│   │   │   ├── sheet.tsx
-│   │   │   ├── skeleton.tsx
-│   │   │   ├── table.tsx
-│   │   │   ├── tabs.tsx
-│   │   │   ├── textarea.tsx
-│   │   │   ├── toast.tsx
-│   │   │   ├── toaster.tsx
-│   │   │   └── tooltip.tsx
-│   │   └── index.ts
-│   ├── hooks
-│   │   ├── useMutation
-│   │   │   ├── index.ts
-│   │   │   └── useMutation.ts
-│   │   ├── useQuery
-│   │   │   ├── index.ts
-│   │   │   └── useQuery.ts
-│   │   ├── utils
-│   │   │   ├── errorTreatment.ts
-│   │   │   ├── index.ts
-│   │   │   └── request.ts
-│   │   ├── Context.ts
-│   │   ├── index.ts
-│   │   ├── use-toast.ts
-│   │   ├── useDataTable.ts
-│   │   ├── useDialogParams.ts
-│   │   ├── useFilterCount.ts
-│   │   ├── useFilterParams.ts
-│   │   ├── useFilteredData.ts
-│   │   ├── useFilters.ts
-│   │   ├── useRecentPages.ts
-│   │   ├── useScreenSize.ts
-│   │   └── useShortcutDialog.ts
-│   ├── interfaces
-│   │   ├── enum
-│   │   │   ├── domains.enum.ts
-│   │   │   └── index.ts
-│   │   └── models
-│   │       └── data
-│   │           ├── icons.d.ts
-│   │           ├── menus.d.ts
-│   │           └── notifications.d.ts
-│   ├── lib
-│   │   ├── export.ts
-│   │   └── utils.ts
-│   ├── mocks
-│   │   ├── index.ts
-│   │   ├── mock_get_banco.ts
-│   │   ├── mock_get_bancos.ts
-│   │   ├── mock_get_consultar.ts
-│   │   ├── mock_get_consultar_empresa.ts
-│   │   ├── mock_get_empresa_indicadora.ts
-│   │   ├── mock_get_empresas_grupo_empresa.ts
-│   │   ├── mock_get_empresas_indicadoras.ts
-│   │   ├── mock_get_favorite_pages.ts
-│   │   ├── mock_get_grupo_empresas.ts
-│   │   └── mock_get_notifications.ts
-│   ├── routes
-│   │   ├── cadastros.route.ts
-│   │   ├── cadastrosGerais.routes.ts
-│   │   ├── ferramentas.routes.ts
-│   │   ├── index.ts
-│   │   ├── menus.ts
-│   │   └── public.routes.ts
-│   ├── screens
-│   │   ├── Bookings
-│   │   │   ├── Branches
-│   │   │   │   ├── components
-│   │   │   │   │   ├── Edit
-│   │   │   │   │   │   ├── Edit.tsx
-│   │   │   │   │   │   └── index.ts
-│   │   │   │   │   ├── Filters
-│   │   │   │   │   │   ├── filters.config.ts
-│   │   │   │   │   │   ├── filters.model.ts
-│   │   │   │   │   │   ├── filters.schema.ts
-│   │   │   │   │   │   └── index.ts
-│   │   │   │   │   └── Table
-│   │   │   │   │       ├── Table.tsx
-│   │   │   │   │       └── index.ts
-│   │   │   │   ├── Branches.tsx
-│   │   │   │   └── index.ts
-│   │   │   └── index.ts
-│   │   ├── Home
-│   │   │   ├── Home.tsx
-│   │   │   └── index.ts
-│   │   ├── Club
-│   │   │   ├── Club.tsx
-│   │   │   └── index.ts
-│   │   ├── Plan
-│   │   │   ├── Plan.tsx
-│   │   │   └── index.ts
-│   │   ├── Profile
-│   │   │   ├── Profile.tsx
-│   │   │   └── index.ts
-│   │   └── Login
-│   │       ├── components
-│   │       │   ├── Banner
-│   │       │   │   ├── components
-│   │       │   │   │   ├── IconsFirstGroup.tsx
-│   │       │   │   │   ├── IconsFourthGroup.tsx
-│   │       │   │   │   ├── IconsSecondGroup.tsx
-│   │       │   │   │   └── IconsThirdGroup.tsx
-│   │       │   │   ├── Banner.tsx
-│   │       │   │   └── index.ts
-│   │       │   ├── DialogChangePassword
-│   │       │   │   ├── DialogChangePassword.tsx
-│   │       │   │   └── index.ts
-│   │       │   └── index.ts
-│   │       ├── Login.tsx
-│   │       └── index.ts
-│   │   └── Register
-│   │       ├── components
-│   │       │   ├── Banner
-│   │       │   │   ├── components
-│   │       │   │   │   ├── IconsFirstGroup.tsx
-│   │       │   │   │   ├── IconsFourthGroup.tsx
-│   │       │   │   │   ├── IconsSecondGroup.tsx
-│   │       │   │   │   └── IconsThirdGroup.tsx
-│   │       │   │   ├── Banner.tsx
-│   │       │   │   └── index.ts
-│   │       │   └── index.ts
-│   │       ├── Register.tsx
-│   │       └── index.ts
-│   ├── store
-│   │   ├── index.ts
-│   │   ├── statusSidebar.ts
-│   │   └── theme.ts
-│   ├── utils
-│   │   ├── animations.ts
-│   │   ├── encode.ts
-│   │   ├── env.ts
-│   │   ├── getInitials.ts
-│   │   ├── index.ts
-│   │   ├── logger.ts
-│   │   └── maskValue.ts
-│   ├── main.tsx
-│   ├── output.css
-│   └── vite-env.d.ts
-├── .editorconfig
-├── .env.staging
-├── .eslintrc.json
-├── .gitattributes
-├── .gitignore
-├── .gitlab-ci.yml
-├── .npmrc
-├── .nvmrc
-├── .prettierrc
-├── README.md
-├── commitlint.config.js
-├── components.json
-├── git-dev.key
-├── index.html
-├── output.css
-├── package.json
-├── pnpm-lock.yaml
-├── postcss.config.js
-├── tailwind.config.js
-├── tsconfig.app.json
-├── tsconfig.json
-├── tsconfig.node.json
-└── vite.config.ts
-```
-
-##### Tools
-```
-- shadcn/ui
-- tailwindcss
-- tanstack query
-- tanstack router
-- tanstack form/react-hook-form
-- zod
-- zustand
-- vitest
-- vite
-- msw
-- pnpm
-- cypress/playwrright
-- i18next
-```
-
-##### Initial business rules guideline
-- Client can register and login
-   - Admin (Customer salon) can login
-- Admin can manage branches and services and its prices
-- Client can view available time slots
-- Client can book appointments
-
-#### Implementation Checklist (based on the prototype)
-- [ ] Update the current client libraries to lastest stable versions, including React, Typescript
-- [ ] Setup the base libraries
-- [ ] Add the 'client' folder structure as needed
-
-## 📊 Progress Tracking
-
-### In Progress 🚧
+##### In Progress 🚧
 - None currently
 
-### Next Up 📋
-- Create the Frontend documentation
-- Create Login page
+#### Next Up 📋
+- Improve tests structure
+- Create / update the Frontend documentation

@@ -4,16 +4,24 @@ const baseUrl = 'http://localhost:4000';
 
 export const handlers = [
   // Auth handlers
-  http.post(`${baseUrl}/api/auth/login`, async () => {
-    return HttpResponse.json({
-      user: {
-        id: '1',
-        email: 'test@example.com',
-        name: 'Test User',
-        role: 'customer',
-      },
-      token: 'mock-jwt-token',
-    });
+  http.post(`${baseUrl}/api/auth/login`, async ({ request }) => {
+    const body = (await request.json()) as { email?: string; password?: string };
+
+    if (body.email === 'admin@test.com' && body.password === 'password123') {
+      return HttpResponse.json({
+        user: { id: '1', email: body.email, name: 'Admin User', role: 'admin' },
+        token: 'mock-jwt-admin-token',
+      });
+    }
+
+    if (body.email === 'user@test.com' && body.password === 'password123') {
+      return HttpResponse.json({
+        user: { id: '2', email: body.email, name: 'Test User', role: 'customer' },
+        token: 'mock-jwt-user-token',
+      });
+    }
+
+    return HttpResponse.json({ message: 'Invalid credentials' }, { status: 401 });
   }),
 
   http.post(`${baseUrl}/api/auth/register`, async () => {

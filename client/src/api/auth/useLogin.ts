@@ -1,11 +1,13 @@
-import { useMutation } from '~/hooks';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
+import { useAuthStore } from '~/store';
 
-interface LoginCredentials {
+export interface LoginCredentials {
   email: string;
   password: string;
 }
 
-interface LoginResponse {
+export interface LoginResponse {
   user: {
     id: string;
     email: string;
@@ -15,12 +17,32 @@ interface LoginResponse {
   token: string;
 }
 
-const ENDPOINT = '/api/auth/login';
+const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+const ENDPOINT = `${baseUrl}/api/auth/login`;
 
-export const useLogin = () => {
-  return useMutation<LoginResponse, LoginCredentials>({
-    endpoint: ENDPOINT,
+export function useLogin() {
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const router = useRouter();
+
+  return useMutation<LoginResponse, Error, LoginCredentials>({
     mutationKey: ['auth', 'login'],
-    method: 'POST',
+    mutationFn: async (credentials) => {
+      const response = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error((body as { message?: string }).message ?? 'Login failed');
+      }
+
+      return response.json() as Promise<LoginResponse>;
+    },
+    onSuccess: (data) => {
+      setAuth(data.user, data.token);
+      router.navigate({ to: '/' });
+    },
   });
-};
+}

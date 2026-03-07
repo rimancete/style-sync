@@ -71,7 +71,7 @@ client/src/
 
 ## 6. Coding Standards
 
-- **Functional Components**: Use functional components with hooks.
+- **Functional Components**: Use functional components with hooks ('function' instead 'const' for any visual component).
 - **Naming**: PascalCase for components/types, camelCase for functions/variables.
 - **Imports**: Use path aliases (e.g., `~/components/...`) for cleaner imports.
 - **Testing**: Every new feature should include unit or integration tests using Vitest.
