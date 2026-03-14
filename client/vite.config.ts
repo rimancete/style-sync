@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import checker from 'vite-plugin-checker';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -13,6 +14,13 @@ export default defineConfig({
     tanstackRouter({
       routesDirectory: './src/routes',
       generatedRouteTree: './src/routeTree.gen.ts',
+    }),
+    checker({
+      typescript: true,
+      eslint: {
+        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+        useFlatConfig: true,
+      },
     }),
   ],
   resolve: {

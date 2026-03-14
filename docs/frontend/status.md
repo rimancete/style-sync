@@ -10,7 +10,7 @@ This document tracks the progress of the frontend implementation.
 - [x] API Client (Fetch + TanStack Query + Mocks)
 - [x] Internationalization (i18next)
 - [x] Testing Framework (Vitest + MSW)
-- [x] Code Quality (ESLint, Prettier, Husky)
+- [x] Code Quality (ESLint + type-aware rules, Prettier as ESLint errors, Husky, vite-plugin-checker runtime lint)
 
 ## 2. Core Components
 - [x] Layout (Header, Footer, Sidebar)

@@ -24,7 +24,7 @@ export const handlers = [
     return HttpResponse.json({ message: 'Invalid credentials' }, { status: 401 });
   }),
 
-  http.post(`${baseUrl}/api/auth/register`, async () => {
+  http.post(`${baseUrl}/api/auth/register`, () => {
     return HttpResponse.json({
       user: {
         id: '1',
@@ -37,7 +37,7 @@ export const handlers = [
   }),
 
   // Branches handlers
-  http.get(`${baseUrl}/api/branches`, async () => {
+  http.get(`${baseUrl}/api/branches`, () => {
     return HttpResponse.json([
       {
         id: '1',
@@ -55,7 +55,7 @@ export const handlers = [
   }),
 
   // Services handlers
-  http.get(`${baseUrl}/api/services`, async () => {
+  http.get(`${baseUrl}/api/services`, () => {
     return HttpResponse.json([
       { id: '1', name: 'Social + Beard', price: 85.0, duration: 60 },
       { id: '2', name: 'Social (Scissors or Clipper)', price: 40.0, duration: 45 },
@@ -64,7 +64,7 @@ export const handlers = [
   }),
 
   // Professionals handlers
-  http.get(`${baseUrl}/api/professionals`, async () => {
+  http.get(`${baseUrl}/api/professionals`, () => {
     return HttpResponse.json([
       { id: '1', name: 'Michel' },
       { id: '2', name: 'Luis' },
@@ -74,7 +74,7 @@ export const handlers = [
   }),
 
   // Bookings handlers
-  http.post(`${baseUrl}/api/bookings`, async () => {
+  http.post(`${baseUrl}/api/bookings`, () => {
     return HttpResponse.json({
       id: '1',
       branchId: '1',

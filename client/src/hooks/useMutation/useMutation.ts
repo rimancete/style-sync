@@ -32,7 +32,8 @@ export function useMutation<TData = unknown, TVariables = unknown>({
       });
 
       if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
+        const body = (await response.json().catch(() => ({}))) as { message?: string };
+        throw new Error(body.message ?? response.statusText);
       }
 
       return response.json() as Promise<TData>;
