@@ -1,0 +1,28 @@
+---
+description: Git/GitHub workflow — issues, branches, PRs, release, hotfix
+globs:
+alwaysApply: true
+---
+
+# Git and GitHub workflow (mandatory)
+
+Follow [docs/git-workflow.md](docs/git-workflow.md) for every task that touches the remote repository.
+
+**Per task (agent execution)** — For upcoming work, **you** drive the aligned Git flow end-to-end unless the user already did a step: ensure an **Issue** exists on GitHub (or ask for its number), **`git fetch`**, create/checkout branch **`n-slug`** from the correct base (**`develop`** for normal work), implement, **`git commit`** / **`git push`**, and guide or run **`gh pr create`** (or the equivalent) with base **`develop`**, **`Closes #n`**, and the PR template. Do not skip branching/PR discipline for “small” changes unless the user explicitly opts out for that task.
+
+**Before implementation**
+
+- Confirm there is a linked **GitHub Issue** and a branch named `issueNumber-slug` (e.g. `1-login-api-integration`).
+- Normal work: branch from **`develop`**, PR base **`develop`**.
+- Hotfix on production: branch from **`main`**, PR base **`main`**, then plan the **back-merge PR** `main` → `develop`.
+
+**Do not** merge **`develop` → `main`**, release, or back-merge without **explicit human confirmation** in the conversation.
+
+**Quality**
+
+- Run **`pnpm lint`** locally when changes may affect lint; CI must stay green.
+
+**PRs**
+
+- Include `Closes #n` or `Fixes #n` in the description when the issue should close on merge.
+- Use the [pull request template](.github/pull_request_template.md) checklist (release / hotfix / back-merge).

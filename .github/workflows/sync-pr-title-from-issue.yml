@@ -1,0 +1,66 @@
+name: Sync PR title from issue
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: write
+
+jobs:
+  sync-title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const skip =
+              pr.labels?.some((l) => l.name === 'skip-pr-title-bot') ?? false;
+            if (skip) {
+              core.info('Label skip-pr-title-bot present; skipping.');
+              return;
+            }
+
+            let issueNum = null;
+            const ref = pr.head.ref || '';
+            const branchMatch = ref.match(/^(\d+)-/);
+            if (branchMatch) {
+              issueNum = parseInt(branchMatch[1], 10);
+            }
+            if (issueNum == null) {
+              const body = pr.body || '';
+              const m = body.match(/(?:closes|fixes|resolves)\s+#(\d+)/i);
+              if (m) issueNum = parseInt(m[1], 10);
+            }
+            if (issueNum == null) {
+              core.info('No issue number from branch (N-slug) or body (Closes/Fixes #n); skipping.');
+              return;
+            }
+
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNum,
+            });
+
+            if (issue.pull_request) {
+              core.info(`#${issueNum} is a pull request, not an issue; skipping.`);
+              return;
+            }
+
+            const desired = `#${issueNum} ${issue.title}`;
+            if (pr.title === desired) {
+              core.info('PR title already matches issue title; skipping.');
+              return;
+            }
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              title: desired,
+            });
+            core.info(`Updated PR title to: ${desired}`);
