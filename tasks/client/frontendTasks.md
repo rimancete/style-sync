@@ -1,25 +1,27 @@
 # Current Sprint Tasks
 
-## Phase 1 (Project structure)
-
-### FFU-004: Review Code linter
-
-**Status**: ✅ Done  
+## Phase 2 (Business)
+### BUS-004: Login API integration
+**Status**: 📋 Backlog  
 **Priority**: High  
-**Estimated Effort**: S
-**Dependencies**: None
+**Estimated Effort**: EVALUATE
+**Dependencies**: EVALUATE
 
 #### References
-- [vite-plugin-checker](https://github.com/fi3ework/vite-plugin-checker)
-- [typescript-eslint typed linting](https://typescript-eslint.io/getting-started/typed-linting)
 
 #### Feature goals
-- Surface TypeScript and ESLint errors in the browser overlay and terminal during `vite dev`
-- Ensure formatting violations (indentation, quotes, etc.) are reported as ESLint errors on commit
+- Improve login structure, including components used in there
+- Integrate login integration
+
 
 #### Implementation Checklist
-- [x] Runtime lint (`vite-plugin-checker` with TypeScript + ESLint)
-- [x] Fix or find code issues on commit (`eslint-plugin-prettier` + type-aware ESLint via `projectService`)
+- [ ] Improve screen structure
+    - [ ] Isolate responsabilities
+    - [ ] Componentize shared components
+        - [ ] Button
+        - [ ] TextField
+- [ ] Improve screen layout
+- [ ] Integrate login api integration
 
 #### 📊 Progress Tracking
 
@@ -27,5 +29,6 @@
 - None currently
 
 #### Next Up 📋
-- Improve tests structure
-- Create / update the Frontend documentation
+- 005 Improve test structure
+- 006 Update the Frontend documentation
+- 007 Register screen improvements and api integration

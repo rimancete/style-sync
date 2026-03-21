@@ -1,15 +1,59 @@
 # Backlog
-## Phase 1 (Project structure)
+## Phase 2 (Improve project structure)
+### FFU-005: Improve test structure
 
-<!-- create a task to update frontend doc -->
-### FFU-004: Create / update the Frontend documentation
+**Status**: 📋 Backlog  
+**Priority**: Medium  
+**Estimated Effort**: EVALUATE
+**Dependencies**: EVALUATE
+
+#### References
+
+#### Feature goals
+- Based at the reference, create a robust test structure
+
+
+#### Implementation Checklist
+- [ ] Implement testRenderHelper
+- [ ] MSW to simulate API requests
+- [ ] Implement 'contract' integration test for login screen
+
+#### 📊 Progress Tracking
+
+##### In Progress 🚧
+- None currently
 
 #### Next Up 📋
-- Login API integration
-- Register integration
+- Create / update the Frontend documentation
+
+### FFU-006: Create / update the Frontend documentation
+
+**Status**: 📋 Backlog  
+**Priority**: Medium  
+**Estimated Effort**: EVALUATE
+**Dependencies**: EVALUATE
+
+#### References
+
+#### Feature goals
+- Based at the project, update the frontend documentation
 
 
-### BUS-006: Business Feats
+#### Implementation Checklist
+- [ ] Frontend System architecture and component relationships at [architecture.mermaid](../../docs/frontend/architecture.mermaid)
+- [ ] Technical specifications at [technical.md](../../docs/frontend/technical.md)
+- [ ] Prepar to integration test
+
+#### 📊 Progress Tracking
+
+##### In Progress 🚧
+- None currently
+
+#### Next Up 📋
+- Create / update the Frontend documentation
+
+### BUS-007: Register API integration
+
 **Status**: 📋 Backlog  
 **Priority**: High  
 **Estimated Effort**: EVALUATE

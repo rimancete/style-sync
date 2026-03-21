@@ -19,9 +19,9 @@ This document tracks the progress of the frontend implementation.
 - [x] Form Components (Controlled with React Hook Form)
 
 ## 3. Screens & Features
-- [x] Login Screen
-- [x] Registration Screen
-- [x] Home Page
+- [ ] Login Screen
+- [ ] Registration Screen
+- [ ] Home Page
 - [ ] Booking Flow
   - [ ] Branch Selection
   - [ ] Service Selection
@@ -32,14 +32,15 @@ This document tracks the progress of the frontend implementation.
 - [ ] Booking History
 
 ## 4. API Integration
-- [x] Auth (Login/Register)
-- [x] Branches (List/Get)
-- [x] Services (List/Get)
-- [x] Professionals (List/Get)
-- [x] Bookings (List/Create)
-- [x] Theme (Get dynamic config)
+- [ ] Auth (Login/Register)
+- [ ] Branches (List/Get)
+- [ ] Services (List/Get)
+- [ ] Professionals (List/Get)
+- [ ] Bookings (List/Create)
+- [ ] Theme (Get dynamic config)
 
 ## 5. Current Focus
-- Completing the modal-based booking flow.
-- Refining the dynamic theming system.
-- Increasing test coverage for core hooks.
+- Improve initial screens layout
+- Integrate with API.
+- Improve test coverage.
+- Update documentation
