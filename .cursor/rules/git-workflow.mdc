@@ -8,7 +8,7 @@ alwaysApply: true
 
 Follow [docs/git-workflow.md](docs/git-workflow.md) for every task that touches the remote repository.
 
-**Per task (agent execution)** — For upcoming work, **you** drive the aligned Git flow end-to-end unless the user already did a step: ensure an **Issue** exists on GitHub (or ask for its number), **`git fetch`**, create/checkout branch **`n-slug`** from the correct base (**`develop`** for normal work), implement, **`git commit`** / **`git push`**, and open a PR only if one does not already exist for the branch (see PR rules below). Do not skip branching/PR discipline for "small" changes unless the user explicitly opts out for that task.
+**Per task (agent execution)** — Before starting a new issue/branch/PR cycle, check whether there is already an open PR from the current task or conversation that the work belongs to. If so, push to that branch instead. Otherwise, drive the aligned Git flow end-to-end unless the user already did a step: ensure an **Issue** exists on GitHub (or ask for its number), **`git fetch`**, create/checkout branch **`n-slug`** from the correct base (**`develop`** for normal work), implement, **`git commit`** / **`git push`**, and open a PR only if one does not already exist for the branch (see PR rules below). Do not skip branching/PR discipline for "small" changes unless the user explicitly opts out for that task.
 
 **Before implementation**
 
