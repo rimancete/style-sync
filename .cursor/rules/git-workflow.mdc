@@ -6,13 +6,14 @@ alwaysApply: true
 
 # Git and GitHub workflow (mandatory)
 
-Follow [docs/git-workflow.md](docs/git-workflow.md) for every task that touches the remote repository.
+Follow [docs/git-workflow.md](../../docs/git-workflow.md) for every task that touches the remote repository.
 
-**Per task (agent execution)** — For upcoming work, **you** drive the aligned Git flow end-to-end unless the user already did a step: ensure an **Issue** exists on GitHub (or ask for its number), **`git fetch`**, create/checkout branch **`n-slug`** from the correct base (**`develop`** for normal work), implement, **`git commit`** / **`git push`**, and guide or run **`gh pr create`** (or the equivalent) with base **`develop`**, **`Closes #n`**, and the PR template. Do not skip branching/PR discipline for “small” changes unless the user explicitly opts out for that task.
+**Per task (agent execution)** — Before starting a new issue/branch/PR cycle, check whether there is already an open PR from the current task or conversation that the work belongs to. If so, push to that branch instead. Otherwise, drive the aligned Git flow end-to-end unless the user already did a step: ensure an **Issue** exists on GitHub (or ask for its number), **`git fetch`**, create/checkout branch **`n-slug`** from the correct base (**`develop`** for normal work), implement, **`git commit`** / **`git push`**, and open a PR only if one does not already exist for the branch (see PR rules below). Do not skip branching/PR discipline for "small" changes unless the user explicitly opts out for that task.
 
 **Before implementation**
 
 - Confirm there is a linked **GitHub Issue** and a branch named `issueNumber-slug` (e.g. `1-login-api-integration`).
+- If the branch already exists locally or on the remote, **check it out** instead of creating a new one.
 - Normal work: branch from **`develop`**, PR base **`develop`**.
 - Hotfix on production: branch from **`main`**, PR base **`main`**, then plan the **back-merge PR** `main` → `develop`.
 
@@ -22,7 +23,9 @@ Follow [docs/git-workflow.md](docs/git-workflow.md) for every task that touches 
 
 - Run **`pnpm lint`** locally when changes may affect lint; CI must stay green.
 
-**PRs**
+**PRs — one issue, one branch, one PR**
 
+- Before running `gh pr create`, check if a PR already exists for the branch: `gh pr list --head <branch>`. If one is open, **do not create another** — just push commits and the existing PR updates automatically.
 - Include `Closes #n` or `Fixes #n` in the description when the issue should close on merge.
-- Use the [pull request template](.github/pull_request_template.md) checklist (release / hotfix / back-merge).
+- Use the [pull request template](../../.github/pull_request_template.md) checklist (release / hotfix / back-merge).
+- When resuming work on an existing PR (review feedback, CI fixes, follow-up changes), checkout the existing branch, commit, and push. Never start a new branch or PR for the same issue while the original PR is still open.

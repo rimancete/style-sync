@@ -33,7 +33,24 @@ Slugs may strip bracket prefixes; the issue number is the source of truth for tr
 4. In the PR description, link the issue (`Closes #1`, etc.).
 5. Wait for review and CI; merge into **`develop`** when approved.
 
+**One issue, one branch, one PR.** Do not create a second PR for a branch that already has an open one. If you need to verify, run `gh pr list --head <branch>` before creating.
+
 **Commit messages:** follow [docs/projectArchitecture.md](projectArchitecture.md) (`type(scope): description`).
+
+## Continuing work on an existing PR
+
+When you need to address review feedback, fix CI, or make follow-up changes on a branch that already has an open PR:
+
+1. Check out the existing branch:
+
+   ```bash
+   git fetch origin
+   git checkout 1-login-api-integration
+   git pull origin 1-login-api-integration
+   ```
+
+2. Make your changes, commit, and push. The open PR updates automatically with the new commits.
+3. **Do not** create a new branch or a new PR for the same issue while the original PR is still open.
 
 ## PR title automation
 
@@ -97,3 +114,5 @@ These settings are not stored in the repo; configure them in the GitHub UI.
 ## Agent and local tooling
 
 AI assistants working in this repo should follow this document. They must **not** merge `develop` → `main` or perform release/back-merge steps without **explicit human confirmation**. Run `pnpm lint` locally when changing code that must pass CI.
+
+Before running `gh pr create`, agents **must** check `gh pr list --head <branch>` to verify no PR already exists. If one is open, push new commits to the existing branch — the PR updates automatically. Never create duplicate PRs for the same branch or issue.
