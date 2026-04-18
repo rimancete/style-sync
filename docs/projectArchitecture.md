@@ -8,12 +8,28 @@ This document outlines the system architecture.
 
 #### 1.1.1 Technology Stack
 
-- **Backend**: NestJS + TypeScript
+##### 1.1.2 Backend
+
+- NestJS + TypeScript
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: JWT tokens
 - **Development Database**: Docker Compose
 - **API Documentation**: Swagger/OpenAPI + Postman collection
 - **Validation**: class-validator + class-transformer
+
+##### 1.1.2 Frontend
+
+- ReactJS + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Build Tool**: Vite
+- **Tests**: Vitest + MSW
+- **Routing**: TanStack Router
+- **State Management**:
+  - **Global**: Zustand (Auth, Theme, Global Settings)
+  - **Page-level**: Constate + React Context (Local state isolation)
+- **Data Fetching**: TanStack Query
+- **Form Management**: React Hook Form + Zod
+
 
 ### 4.2. Code Quality Standards
 
