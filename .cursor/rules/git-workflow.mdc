@@ -13,11 +13,16 @@ Follow [docs/git-workflow.md](../../docs/git-workflow.md) for every task that to
 **Before implementation**
 
 - Confirm there is a linked **GitHub Issue** and a branch named `issueNumber-slug` (e.g. `1-login-api-integration`).
+- Source the issue title and number from the `tasks/` files when applicable: heading `### {PREFIX-NNN}: {Title}` maps to Issue `#NNN` titled `{Title}`. The prefix stays in `tasks/` only; branch names use `{N}-{slug}` with hyphens (e.g. `4-login-api-integration`).
 - If the branch already exists locally or on the remote, **check it out** instead of creating a new one.
 - Normal work: branch from **`develop`**, PR base **`develop`**.
 - Hotfix on production: branch from **`main`**, PR base **`main`**, then plan the **back-merge PR** `main` → `develop`.
 
 **Do not** merge **`develop` → `main`**, release, or back-merge without **explicit human confirmation** in the conversation.
+
+**Long-lived branches**
+
+- Never delete **`main`** or **`develop`**. When merging release PRs (`develop` → `main`) or back-merge PRs (`main` → `develop`), do **not** pass `--delete-branch` to `gh pr merge` and do not click **Delete branch** in the GitHub UI. Repository auto-delete may be enabled for feature branches; long-lived branches must be preserved.
 
 **Quality**
 

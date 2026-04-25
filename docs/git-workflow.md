@@ -7,6 +7,23 @@ This repository uses a **develop** integration branch and **main** for productio
 - Every PR should link to an **Issue** (reference `#n` in the description; use `Closes #n` or `Fixes #n` when the PR should close the issue on merge).
 - Use **Milestones** for larger or multi-step work; small tasks can stay without a milestone.
 
+## Issue source of truth (`tasks/` files)
+
+Use the task files as the source of truth for upcoming work and issue naming:
+
+- [tasks/client/frontendTasks.md](../tasks/client/frontendTasks.md)
+- [tasks/client/backlog.md](../tasks/client/backlog.md)
+- [tasks/server/backendTasks.md](../tasks/server/backendTasks.md)
+
+Task headings should follow `### {PREFIX-NNN}: {Title}`. The prefix keeps the task organized in the task files; GitHub issues and branches use only the numeric part.
+
+Example from `tasks/client/frontendTasks.md`:
+
+- Task heading: `BUS-004: Login API integration`
+- GitHub Issue: `#4` titled `Login API integration`
+- Branch name: `4-login-api-integration`
+- PR title: `#4 Login API integration` (set by the PR title automation when the issue number is detected)
+
 ## Branch naming
 
 Pattern: `{issueNumber}-{slug-from-title}` (lowercase, hyphenated).
@@ -15,6 +32,7 @@ Examples:
 
 - Issue `#1` titled `[LOGIN] API Integration` → branch `1-login-api-integration`
 - Issue `#2` titled `[FIX] Set booking request limit` → branch `2-fix-set-booking-request-limit`
+- Task `BUS-004: Login API integration` → Issue `#4` → branch `4-login-api-integration`
 
 Slugs may strip bracket prefixes; the issue number is the source of truth for traceability.
 
@@ -29,7 +47,7 @@ Slugs may strip bracket prefixes; the issue number is the source of truth for tr
    git checkout -b 1-login-api-integration
    ```
 
-3. Commit and push. Open a **Pull Request** with **base `develop`**.
+3. Commit and push. Open a **Pull Request** with **base `develop`** and fill the matching type section in [.github/pull_request_template.md](../.github/pull_request_template.md).
 4. In the PR description, link the issue (`Closes #1`, etc.).
 5. Wait for review and CI; merge into **`develop`** when approved.
 
@@ -90,15 +108,22 @@ Pull requests and pushes to `main` / `develop` run [.github/workflows/ci.yml](..
 
 - Node version comes from [.nvmrc](../.nvmrc) (Node 24.x).
 - Package manager: **pnpm** (see root [package.json](../package.json)).
+- GitHub Actions check name for future branch protection: **Install and lint**.
 
-You can require this workflow to pass under **Settings → Branches → Branch protection rules** (status check name as shown in the Actions tab).
+You can require this workflow to pass under **Settings → Branches → Branch protection rules** or **Settings → Rules → Rulesets**.
 
-## Branch protection (GitHub settings)
+## Branch protection (GitHub settings, deferred)
 
-Recommended (adjust to your team):
+Branch protection is not configured by this repository's files. Configure it in GitHub when the team is ready.
+
+Recommended baseline:
 
 - **`main`:** require PR before merging; require status checks (CI); optional required reviewers.
 - **`develop`:** require PR or allow trusted maintainers; require CI on PRs.
+- Required status check: **Install and lint**.
+- For both `main` and `develop`: **Allow deletions: OFF** and **Allow force pushes: OFF**.
+
+Incident note: GitHub's repository-level **Automatically delete head branches** setting can delete the source branch after a PR merge. That is useful for feature branches, but dangerous when a release PR uses `develop` as the head branch. Protecting `develop` and `main` with **Allow deletions: OFF** prevents long-lived branches from being removed by that cleanup setting or by manual UI actions.
 
 Creating the `develop` branch (first time):
 
@@ -116,3 +141,5 @@ These settings are not stored in the repo; configure them in the GitHub UI.
 AI assistants working in this repo should follow this document. They must **not** merge `develop` → `main` or perform release/back-merge steps without **explicit human confirmation**. Run `pnpm lint` locally when changing code that must pass CI.
 
 Before running `gh pr create`, agents **must** check `gh pr list --head <branch>` to verify no PR already exists. If one is open, push new commits to the existing branch — the PR updates automatically. Never create duplicate PRs for the same branch or issue.
+
+Agents must **never** pass `--delete-branch` to `gh pr merge` for release PRs (`develop` → `main`) or back-merge PRs (`main` → `develop`). Do not click the GitHub UI's **Delete branch** button for `develop` or `main`; both are long-lived branches and must be preserved.

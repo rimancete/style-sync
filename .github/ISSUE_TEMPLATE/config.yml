@@ -1,2 +1,7 @@
+# Issue templates policy:
+# - blank_issues_enabled: true keeps the "Open a blank issue" link visible.
+#   Set to false to force contributors into one of the structured templates.
+# - contact_links is empty by design; add entries here if external channels
+#   (e.g. Discussions, support email) become canonical.
 blank_issues_enabled: true
 contact_links: []

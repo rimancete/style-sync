@@ -1,16 +1,18 @@
 ---
 name: Feature / task
 about: New capability or refactor tracked against develop
-title: '[AREA] Short title'
-labels: ''
-assignees: ''
+title: '[SCOPE] Short title'
 ---
+
+<!-- Replace [SCOPE] with the relevant area before creating the issue. -->
 
 ## Goal
 
 ## Acceptance criteria
 
 - [ ]
+
+## Out of scope
 
 ## Notes
 
