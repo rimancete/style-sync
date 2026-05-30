@@ -521,7 +521,7 @@
 - Create the Frontend documentation
 - Create Login page
 
-### FFU-004: Create the Frontend documentation
+### FFU-008: Create the Frontend documentation
 
 1. Based on the 'server' structure and the base structure implemented before, generate:
 
@@ -531,8 +531,13 @@
 - docs/frontend/status.md: Frontend progress and state
 - docs/frontend/implementationHistory.md: Implementation history
 
-## Phase 2 (Screens)
+## Phase 3 (Screens)
 **Goal**: Integrate customer branding into React application
+
+**Status**: 📋 Backlog (in progress)
+**Priority**: High  
+**Estimated Effort**: EVALUATE
+**Dependencies**: EVALUATE
 
 ##### Step 2.4.6: Customer Context Provider
 

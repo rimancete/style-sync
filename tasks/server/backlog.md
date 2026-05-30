@@ -2,7 +2,7 @@
 
 ## Phase 4 (Advanced Business Features)
 
-### ADV-003: Buffer Times Between Appointments
+### ADV-009: Buffer Times Between Appointments
 **Status**: 📋 Backlog  
 **Priority**: Low  
 **Estimated Effort**: 1 day  

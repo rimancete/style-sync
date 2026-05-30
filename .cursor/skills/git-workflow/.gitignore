@@ -1,0 +1,2 @@
+# Per-developer choice between `gh` and `mcp`. Not shared across environments.
+.last-tool

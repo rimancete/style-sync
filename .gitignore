@@ -64,3 +64,6 @@ coverage/
 # Temporary folders
 tmp/
 temp/
+
+# Cursor skills - local-only state
+.cursor/skills/**/.env

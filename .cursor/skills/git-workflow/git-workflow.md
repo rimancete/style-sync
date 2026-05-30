@@ -11,9 +11,10 @@ This repository uses a **develop** integration branch and **main** for productio
 
 Use the task files as the source of truth for upcoming work and issue naming:
 
-- [tasks/client/frontendTasks.md](../tasks/client/frontendTasks.md)
-- [tasks/client/backlog.md](../tasks/client/backlog.md)
-- [tasks/server/backendTasks.md](../tasks/server/backendTasks.md)
+- [frontendTasks](../../../tasks/client/frontendTasks.md)
+- [frontendBacklog](../../../tasks/client/backlog.md)
+- [backendTasks](../../../tasks/server/backendTasks.md)
+- [backendBacklog](../../../tasks/server/backlog.md)
 
 Task headings should follow `### {PREFIX-NNN}: {Title}`. The prefix keeps the task organized in the task files; GitHub issues and branches use only the numeric part.
 

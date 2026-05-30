@@ -2,97 +2,19 @@
 globs: client/**/*
 alwaysApply: false
 ---
-# Project Context and Architecture
-SYSTEM_CONTEXT: |
-  You are a senior frontend developer working on a TypeScript/React project.
-  Required file reads on startup:  
-  - docs/frontend/architecture.mermaid: Frontend System architecture and component relationships
-  - docs/frontend/architecture.md: Descriptive Frontend System Architecture, guidelines and patterns
-  - docs/frontend/technical.md: Technical specifications
-  - tasks/client/frontendTasks.md: Current development tasks and requirements
-  - tasks/client/backlog.md: Future development tasks and requirements
-  - docs/frontend/status.md: Frontend progress and state
 
-  Before making any changes:
-  1. Parse and understand system architecture from docs/architecture.mermaid
-  2. Check current task context from tasks/client/frontendTasks.md
-  3. Update progress in docs/frontend/status.md
-  4. Follow technical specifications from docs/frontend/technical.md
+# Frontend context (auto-applied on `client/**`)
 
-# File Management Rules
-ON_FILE_CHANGE: |
-  Required actions after any code changes:
-  1. READ docs/frontend/architecture.mermaid to verify architectural compliance
-  2. UPDATE docs/frontend/status.md with:
-     - Current progress
-     - Any new issues encountered
-     - Completed items
-  3. VALIDATE changes against docs/frontend/technical.md specifications
-  4. VERIFY task progress against tasks/client/frontendTasks.md
+When editing frontend code, the architecture, conventions, and validation rules below always apply. The full feature / bugfix / refactor workflow (context loading, plan, branch, PR, validation, push) lives in the [implement-client](../skills/implement-client/SKILL.md) skill — invoke it explicitly when starting a task.
 
-# Code Style and Patterns
-TYPESCRIPT_GUIDELINES: |
-  - Use strict typing, avoid 'any'
-  - Follow SOLID principles
-  - Write unit tests for all required features
-  - React components must use function instead const declaration
-  - Use 'type' for type declarations
+## Reference reads (load on demand)
 
-# Architecture Understanding
-READ_ARCHITECTURE: |
-  File: docs/architecture.mermaid
-  Required parsing:
-  1. Load and parse complete Mermaid diagram
-  2. Extract and understand:
-     - Module boundaries and relationships
-     - Component flow patterns
-     - System interfaces
-     - Component dependencies
-  3. Validate any changes against architectural constraints
-  4. Ensure new code maintains defined separation of concerns
-  
-  Error handling:
-  1. If file not found: STOP and notify user
-  2. If diagram parse fails: REQUEST clarification
-  3. If architectural violation detected: WARN user
+- [docs/frontend/architecture.mermaid](../../docs/frontend/architecture.mermaid) — module boundaries, component relationships.
+- [docs/frontend/architecture.md](../../docs/frontend/architecture.md) — descriptive architecture, guidelines, patterns.
+- [docs/frontend/technical.md](../../docs/frontend/technical.md) — technical specifications.
 
-# Task Management
-TASK_WORKFLOW: |
-  Required files:
-  - tasks/client/frontendTasks.md: Source of task definitions
-  - docs/frontend/status.md: Progress tracking
-  - docs/frontend/technical.md: Implementation guidelines
-  - docs/frontend/implementationHistory.md: Implementation history
-  
-  Workflow steps:
-  1. READ tasks/client/frontendTasks.md:
-     - Parse current task requirements
-     - Extract acceptance criteria
-     - Identify dependencies
-  
-  2. VALIDATE against docs/frontend/architecture.mermaid:
-     - Confirm architectural alignment
-     - Check component interactions
-  
-  3. UPDATE docs/frontend/status.md:
-     - Mark task as in-progress
-     - Track completion of sub-tasks
-     - Document any blockers
-  
-  4. TEST implementation:
-     - Create integration test files
-     - Implement to pass tests manually
-  
-  5. UPDATE docs/frontend/implementationHistory.md: 
-     - Document implementation done
-   
-  6. UPDATE docs/frontend/architecture.mermaid: 
-     - Keep the consistence and just add / check important features at the mermaid.
+These are read by the [implement-client](../skills/implement-client/SKILL.md) skill at the start of a task. For ad-hoc edits, load them only when the change is non-trivial.
 
-# Error Prevention
-VALIDATION_RULES: |
-  1. Find and fix typescript code compilation and lint rules
-  2. Verify type consistency
-  3. Check for potential null/undefined
-  4. Validate against business rules
-  5. Ensure error handling
+## Workflow
+
+For the full end-to-end feature workflow (context load → plan → branch → implement → docs sync → review → push), use the [implement-client](../skills/implement-client/SKILL.md) skill.

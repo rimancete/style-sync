@@ -54,7 +54,7 @@ Closes #
 - [ ] Source branch is **`main`**
 - [ ] Base branch is **`develop`**
 - [ ] Hotfix PR or issue is linked in the summary or notes
-- [ ] Conflicts, if any, were resolved without dropping the hotfix
+- [ ] Conflicts, if any, were resolved without dropping the hotfix by developer manually
 - [ ] CI passed for the back-merge PR
 - [ ] Do **not** enable "delete head branch" and do **not** click **Delete branch** after merge; **`main`** is long-lived
 
