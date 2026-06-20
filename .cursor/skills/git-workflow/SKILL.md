@@ -26,7 +26,7 @@ These are non-negotiable. Every workflow phase below assumes them.
 4. **Never merge `develop` → `main`, run a release, or back-merge without explicit human confirmation.** Stop and ask if a release/back-merge PR appears in scope.
 5. **Never delete `main` or `develop`.** Never pass `--delete-branch` to `gh pr merge` for release or back-merge PRs. Never click "Delete branch" for these long-lived refs in the UI.
 6. **Always include `Closes #N`, `Fixes #N`, or `Resolves #N`** in the PR body so the linked issue closes on merge.
-7. **Run `pnpm lint` locally** when changes can affect lint. CI must stay green (`Install and lint` workflow in [.github/workflows/ci.yml](../../../.github/workflows/ci.yml)).
+7. **Run `rtk pnpm lint` locally** when changes can affect lint. CI must stay green (`Install and lint` workflow in [.github/workflows/ci.yml](../../../.github/workflows/ci.yml)).
 
 ## Prerequisites
 
@@ -35,7 +35,7 @@ For PR/Issue operations the agent can use either of two tools. At least one must
 - **`gh` CLI** — see [gh-setup.md](gh-setup.md).
 - **GitHub MCP** (`user-github_style-sync`) — see [mcp-setup.md](mcp-setup.md).
 
-All native git operations (`fetch`, `checkout`, `commit`, `push`, `pull`) always use plain `git`, regardless of which tool is chosen for PRs.
+Native git side-effect operations (`fetch`, `checkout`, `commit`) use plain `git`. Use `rtk git pull` and `rtk git push` for pull/push (see [.cursor/rules/rtk.mdc](../../rules/rtk.mdc)). PR/Issue reads use `rtk gh` where applicable.
 
 ---
 
@@ -80,7 +80,7 @@ Branch name pattern: `{issueNumber}-{slug}` — lowercase, hyphenated, no bracke
 
 ```bash
 git checkout <base>            # develop for normal, main for hotfix
-git pull origin <base>
+rtk git pull origin <base>
 git checkout -b <N>-<slug>     # e.g. 4-login-api-integration
 ```
 
@@ -89,7 +89,7 @@ If the branch already exists locally or on the remote, **check it out** instead 
 ```bash
 git fetch origin
 git checkout <N>-<slug>
-git pull origin <N>-<slug>
+rtk git pull origin <N>-<slug>
 ```
 
 ### 5. Commit with Conventional Commits
@@ -107,7 +107,7 @@ Common types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf
 ### 6. Push the branch
 
 ```bash
-git push -u origin HEAD
+rtk git push -u origin HEAD
 ```
 
 ### 7. Check for an existing PR before creating one
@@ -117,7 +117,7 @@ Always do this — it's the only way to enforce "one Issue, one branch, one PR":
 **If `gh`:**
 
 ```bash
-gh pr list --head "$(git branch --show-current)" --state open
+rtk gh pr list --head "$(git branch --show-current)" --state open
 ```
 
 **If `mcp`:** call `list_pull_requests` on `user-github_style-sync` with `owner`, `repo`, `head=<owner>:<current-branch>`, `state=open`.
@@ -210,7 +210,7 @@ Hotfixes target `main` directly. They **must** be followed by a back-merge PR `m
    ```bash
    git fetch origin
    git checkout main
-   git pull origin main
+   rtk git pull origin main
    git checkout -b <N>-<slug>
    ```
 
@@ -248,13 +248,13 @@ For inline review comments and review-thread management, the `review-pr` skill i
 ```bash
 # Normal feature flow
 git fetch origin
-git checkout develop && git pull origin develop
+git checkout develop && rtk git pull origin develop
 git checkout -b 4-login-api-integration
 # implement + commit (conventional commits)
-git push -u origin HEAD
+rtk git push -u origin HEAD
 
 # Pre-flight: is there already an open PR for this branch?
-gh pr list --head "$(git branch --show-current)" --state open
+rtk gh pr list --head "$(git branch --show-current)" --state open
 
 # If no, create one
 gh pr create --base develop \
@@ -266,9 +266,9 @@ gh pr create --base develop \
 
 - One Issue, one branch (`{N}-{slug}`), one PR.
 - Feature/Task PRs target `develop`. Hotfix PRs target `main`. Release PRs target `main`. Back-merge PRs target `develop`.
-- Always run `gh pr list --head <branch>` (or `list_pull_requests`) before creating.
+- Always run `rtk gh pr list --head <branch>` (or `list_pull_requests`) before creating.
 - Always include `Closes #N` / `Fixes #N` / `Resolves #N` in the PR body.
 - Never merge `develop` → `main` or do release / back-merge without explicit human confirmation.
 - Never delete `main` or `develop`; never use `--delete-branch` for release / back-merge PRs.
 - Conventional Commits, imperative mood.
-- `pnpm lint` clean locally before push when changes affect lint.
+- `rtk pnpm lint` clean locally before push when changes affect lint.

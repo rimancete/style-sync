@@ -90,7 +90,7 @@ Decide `tasks/<side>/frontendTasks.md` (or `backendTasks.md`) when the work is p
 
 1. Read the target file to inspect existing prefixes (`BUS-`, `FFU-`, `BFU-`, etc.) and decide which one fits — or propose a new prefix and confirm with the developer.
 2. Pick the next available zero-padded number for that prefix (`BUS-004` → next is `BUS-005`).
-3. Verify the chosen `{N}` does not collide with an existing GitHub Issue if the developer plans to create one (`gh issue view <N>` or `pull_request_read`/`issue_read` via MCP).
+3. Verify the chosen `{N}` does not collide with an existing GitHub Issue if the developer plans to create one (`rtk gh issue view <N>` or `pull_request_read`/`issue_read` via MCP).
 
 ### Phase 5: Write the task entry
 
@@ -161,7 +161,7 @@ After writing the task, use `AskQuestion` to ask the developer:
 
 - **Create now** — hand off to the [git-workflow](../git-workflow/SKILL.md) skill. Before invoking it, verify no Issue with the same title or number already exists to avoid duplicates:
 
-  - **`gh`**: `gh issue list --search "<Title>"` and `gh issue view <N>`
+  - **`gh`**: `rtk gh issue list --search "<Title>"` and `rtk gh issue view <N>`
   - **`mcp`**: `search_issues` then `issue_read` on `user-github_style-sync`
 
   Then create the Issue (title = English `{Title}` from the heading, body = a short reference back to the task file plus a link if useful):

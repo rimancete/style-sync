@@ -43,9 +43,9 @@ Update base and gather the full diff plus metadata:
 BASE=$(gh pr view --json baseRefName -q .baseRefName 2>/dev/null || echo develop)
 
 git fetch origin "$BASE":"$BASE"
-git diff "$BASE"...HEAD
+rtk git diff "$BASE"...HEAD
 git diff "$BASE"...HEAD --name-only
-git log "$BASE"...HEAD --oneline
+rtk git log "$BASE"...HEAD --oneline
 git log "$BASE"...HEAD --format=%s        # for conventional-commit check
 ```
 
@@ -59,7 +59,7 @@ Read the PR description, title, base, and head.
 
 ```bash
 gh pr view --json title,body,number,baseRefName,headRefName,url
-gh pr checks "$(gh pr view --json number -q .number)" 2>/dev/null || true
+rtk gh pr checks "$(gh pr view --json number -q .number)" 2>/dev/null || true
 ```
 
 **If `mcp`:** call `list_pull_requests` on `user-github_style-sync` with `owner`, `repo`, `head=<owner>:<current-branch>`, `state=open` → take the first result. Then call `pull_request_read` with `method=get` for the body, and `method=get_check_runs` for CI status.
@@ -71,7 +71,7 @@ If no open PR exists, use the commit messages and diff to infer scope. The compl
 Before judging code, build a mental model of **what the PR is trying to achieve**:
 
 1. Read `## Summary` (intent), `## Issue` (linked Issue), `## Type` (release flavor), and the matching checklist.
-2. If an Issue is linked, optionally pull it (`gh issue view <N>` or `issue_read` MCP) to read the acceptance criteria from the task source.
+2. If an Issue is linked, optionally pull it (`rtk gh issue view <N>` or `issue_read` MCP) to read the acceptance criteria from the task source.
 3. Map each task/checklist item to actual diff changes. Flag:
    - Tasks with no backing diff (missing implementation).
    - Diff areas with no backing task (scope creep).
@@ -244,7 +244,7 @@ The template at [.github/pull_request_template.md](../../../.github/pull_request
 - Branch name matches `^[0-9]+-[a-z0-9-]+$`. Leading number == linked Issue `N`.
 - PR `baseRefName` == `develop`.
 - Issue link present (already verified above).
-- `pnpm lint` passed locally **or** a skip rationale is documented in `## Notes`. CI's `Install and lint` check should be green (`gh pr checks <N>` / `pull_request_read method=get_check_runs`).
+- `rtk pnpm lint` passed locally **or** a skip rationale is documented in `## Notes`. CI's `Install and lint` check should be green (`rtk gh pr checks <N>` / `pull_request_read method=get_check_runs`).
 
 ### If Type = `Hotfix targeting main`
 
@@ -252,14 +252,14 @@ The template at [.github/pull_request_template.md](../../../.github/pull_request
 - PR `baseRefName` == `main`.
 - `## Summary` or `## Notes` explains production impact and urgency.
 - Issue link present.
-- `pnpm lint` rule (same as Feature).
+- `rtk pnpm lint` rule (same as Feature).
 - **Follow-up back-merge PR** (`main` → `develop`) is planned or linked in `## Notes`. Missing back-merge is a Critical finding — it leaves `develop` missing the hotfix.
 
 ### If Type = `Release develop → main`
 
 - PR `headRefName` == `develop`, `baseRefName` == `main`.
 - `## Notes` (or comments) shows explicit release approval from a human.
-- CI passed for the release PR (`gh pr checks <N>` / MCP `pull_request_read method=get_check_runs`).
+- CI passed for the release PR (`rtk gh pr checks <N>` / MCP `pull_request_read method=get_check_runs`).
 - **No `--delete-branch` / "Delete branch"** is planned after merge — `develop` is long-lived. Flag any indication otherwise as Critical.
 
 ### If Type = `Back-merge main → develop`

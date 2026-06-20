@@ -1,0 +1,23 @@
+---
+alwaysApply: true
+---
+# Shell Command Optimization — RTK
+
+RTK is installed globally via a `preToolUse` hook (~80% token reduction on CLI output).
+Always prefer `rtk <command>` for the families below.
+
+## Prefix with `rtk`
+
+- **Git reads/writes**: `rtk git status`, `rtk git diff`, `rtk git log`, `rtk git pull`, `rtk git push`
+- **GitHub CLI reads**: `rtk gh pr list`, `rtk gh pr view`, `rtk gh pr checks`, `rtk gh issue list`, `rtk gh issue view`
+- **Lint**: `rtk pnpm lint`
+- **Tests**: `rtk vitest`, `rtk jest`
+- **TypeScript**: `rtk tsc --noEmit`
+- **Prisma**: `rtk prisma generate`, `rtk prisma migrate status`
+
+## Do NOT prefix
+
+- `git checkout`, `git fetch`, `git checkout -b`, `git commit` — side-effect only
+- `gh pr create`, `gh pr merge`, `gh issue create` — return structured URLs the agent must parse
+- `git rebase`, `git cherry-pick` — interactive; RTK excludes these
+- Any command where verbatim JSON output is needed for parsing (e.g. `gh pr view --json`)

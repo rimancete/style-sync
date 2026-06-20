@@ -74,7 +74,7 @@ If any of these files are missing, **stop and notify the developer** rather than
 Hand off to [git-workflow](../git-workflow/SKILL.md) for:
 
 - `git fetch origin`
-- Branch from `develop`: `git checkout develop && git pull && git checkout -b <N>-<slug>`
+- Branch from `develop`: `git checkout develop && rtk git pull && git checkout -b <N>-<slug>`
 - Initial empty push (or after the first commit) and PR creation as **draft** with the body filled from the [PR template](../../../.github/pull_request_template.md):
   - `## Summary` — from the task Descrição + chosen approach.
   - `## Issue` — `Closes #<N>`.
@@ -128,7 +128,7 @@ Before considering the task done:
 2. Update [docs/frontend/architecture.mermaid](../../../docs/frontend/architecture.mermaid) — only add / adjust what is genuinely new and important. Keep consistency.
 3. Verify changes against [docs/frontend/technical.md](../../../docs/frontend/technical.md) specifications.
 4. Verify task progress against the task entry; mark Critérios de Aceitação checkboxes as `- [x]` when their backing / smooth tests pass.
-5. Run `pnpm lint` (and any frontend test command configured) locally. CI must stay green. If lint fails, fix and re-run.
+5. Run `rtk pnpm lint` (and `rtk vitest` or any frontend test command configured) locally. CI must stay green. If lint fails, fix and re-run.
 
 Validation rules:
 
@@ -158,7 +158,7 @@ Validation rules:
 3. Push only when confirmed:
 
    ```bash
-   git push -u origin HEAD
+   rtk git push -u origin HEAD
    ```
 
 4. After push, report: remote branch URL, PR link, summary of commits pushed, any open review findings still pending.
