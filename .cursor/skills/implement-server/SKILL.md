@@ -3,17 +3,17 @@ name: implement-server
 path: server/**/*
 description: >-
   Implement a backend task end-to-end in this TypeScript/NestJS project —
-  load the mandatory backend context (architecture, technical, status,
-  tasks), plan the change, create the `{N}-{slug}` branch and draft PR via
-  the `git-workflow` skill, implement with strict typing, SOLID, JSDoc, and
-  contract tests, update `docs/backend/postman-collection.json` when the
-  API surface changes, keep `docs/backend/status.md` and the PR description
-  in sync, run `pnpm lint`, then offer the `review-pr` skill before asking
-  for push confirmation. Never auto-runs review; never pushes without
-  explicit developer approval.
+  load the mandatory backend context (architecture, technical, status) and
+  the linked GitHub Issue (#N) as the task source of truth, plan the change,
+  create the `{N}-{slug}` branch and draft PR via the `git-workflow` skill,
+  implement with strict typing, SOLID, JSDoc, and contract tests, update
+  `docs/backend/postman-collection.json` when the API surface changes, keep
+  `docs/backend/status.md` and the PR description in sync, run `pnpm lint`,
+  then offer the `review-pr` skill before asking for push confirmation.
+  Never auto-runs review; never pushes without explicit developer approval.
   Use when the user asks to implement, build, fix, or refactor anything
-  inside `server/**`, or to pick up an existing backend task from
-  `tasks/server/*`.
+  inside `server/**`, or to pick up a backend task referenced by a GitHub
+  Issue number.
 ---
 
 # Implement Server (Backend)
@@ -25,7 +25,7 @@ This skill orchestrates other skills: it calls [git-workflow](../git-workflow/SK
 ## Prerequisites
 
 - The `git-workflow` skill must be wired ([gh-setup](../git-workflow/gh-setup.md) or [mcp-setup](../git-workflow/mcp-setup.md)). Tooling choice persists in `.cursor/skills/git-workflow/.last-tool`.
-- A linked GitHub Issue exists (or [create-task](../create-task/SKILL.md) is used first to draft the task, then the developer creates / confirms the Issue).
+- A linked GitHub Issue `#N` must exist. If not, use [create-task](../create-task/SKILL.md) first to create it.
 
 ## Mandatory startup reads
 
@@ -34,22 +34,21 @@ Before touching code, read these files. They are the contract for any backend ch
 - [docs/backend/architecture.mermaid](../../../docs/backend/architecture.mermaid) — backend system architecture and component relationships.
 - [docs/backend/architecture.md](../../../docs/backend/architecture.md) — descriptive architecture, guidelines, patterns.
 - [docs/backend/technical.md](../../../docs/backend/technical.md) — technical specifications.
-- [tasks/server/backendTasks.md](../../../tasks/server/backendTasks.md) — current development tasks and requirements.
-- [tasks/server/backlog.md](../../../tasks/server/backlog.md) — only when the task is in the backlog.
 - [docs/backend/status.md](../../../docs/backend/status.md) — current backend progress and state.
+- **GitHub Issue `#N`** — source of truth for the task. Read via `rtk gh issue view <N>` (or `issue_read` MCP) to extract: Descrição, Objetivos, Regras de Negócio, Requisitos Funcionais, Requisitos Não Funcionais, and Critérios de Aceitação.
 
-If any of these are missing, **stop and notify the developer** rather than proceeding blind.
+If any of these are missing or the Issue does not exist, **stop and notify the developer** rather than proceeding blind.
 
 ## Workflow
 
 ### Phase 1: Context load and task parse
 
 1. Read the mandatory startup files (above).
-2. Locate the task entry: `### {PREFIX-NNN}: {Title}` in [tasks/server/backendTasks.md](../../../tasks/server/backendTasks.md) or [tasks/server/backlog.md](../../../tasks/server/backlog.md). Extract:
-   - `{N}` (numeric part) — drives the branch name and Issue number.
+2. Read the GitHub Issue `#N` body via `rtk gh issue view <N>` (or `issue_read` MCP). Extract:
+   - `{N}` — the Issue number; drives the branch name (`<N>-<slug>`) and the `Closes #<N>` in the PR.
    - Title — used in the PR title.
-   - Body — Descrição, Objetivos, Regras de Negócio, Requisitos Funcionais, Requisitos Não Funcionais, Critérios de Aceitação.
-3. Confirm the linked GitHub Issue number matches `{N}`. If no Issue exists, stop and either ask the developer or hand off to [create-task](../create-task/SKILL.md) → `git-workflow` to create it.
+   - Body sections — Descrição, Objetivos, Regras de Negócio, Requisitos Funcionais, Requisitos Não Funcionais, Critérios de Aceitação.
+3. If the Issue does not exist or has no structured body, stop and ask the developer to run [create-task](../create-task/SKILL.md) first.
 
 ### Phase 2: Plan
 
@@ -115,11 +114,11 @@ After each logical milestone update:
 - [docs/backend/status.md](../../../docs/backend/status.md): current progress, new issues encountered, completed items.
 - PR description: check off completed items in the chosen Type checklist; refine `## Notes` for any new risk or migration step.
 
-Do **not** push at this stage unless the PR is already open and continuous updates are expected; the push happens only at Phase 7.
+Do **not** push at this stage unless the PR is already open and continuous updates are expected; the push happens only at Phase 8.
 
 ### Phase 6: Smooth tests
 
-Generate a playbook with manual tests by developer and wait the developer approval. Use "Critérios de Aceitação" session from `backendTasks.md` as reference for manual tests.
+Generate a playbook with manual tests by developer and wait the developer approval. Use the "Critérios de Aceitação" section from GitHub Issue `#N` as reference for manual tests.
 
 If there would be any implementation issue, the developer can ask for fix, You have to clarify intention using one of the `AskUser`, `Plan` or `Multitask` mode.
 
@@ -132,7 +131,7 @@ Before considering the task done:
 3. Update [docs/backend/implementationHistory.md](../../../docs/backend/implementationHistory.md) — document the implementation (what was built, key decisions, migration notes).
 4. Update [docs/backend/architecture.mermaid](../../../docs/backend/architecture.mermaid) — only add / adjust what is genuinely new and important.
 5. Verify changes against [docs/backend/technical.md](../../../docs/backend/technical.md) specifications.
-6. Verify task progress against the task entry; mark Critérios de Aceitação as `- [x]` when their tests pass.
+6. Verify task progress against Issue `#N`; mark Critérios de Aceitação as `- [x]` in the Issue body (via `gh issue edit` or `issue_write` update) when their tests pass.
 7. Run `rtk pnpm lint` and `rtk vitest` (or any backend test command configured). CI must stay green. If lint or tests fail, fix and re-run.
 
 Validation rules:
@@ -143,7 +142,7 @@ Validation rules:
 4. Validate against business rules (Regras de Negócio in the task entry).
 5. Ensure error handling, including failure-path tests.
 
-### Phase 7: Offer `review-pr`, then ask before pushing
+### Phase 8: Offer `review-pr`, then ask before pushing
 
 1. **Offer** (do not auto-run) the [review-pr](../review-pr/SKILL.md) skill:
 

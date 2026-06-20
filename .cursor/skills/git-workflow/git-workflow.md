@@ -7,23 +7,19 @@ This repository uses a **develop** integration branch and **main** for productio
 - Every PR should link to an **Issue** (reference `#n` in the description; use `Closes #n` or `Fixes #n` when the PR should close the issue on merge).
 - Use **Milestones** for larger or multi-step work; small tasks can stay without a milestone.
 
-## Issue source of truth (`tasks/` files)
+## Issue source of truth
 
-Use the task files as the source of truth for upcoming work and issue naming:
+**GitHub Issue `#N`** is the source of truth for upcoming work and task naming. The `tasks/` files (`tasks/client/`, `tasks/server/`) are kept as historical legacy only and are no longer maintained.
 
-- [frontendTasks](../../../tasks/client/frontendTasks.md)
-- [frontendBacklog](../../../tasks/client/backlog.md)
-- [backendTasks](../../../tasks/server/backendTasks.md)
-- [backendBacklog](../../../tasks/server/backlog.md)
+Use `rtk gh issue view <N>` (or `issue_read` MCP) to read the task title and body. New tasks are created via the [create-task](../../.cursor/skills/create-task/SKILL.md) skill, which always creates the GitHub Issue with the full Portuguese template as the body.
 
-Task headings should follow `### {PREFIX-NNN}: {Title}`. The prefix keeps the task organized in the task files; GitHub issues and branches use only the numeric part.
+Naming convention (driven by the Issue number):
 
-Example from `tasks/client/frontendTasks.md`:
-
-- Task heading: `BUS-004: Login API integration`
 - GitHub Issue: `#4` titled `Login API integration`
 - Branch name: `4-login-api-integration`
-- PR title: `#4 Login API integration` (set by the PR title automation when the issue number is detected)
+- PR title: `#4 Login API integration` (set by the PR title automation when the issue number is detected from the branch name or `Closes #N` in the PR body)
+
+Task headings in chat or preview use `### {PREFIX-NNN}: {Title}` (e.g. `BUS-004: Login API integration`) as a human-readable label only. The canonical identifier is always `#N`.
 
 ## Branch naming
 

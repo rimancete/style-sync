@@ -3,16 +3,17 @@ name: implement-client
 path: client/**/*
 description: >-
   Implement a frontend task end-to-end in this TypeScript/React project —
-  load the mandatory frontend context (architecture, technical, status,
-  tasks), plan the change, create the `{N}-{slug}` branch and draft PR via
-  the `git-workflow` skill, implement with strict typing and React best
-  practices, keep `docs/frontend/status.md` and the PR description in sync,
-  run `pnpm lint`, wait for smooth tests or developer approval, then offer the `review-pr` skill before asking for push
-  confirmation. Never auto-runs review; never pushes without explicit
-  developer approval.
+  load the mandatory frontend context (architecture, technical, status) and
+  the linked GitHub Issue (#N) as the task source of truth, plan the change,
+  create the `{N}-{slug}` branch and draft PR via the `git-workflow` skill,
+  implement with strict typing and React best practices, keep
+  `docs/frontend/status.md` and the PR description in sync, run `pnpm lint`,
+  wait for smooth tests or developer approval, then offer the `review-pr`
+  skill before asking for push confirmation. Never auto-runs review; never
+  pushes without explicit developer approval.
   Use when the user asks to implement, build, fix, or refactor anything
-  inside `client/**`, or to pick up an existing frontend task from
-  `tasks/client/*`.
+  inside `client/**`, or to pick up a frontend task referenced by a GitHub
+  Issue number.
 ---
 
 # Implement Client (Frontend)
@@ -24,7 +25,7 @@ This skill orchestrates other skills: it calls [git-workflow](../git-workflow/SK
 ## Prerequisites
 
 - The `git-workflow` skill must be wired ([gh-setup](../git-workflow/gh-setup.md) or [mcp-setup](../git-workflow/mcp-setup.md)). Tooling choice persists in `.cursor/skills/git-workflow/.last-tool`.
-- A linked GitHub Issue exists (or [create-task](../create-task/SKILL.md) is used first to draft the task, then the developer creates / confirms the Issue).
+- A linked GitHub Issue `#N` must exist. If not, use [create-task](../create-task/SKILL.md) first to create it.
 
 ## Mandatory startup reads
 
@@ -33,22 +34,21 @@ Before touching code, read these files. They are the contract for any frontend c
 - [docs/frontend/architecture.mermaid](../../../docs/frontend/architecture.mermaid) — frontend system architecture and component relationships.
 - [docs/frontend/architecture.md](../../../docs/frontend/architecture.md) — descriptive architecture, guidelines, patterns.
 - [docs/frontend/technical.md](../../../docs/frontend/technical.md) — technical specifications.
-- [tasks/client/frontendTasks.md](../../../tasks/client/frontendTasks.md) — current development tasks and requirements.
-- [tasks/client/backlog.md](../../../tasks/client/backlog.md) — only when the task is in the backlog.
 - [docs/frontend/status.md](../../../docs/frontend/status.md) — current frontend progress and state.
+- **GitHub Issue `#N`** — source of truth for the task. Read via `rtk gh issue view <N>` (or `issue_read` MCP) to extract: Descrição, Objetivos, Regras de Negócio, Requisitos Funcionais, Requisitos Não Funcionais, and Critérios de Aceitação.
 
-If any of these files are missing, **stop and notify the developer** rather than proceeding blind.
+If any of these files are missing or the Issue does not exist, **stop and notify the developer** rather than proceeding blind.
 
 ## Workflow
 
 ### Phase 1: Context load and task parse
 
 1. Read the mandatory startup files (above).
-2. Locate the task entry: `### {PREFIX-NNN}: {Title}` in [tasks/client/frontendTasks.md](../../../tasks/client/frontendTasks.md) or [tasks/client/backlog.md](../../../tasks/client/backlog.md). Extract:
-   - `{N}` (numeric part) — drives the branch name and Issue number.
+2. Read the GitHub Issue `#N` body via `rtk gh issue view <N>` (or `issue_read` MCP). Extract:
+   - `{N}` — the Issue number; drives the branch name (`<N>-<slug>`) and the `Closes #<N>` in the PR.
    - Title — used in the PR title.
-   - Body — Descrição, Objetivos, Regras de Negócio, Requisitos Funcionais, Requisitos Não Funcionais, Critérios de Aceitação.
-3. Confirm the linked GitHub Issue number matches `{N}`. If no Issue exists, stop and either ask the developer or hand off to [create-task](../create-task/SKILL.md) → `git-workflow` to create it.
+   - Body sections — Descrição, Objetivos, Regras de Negócio, Requisitos Funcionais, Requisitos Não Funcionais, Critérios de Aceitação.
+3. If the Issue does not exist or has no structured body, stop and ask the developer to run [create-task](../create-task/SKILL.md) first.
 
 ### Phase 2: Plan
 
@@ -116,7 +116,7 @@ Do **not** push at this stage unless an existing PR is already open and the deve
 
 ### Phase 6: Smooth tests
 
-Generate a playbook with manual tests by developer and wait the developer approval. Use "Critérios de Aceitação" session from `frontendTasks.md` as reference for manual tests.
+Generate a playbook with manual tests by developer and wait the developer approval. Use the "Critérios de Aceitação" section from GitHub Issue `#N` as reference for manual tests.
 
 If there would be any implementation issue, the developer can ask for fix, You have to clarify intention using one of the `AskUser`, `Plan` or `Multitask` mode.
 
@@ -127,7 +127,7 @@ Before considering the task done:
 1. Update [docs/frontend/implementationHistory.md](../../../docs/frontend/implementationHistory.md) — document the implementation (what was built, key decisions, references).
 2. Update [docs/frontend/architecture.mermaid](../../../docs/frontend/architecture.mermaid) — only add / adjust what is genuinely new and important. Keep consistency.
 3. Verify changes against [docs/frontend/technical.md](../../../docs/frontend/technical.md) specifications.
-4. Verify task progress against the task entry; mark Critérios de Aceitação checkboxes as `- [x]` when their backing / smooth tests pass.
+4. Verify task progress against Issue `#N`; mark Critérios de Aceitação checkboxes as `- [x]` in the Issue body (via `gh issue edit` or `issue_write` update) when their backing / smooth tests pass.
 5. Run `rtk pnpm lint` (and `rtk vitest` or any frontend test command configured) locally. CI must stay green. If lint fails, fix and re-run.
 
 Validation rules:

@@ -54,12 +54,12 @@ The skill persists the developer's last choice in `.cursor/skills/git-workflow/.
 
 ### 2. Resolve the Issue and the task source
 
-- Source of truth for upcoming work: the `tasks/` files. Headings use `### {PREFIX-NNN}: {Title}` — the prefix stays in `tasks/` only; the GitHub Issue and branch use the numeric `NNN`.
-- Examples (see [git-workflow.md](./git-workflow.md) for more):
-  - Task heading: `BUS-004: Login API integration`
+- Source of truth for upcoming work: **GitHub Issue `#N`**. Use `rtk gh issue view <N>` (or `issue_read` MCP) to resolve the title, slug, and task body. The `tasks/` files are no longer maintained and should not be used as the canonical reference.
+- The Issue title defines the branch slug. Examples (see [git-workflow.md](./git-workflow.md) for more):
   - GitHub Issue: `#4` titled `Login API integration`
   - Branch: `4-login-api-integration`
-- If the user did not provide an Issue number, ask for it (or hand off to `create-task` skill to draft the task, then ask the developer to create / confirm the Issue).
+  - PR title: `#4 Login API integration`
+- If the user did not provide an Issue number, ask for it (or hand off to [create-task](../create-task/SKILL.md) to create the Issue, which returns `#N`).
 
 ### 3. Decide the base branch
 

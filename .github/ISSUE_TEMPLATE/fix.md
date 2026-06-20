@@ -1,17 +1,37 @@
 ---
-name: Fix
-about: Bug or correction (usually merged via develop)
-title: '[FIX] Short title'
+name: Fix / Hotfix
+about: Correção de bug ou comportamento incorreto (HOT — merge direto em main quando for produção)
+title: ''
 ---
 
-## Problem
+## 🐛 Problema
 
-## Steps to reproduce
+Descreva claramente o bug ou comportamento incorreto observado.
+Inclua contexto: ambiente, fluxo que causou o problema, frequência.
 
-## Actual behavior
+## 🔁 Passos para reproduzir
 
-## Expected behavior
+1. Passo 1
+2. Passo 2
+3. Passo 3
 
-## Environment
+## ❌ Comportamento atual
 
-## Notes
+O que acontece hoje.
+
+## ✅ Comportamento esperado
+
+O que deveria acontecer.
+
+## 📐 Regras de Negócio impactadas
+
+- Regra 1 (ex: status Y não pode ser atribuído sem Z)
+
+## 🧪 Critérios de Aceitação
+
+- [ ] Dado que <contexto>, quando <ação>, então <resultado esperado>.
+- [ ] Dado que <contexto>, quando <ação>, então <resultado esperado>.
+
+## 📎 Notas
+
+<!-- Ambiente, versão, logs relevantes, screenshots, links para PRs relacionados -->
