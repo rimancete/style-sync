@@ -7,10 +7,10 @@
 
 ### 1.2 Postman Collection
 
-Import the collection from `docs/postman-collection.json`:
+Import the collection from `docs/backend/postman-collection.json`:
 
 1. Open Postman
-2. Import → Upload Files → Select `postman-collection.json`
+2. Import → Upload Files → Select `docs/backend/postman-collection.json`
 3. Set environment variables:
    - `baseUrl`: `http://localhost:3001/api`
    - `authToken`: (will be auto-filled after login)

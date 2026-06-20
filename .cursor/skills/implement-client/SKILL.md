@@ -180,7 +180,7 @@ At the end of the workflow:
 
 Only use parallel subagents when **all** are true:
 
-- The task has 2+ clearly independent units of work.
+- The task has 4+ clearly independent units of work.
 - No shared files or ordering dependencies.
 - Each unit is self-contained enough for a subagent to execute without follow-up questions.
 - The developer approved parallelization in the plan review.
