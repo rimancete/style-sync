@@ -1,0 +1,58 @@
+---
+description: Core development guide — TDD workflow, clean code principles, and project patterns applied to all coding tasks
+alwaysApply: true
+---
+
+# Development Guide
+
+## TDD Workflow
+
+Follow the Red-Green-Refactor cycle for every change:
+
+1. **Red** — Write a failing test that describes the expected behavior based on acceptance criteria or requirements.
+2. **Green** — Write the minimal code to make the test pass.
+3. **Refactor** — Improve the implementation without changing behavior; ensure tests stay green.
+
+Before writing any code, review:
+- **Acceptance criteria** from the task/card.
+- **Requirements** and constraints described by the developer.
+- **Existing code and logic** in the codebase to reuse patterns, avoid duplication, and stay consistent.
+
+When the developer provides their own solution or direction, still validate it against acceptance criteria and write tests first. Question the developer's assumptions or approach when something seems inconsistent, incomplete, or could be improved.
+
+## Clean Code Principles
+
+### Naming
+- Use intention-revealing names for variables, functions, classes, and files.
+- Avoid abbreviations unless they are universally understood in the domain.
+- Booleans should read as predicates: `isActive`, `hasPermission`, `canEdit`.
+
+### Functions
+- Keep functions small and focused — each one should do exactly one thing.
+- Limit parameters; prefer structured objects when more than 3 args are needed.
+- Avoid side effects; when side effects are necessary, make them explicit.
+
+### Structure
+- Follow the **Single Responsibility Principle** — each module/class/function has one reason to change.
+- Favor composition over inheritance.
+- Keep related code close together (colocation).
+- Extract reusable logic into well-named helpers or utilities.
+
+### Error Handling
+- Never swallow errors silently.
+- Throw or propagate meaningful error messages with context.
+- Prefer early returns and guard clauses over deeply nested conditionals.
+
+### Readability
+- Code should be self-documenting; reserve comments for *why*, not *what*.
+- Avoid magic numbers and strings — use named constants.
+- Keep nesting shallow (max 2-3 levels).
+
+## Project Patterns
+
+- **DRY** — Don't repeat yourself, but don't over-abstract prematurely either. Duplication is cheaper than the wrong abstraction.
+- **KISS** — Choose the simplest approach that satisfies the requirements.
+- **YAGNI** — Don't build features or abstractions until they are actually needed.
+- **Separation of concerns** — Keep business logic, data access, and presentation in distinct layers.
+- **Dependency inversion** — Depend on abstractions, not concrete implementations, when flexibility is needed.
+- **Consistent conventions** — Follow existing patterns in the codebase before introducing new ones. When a new pattern is justified, apply it consistently.

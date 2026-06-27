@@ -31,9 +31,12 @@ This skill orchestrates other skills: it calls [git-workflow](../git-workflow/SK
 
 Before touching code, read these files. They are the contract for any backend change:
 
-- [docs/backend/architecture.mermaid](../../../docs/backend/architecture.mermaid) — backend system architecture and component relationships.
-- [docs/backend/architecture.md](../../../docs/backend/architecture.md) — descriptive architecture, guidelines, patterns.
-- [docs/backend/technical.md](../../../docs/backend/technical.md) — technical specifications.
+- [.spec-kit/constitution.md](../../../.spec-kit/constitution.md) — technical principles, conventions, forbidden patterns, code standards.
+- [.spec-kit/architecture.md](../../../.spec-kit/architecture.md) — module structure, layers, data flow, multi-tenancy rules.
+- [.spec-kit/domain.md](../../../.spec-kit/domain.md) — entities, business rules, glossary.
+- [.spec-kit/endpoints.md](../../../.spec-kit/endpoints.md) — HTTP routes catalogue and API contracts.
+- [.spec-kit/references.md](../../../.spec-kit/references.md) — dependencies, environment setup, key commands.
+- [docs/backend/architecture.mermaid](../../../docs/backend/architecture.mermaid) — visual backend system diagram (component relationships).
 - [docs/backend/status.md](../../../docs/backend/status.md) — current backend progress and state.
 - **GitHub Issue `#N`** — source of truth for the task. Read via `rtk gh issue view <N>` (or `issue_read` MCP) to extract: Descrição, Objetivos, Regras de Negócio, Requisitos Funcionais, Requisitos Não Funcionais, and Critérios de Aceitação.
 
@@ -130,7 +133,7 @@ Before considering the task done:
 2. **Postman collection** — update [docs/backend/postman-collection.json](../../../docs/backend/postman-collection.json) when the API surface changes: new endpoint, new field, removed field, renamed param, changed status code. The collection is the manual-testing source of truth.
 3. Update [docs/backend/implementationHistory.md](../../../docs/backend/implementationHistory.md) — document the implementation (what was built, key decisions, migration notes).
 4. Update [docs/backend/architecture.mermaid](../../../docs/backend/architecture.mermaid) — only add / adjust what is genuinely new and important.
-5. Verify changes against [docs/backend/technical.md](../../../docs/backend/technical.md) specifications.
+5. Evaluate spec-kit staleness against the changes made (see spec-kit Phase 5 rules). If any document is stale, notify the developer.
 6. Verify task progress against Issue `#N`; mark Critérios de Aceitação as `- [x]` in the Issue body (via `gh issue edit` or `issue_write` update) when their tests pass.
 7. Run `rtk pnpm lint` and `rtk vitest` (or any backend test command configured). CI must stay green. If lint or tests fail, fix and re-run.
 
@@ -176,7 +179,7 @@ At the end of the workflow:
 1. PR link.
 2. Summary of what was implemented.
 3. List of commits pushed (or held locally if push was declined).
-4. Doc files updated (`status.md`, `implementationHistory.md`, `architecture.mermaid`, `postman-collection.json` if the API changed).
+4. Doc files updated (`status.md`, `implementationHistory.md`, `architecture.mermaid`, `postman-collection.json` if the API changed). Spec-kit staleness flags if applicable.
 5. Migration notes (if Prisma schema was touched).
 6. Review findings (if `review-pr` was run), grouped by severity.
 7. Push status — pushed or pending developer approval.

@@ -31,9 +31,12 @@ This skill orchestrates other skills: it calls [git-workflow](../git-workflow/SK
 
 Before touching code, read these files. They are the contract for any frontend change:
 
-- [docs/frontend/architecture.mermaid](../../../docs/frontend/architecture.mermaid) — frontend system architecture and component relationships.
-- [docs/frontend/architecture.md](../../../docs/frontend/architecture.md) — descriptive architecture, guidelines, patterns.
-- [docs/frontend/technical.md](../../../docs/frontend/technical.md) — technical specifications.
+- [.spec-kit/constitution.md](../../../.spec-kit/constitution.md) — technical principles, conventions, forbidden patterns, code standards.
+- [.spec-kit/architecture.md](../../../.spec-kit/architecture.md) — module structure, routing, state management rules, API facade pattern.
+- [.spec-kit/domain.md](../../../.spec-kit/domain.md) — frontend TypeScript types, Zustand store shapes, Zod schemas, i18n rules.
+- [.spec-kit/endpoints.md](../../../.spec-kit/endpoints.md) — frontend routes and API contracts consumed by the client.
+- [.spec-kit/references.md](../../../.spec-kit/references.md) — dependencies, environment setup, key commands.
+- [docs/frontend/architecture.mermaid](../../../docs/frontend/architecture.mermaid) — visual frontend system diagram (component relationships).
 - [docs/frontend/status.md](../../../docs/frontend/status.md) — current frontend progress and state.
 - **GitHub Issue `#N`** — source of truth for the task. Read via `rtk gh issue view <N>` (or `issue_read` MCP) to extract: Descrição, Objetivos, Regras de Negócio, Requisitos Funcionais, Requisitos Não Funcionais, and Critérios de Aceitação.
 
@@ -126,7 +129,7 @@ Before considering the task done:
 
 1. Update [docs/frontend/implementationHistory.md](../../../docs/frontend/implementationHistory.md) — document the implementation (what was built, key decisions, references).
 2. Update [docs/frontend/architecture.mermaid](../../../docs/frontend/architecture.mermaid) — only add / adjust what is genuinely new and important. Keep consistency.
-3. Verify changes against [docs/frontend/technical.md](../../../docs/frontend/technical.md) specifications.
+3. Evaluate spec-kit staleness against the changes made (see spec-kit Phase 5 rules). If any document is stale, notify the developer.
 4. Verify task progress against Issue `#N`; mark Critérios de Aceitação checkboxes as `- [x]` in the Issue body (via `gh issue edit` or `issue_write` update) when their backing / smooth tests pass.
 5. Run `rtk pnpm lint` (and `rtk vitest` or any frontend test command configured) locally. CI must stay green. If lint fails, fix and re-run.
 
@@ -172,7 +175,7 @@ At the end of the workflow:
 1. PR link.
 2. Summary of what was implemented.
 3. List of commits pushed (or held locally if push was declined).
-4. Doc files updated (`status.md`, `implementationHistory.md`, `architecture.mermaid`).
+4. Doc files updated (`status.md`, `implementationHistory.md`, `architecture.mermaid`). Spec-kit staleness flags if applicable.
 5. Review findings (if `review-pr` was run), grouped by severity.
 6. Push status — pushed or pending developer approval.
 
