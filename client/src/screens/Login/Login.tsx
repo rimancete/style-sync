@@ -1,108 +1,56 @@
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+
 import { useLogin } from '~/api/auth';
 
-const loginSchema = z.object({
-  email: z.string().email({ message: 'errors.invalidEmail' }),
-  password: z.string().min(6, { message: 'errors.minLength' }),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+import { Banner, LoginFormView } from './components';
+import { createLoginSchema, LOGIN_DEFAULT_VALUES, type LoginFormSchema } from './constants';
 
 export function LoginScreen() {
   const { t } = useTranslation('auth');
   const { mutate: login, isPending, error } = useLogin();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  const schema = useMemo(() => createLoginSchema(t), [t]);
+  const methods = useForm<LoginFormSchema>({
+    resolver: zodResolver(schema),
+    defaultValues: LOGIN_DEFAULT_VALUES,
   });
 
-  function onSubmit(data: LoginFormData) {
+  function onSubmit(data: LoginFormSchema) {
     login(data);
   }
 
+  const errorMessage = error ? error.message || t('errors.loginFailed') : undefined;
+
   return (
-    <div className="flex h-screen">
-      <div className="hidden lg:flex lg:w-1/2 bg-primary items-center justify-center p-12">
-        <div className="max-w-md text-primary-foreground">
-          <h1 className="text-5xl font-bold mb-6">Welcome Back</h1>
-          <p className="text-xl">
-            Sign in to manage your appointments and access exclusive member benefits.
-          </p>
+    <div className="relative box-border flex min-h-screen w-full max-w-[100vw] min-w-0 flex-col items-center justify-center gap-4 overflow-x-hidden bg-background px-4 py-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-6 lg:px-6">
+      <Banner />
+
+      <div className="relative flex h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)] min-h-0 w-full min-w-0 flex-col justify-center">
+        <div className="mx-auto flex w-full max-w-md flex-col items-stretch justify-center gap-3">
+          <LoginFormView
+            methods={methods}
+            onSubmit={onSubmit}
+            isPending={isPending}
+            errorMessage={errorMessage}
+          />
         </div>
       </div>
 
-      <div className="flex w-full lg:w-1/2 items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold">{t('login.title')}</h2>
-            <p className="text-muted-foreground mt-2">{t('login.subtitle')}</p>
-          </div>
-
-          {error && (
-            <div className="mb-4 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
-              {error.message || t('errors.loginFailed')}
-            </div>
-          )}
-
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label className="block text-sm font-medium mb-2">{t('login.email')}</label>
-              <input
-                type="email"
-                {...register('email')}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="you@example.com"
-              />
-              {errors.email && (
-                <p className="mt-1 text-xs text-destructive">{t(errors.email.message ?? '')}</p>
-              )}
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium">{t('login.password')}</label>
-                <a href="#" className="text-sm text-primary hover:underline">
-                  {t('login.forgotPassword')}
-                </a>
-              </div>
-              <input
-                type="password"
-                {...register('password')}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="••••••••"
-              />
-              {errors.password && (
-                <p className="mt-1 text-xs text-destructive">{t(errors.password.message ?? '')}</p>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isPending ? 'Signing in...' : t('login.signIn')}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              {t('login.noAccount')}{' '}
-              <Link to="/register" className="text-primary hover:underline font-medium">
-                {t('login.signUp')}
-              </Link>
-            </p>
-          </div>
-        </div>
-      </div>
+      <img
+        src="/login-topo-top.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute right-0 top-0 w-full text-foreground lg:hidden"
+      />
+      <img
+        src="/login-topo-bottom.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 right-0 w-full text-foreground lg:hidden"
+      />
     </div>
   );
 }
