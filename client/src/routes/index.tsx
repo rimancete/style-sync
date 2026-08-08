@@ -1,6 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Navigate } from '@tanstack/react-router';
 import { useAuthStore } from '~/store';
-import { LoginScreen } from '~/screens/Login';
 import { AdminHomeScreen } from '~/screens/Admin/Home';
 import { UserHomeScreen } from '~/screens/User/Home';
 
@@ -10,7 +9,14 @@ export const Route = createFileRoute('/')({
 
 function IndexPage() {
   const { isAuthenticated, user } = useAuthStore();
-  if (!isAuthenticated) return <LoginScreen />;
-  if (user?.role === 'admin') return <AdminHomeScreen />;
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  if (user?.role === 'admin') {
+    return <AdminHomeScreen />;
+  }
+
   return <UserHomeScreen />;
 }

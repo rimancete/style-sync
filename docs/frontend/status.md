@@ -17,9 +17,15 @@ This document tracks the progress of the frontend implementation.
 - [x] UI Library (Button, Input, Card, Modal, etc.)
 - [x] Icon System (Custom SVG)
 - [x] Form Components (Controlled with React Hook Form)
+- [x] shadcn primitives used by Login (`button`, `input`, `label`, `form`, `alert`)
+- [x] `FormElements.Input` wrapper (RHF Controller + shadcn Form a11y)
 
 ## 3. Screens & Features
-- [ ] Login Screen
+- [x] Login Screen (modular layout refactor — Issue #6)
+  - [x] Banner (lg+, rotating slides, throttled parallax)
+  - [x] LoginFormView + ViewTransition
+  - [x] Mobile decorative SVGs
+  - [x] `/` → `/login` redirect when unauthenticated
 - [ ] Registration Screen
 - [ ] Home Page
 - [ ] Booking Flow
@@ -40,7 +46,6 @@ This document tracks the progress of the frontend implementation.
 - [ ] Theme (Get dynamic config)
 
 ## 5. Current Focus
-- Improve initial screens layout
-- Integrate with API.
-- Improve test coverage.
+- Integrate Login/Register with live API next
+- Improve test coverage
 - Update documentation

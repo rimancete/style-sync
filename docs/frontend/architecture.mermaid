@@ -5,6 +5,14 @@ graph TD
         Store[Zustand Store]
         Context[Constate/Local Context]
         Query[TanStack Query]
+        Login[Login Screen Modules]
+    end
+
+    subgraph "Login Composition"
+        Banner[Banner lg+]
+        FormView[LoginFormView]
+        ViewTransition[ViewTransition]
+        FormElements[FormElements.Input]
     end
 
     subgraph "Data & Logic Layer"
@@ -23,11 +31,18 @@ graph TD
     UI --> Store
     UI --> Context
     UI --> Query
+    UI --> Login
+
+    Login --> Banner
+    Login --> FormView
+    FormView --> ViewTransition
+    FormView --> FormElements
 
     %% Data flow
     Query --> API
     API --> Fetch
     API --> Mocks
+    FormView --> API
 
     %% External communication
     Fetch --> Backend

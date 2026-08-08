@@ -1,0 +1,70 @@
+---
+description: General agent behavior guidelines (error handling, commenting discipline, deprecated APIs)
+alwaysApply: true
+---
+
+# General Guidelines
+
+## Avoid Endless Error-Fixing Cycles
+
+When attempting to fix a problem, do not loop through multiple failed attempts without pausing to consult the developer.
+
+After 2 consecutive failed attempts to fix the same error or class of errors, stop immediately and ask the developer for direction. Do not make a third attempt.
+
+Stop and ask when:
+- The same error (or a closely related one) reappears after applying a fix.
+- A fix for one error introduces a new error that leads back to a previous state.
+- More than one approach has been tried and neither worked.
+- The root cause is unclear after two attempts.
+
+What to do instead:
+1. Acknowledge the cycle: briefly state what was tried and why it didn't work.
+2. Summarize what is known: error messages, affected files, attempted approaches.
+3. Ask a focused question: request direction, a hint, or confirmation of an assumption.
+
+Example:
+
+```
+Bad - keep trying silently:
+Attempt 1 -> Error A -> Fix -> Error B -> Fix -> Error A -> Fix -> Error B ...
+
+Good - stop and ask after 2 attempts:
+"I've tried X and Y, but the issue persists. Error message: [...]
+The root cause might be Z, but I'm not certain.
+How would you like me to proceed?"
+```
+
+## Only Add Meaningful Comments
+
+Only add comments when the code is **not** self-explanatory. Do not add comments that just narrate what the line already makes obvious.
+
+Comment when:
+- The logic is non-trivial or not obvious at first read
+- There's a trade-off, workaround, or external limitation (e.g. library bug, unstable API)
+- There's an implicit business rule not conveyed by variable/function names
+- Explaining "why", not "what"
+
+Do NOT comment when it just narrates the obvious:
+
+```typescript
+// Bad - narrates the obvious
+// Increment the counter
+counter++;
+
+// Good - no comment needed, the code is already clear
+counter++;
+```
+
+Example of a comment with purpose:
+
+```typescript
+// Good - explains "why", not "what"
+// 300ms delay to avoid firing multiple requests while the user is still typing
+const debouncedSearch = debounce(search, 300);
+```
+
+Never add comments just to explain the change you (the agent) just made � explain that in your response to the user, not in the code.
+
+## Avoid Deprecated Code
+
+Prefer supported, non-deprecated APIs and patterns. Only use a deprecated API when the non-deprecated alternative does not work for the required solution.

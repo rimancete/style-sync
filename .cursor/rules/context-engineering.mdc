@@ -1,0 +1,42 @@
+---
+description: Context engineering — persist and restore task context across chat sessions using ~/dev/active/
+alwaysApply: true
+---
+
+# Context Engineering
+
+## Starting a Chat: Check for Active Tasks
+
+Before starting substantive work, run:
+```bash
+ls ~/dev/tasks/active/ 2>/dev/null
+```
+
+If task directories exist, ask the user which task to continue (or skip if starting fresh). When continuing, read ALL three files in order:
+1. `~/dev/tasks/active/<task>/<task>-plan.md`
+2. `~/dev/tasks/active/<task>/<task>-context.md`
+3. `~/dev/tasks/active/<task>/<task>-tasks.md`
+
+Then briefly summarize: _"Continuing **[task]** — [N] done, [M] pending."_
+
+## Starting a New Task (after plan approval)
+
+Create the task directory and seed the files:
+```bash
+mkdir -p ~/dev/tasks/active/<task-name>
+```
+- `<task>-plan.md` — the accepted plan, decisions, approach
+- `<task>-context.md` — key files, current state, blockers
+- `<task>-tasks.md` — checklist with `[ ]` / `[x]` items
+
+Use kebab-case for task names (e.g., `context-engineering-setup`).
+
+## During Long Tasks
+
+After significant milestones (file edits, decisions, completions):
+- Mark finished items as `[x]` in `<task>-tasks.md`
+- Append key decisions or state changes to `<task>-context.md`
+
+## Handoff
+
+When the user says "checkpoint", "save context", or "prepare handoff", invoke the `checkpoint` skill.
