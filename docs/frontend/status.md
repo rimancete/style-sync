@@ -46,7 +46,6 @@ This document tracks the progress of the frontend implementation.
 - [ ] Theme (Get dynamic config)
 
 ## 5. Current Focus
-- Login screen structure and presentation (Issue #6) complete locally
 - Integrate Login/Register with live API next
 - Improve test coverage
 - Update documentation

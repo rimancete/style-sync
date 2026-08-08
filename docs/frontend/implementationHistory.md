@@ -20,4 +20,3 @@ A chronological log of significant implementation milestones for the StyleSync f
 - **Assets**: Created StyleSync decorative SVGs inspired by GF structure (top/bottom topo + salon/booking icon groups) — not path clones.
 - **i18n / routing fixes**: Password `minLength` interpolates `{ count: 6 }`; `login.signingIn` for loading; unauthenticated `/` navigates to `/login`.
 - **Auth APIs unchanged**: `useLogin` and `authStore` left intact.
-- **Smooth tests**: See `docs/frontend/login-smooth-tests.md`.
