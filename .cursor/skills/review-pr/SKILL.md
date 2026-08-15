@@ -135,7 +135,7 @@ Use the language the developer is using. Present findings grouped by severity, h
 ### PR Completeness (Type: <detected type>)
 
 - [ ] Summary present and accurate
-- [ ] Issue link present (`Closes #N`)
+- [ ] Issue link present (`Closes #N`); for Feature / Hotfix, number resolves to a real Issue and matches the `{N}-` branch prefix
 - [ ] Type checkbox: exactly one checked
 - [ ] <Type-specific items, see PR Template mapping>
 
@@ -235,15 +235,15 @@ The template at [.github/pull_request_template.md](../../../.github/pull_request
 ### Always validate (any Type)
 
 - `## Summary` — non-empty and not just the `<!-- ... -->` placeholder.
-- `## Issue` — contains `Closes #N`, `Fixes #N`, or `Resolves #N` with a real, resolvable issue number.
+- `## Issue` — contains `Closes #N`, `Fixes #N`, or `Resolves #N`. Fetch the Issue (`rtk gh issue view <N>` or `issue_read` MCP) and confirm it exists and is an Issue (not a PR). For Feature / Hotfix Types, `N` must also match the `{N}-` prefix of the head branch (both feed the close-issue Action on merge into `develop`). Release and Back-merge PRs may omit a closing keyword.
 - `## Type` — exactly **one** of the four checkboxes is checked. Flag if zero or multiple.
 - **Commit hygiene** — every commit message in `git log <base>...HEAD --format=%s` matches Conventional Commits (`type(scope): description`). Reasonable types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`.
 
 ### If Type = `Feature / task` (most common — base `develop`)
 
-- Branch name matches `^[0-9]+-[a-z0-9-]+$`. Leading number == linked Issue `N`.
+- Branch name matches `^[0-9]+-[a-z0-9-]+$`. Leading number == linked Issue `N` (same number the close-issue Action will close).
 - PR `baseRefName` == `develop`.
-- Issue link present (already verified above).
+- Issue link present and resolvable (already verified above).
 - `rtk pnpm lint` passed locally **or** a skip rationale is documented in `## Notes`. CI's `Install and lint` check should be green (`rtk gh pr checks <N>` / `pull_request_read method=get_check_runs`).
 
 ### If Type = `Hotfix targeting main`

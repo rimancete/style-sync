@@ -25,7 +25,7 @@ These are non-negotiable. Every workflow phase below assumes them.
 3. **Hotfixes** branch from `main`, PR targets `main`, and you must plan the back-merge PR `main` → `develop` immediately after.
 4. **Never merge `develop` → `main`, run a release, or back-merge without explicit human confirmation.** Stop and ask if a release/back-merge PR appears in scope.
 5. **Never delete `main` or `develop`.** Never pass `--delete-branch` to `gh pr merge` for release or back-merge PRs. Never click "Delete branch" for these long-lived refs in the UI.
-6. **Always include `Closes #N`, `Fixes #N`, or `Resolves #N`** in the PR body so the linked issue closes on merge.
+6. **Always include `Closes #N`, `Fixes #N`, or `Resolves #N`** in the PR body. The keyword is required: it creates the visible Issue link, feeds the PR-title bot, and is parsed by the close-issue bot. GitHub's native auto-close only runs on merge to the default branch (`main`). Feature PRs targeting `develop` are closed by [.github/workflows/close-issue-on-develop-merge.yml](../../../.github/workflows/close-issue-on-develop-merge.yml), which also reads the `{N}-` branch prefix. Opt out with the `skip-issue-close-bot` label.
 7. **Run `rtk pnpm lint` locally** when changes can affect lint. CI must stay green (`Install and lint` workflow in [.github/workflows/ci.yml](../../../.github/workflows/ci.yml)).
 
 ## Prerequisites
@@ -130,7 +130,7 @@ rtk gh pr list --head "$(git branch --show-current)" --state open
 Fill the body using [.github/pull_request_template.md](../../../.github/pull_request_template.md). Sections and rules:
 
 - `## Summary` — explain *what* and *why* (not just the diff).
-- `## Issue` — `Closes #N` (or `Fixes` / `Resolves`).
+- `## Issue` — `Closes #N` (or `Fixes` / `Resolves`). Required even for PRs targeting `develop`: native GitHub auto-close only applies to `main`; the close-issue Action uses this keyword (and the `{N}-` branch prefix) to close the Issue on merge into `develop`.
 - `## Type` — check **exactly one** of the four boxes (Feature / Hotfix / Release / Back-merge).
 - The checklist matching the chosen Type — fill it. Leave the other three unchanged or remove them.
 - `## Notes` — optional: deployment, risks, follow-up work, screenshots.
@@ -151,6 +151,8 @@ EOF
 ```
 
 A repository GitHub Action sets the PR title from the linked Issue when it can detect the issue number from the branch name (`^<N>-`) or from `Closes` / `Fixes` / `Resolves` in the body. Default format: `#N {issue title}`. To opt out, add the `skip-pr-title-bot` label.
+
+A second Action, [close-issue-on-develop-merge.yml](../../../.github/workflows/close-issue-on-develop-merge.yml), closes the linked Issue when a PR is merged into `develop`. It unions the `{N}-` branch prefix with every `Closes` / `Fixes` / `Resolves #N` in the body. To opt out, add the `skip-issue-close-bot` label. Merges into `main` (hotfix / release) still rely on GitHub's native keyword auto-close.
 
 **If `mcp`:** call `create_pull_request` on `user-github_style-sync` with:
 
@@ -267,7 +269,7 @@ gh pr create --base develop \
 - One Issue, one branch (`{N}-{slug}`), one PR.
 - Feature/Task PRs target `develop`. Hotfix PRs target `main`. Release PRs target `main`. Back-merge PRs target `develop`.
 - Always run `rtk gh pr list --head <branch>` (or `list_pull_requests`) before creating.
-- Always include `Closes #N` / `Fixes #N` / `Resolves #N` in the PR body.
+- Always include `Closes #N` / `Fixes #N` / `Resolves #N` in the PR body. Native GitHub auto-close applies only to merges into `main`; merges into `develop` are closed by the close-issue Action.
 - Never merge `develop` → `main` or do release / back-merge without explicit human confirmation.
 - Never delete `main` or `develop`; never use `--delete-branch` for release / back-merge PRs.
 - Conventional Commits, imperative mood.

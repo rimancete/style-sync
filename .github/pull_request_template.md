@@ -23,7 +23,7 @@ Closes #
 
 - [ ] Branch name follows `issueNumber-slug` (e.g. `4-login-api-integration`)
 - [ ] Base branch is **`develop`**
-- [ ] Issue link uses `Closes #n`, `Fixes #n`, or `Resolves #n`. It must close on merge
+- [ ] Issue link uses `Closes #n`, `Fixes #n`, or `Resolves #n`. On merge into `develop`, the close-issue bot closes the linked Issue (GitHub native auto-close only applies to the default branch `main`)
 - [ ] `pnpm lint` passes locally, or the reason for skipping is noted below
 
 ## Hotfix Checklist
@@ -33,7 +33,7 @@ Closes #
 - [ ] Branch name follows `issueNumber-slug` (e.g. `42-fix-payment-timeout`)
 - [ ] Base branch is **`main`**
 - [ ] Production impact and urgency are explained in the summary or notes
-- [ ] Issue link uses `Closes #n`, `Fixes #n`, or `Resolves #n`. It must close on merge
+- [ ] Issue link uses `Closes #n`, `Fixes #n`, or `Resolves #n`. Merge into `main` (the default branch) closes the Issue via GitHub native keywords
 - [ ] `pnpm lint` passes locally, or the reason for skipping is noted below
 - [ ] Follow-up back-merge PR (`main` → `develop`) is planned or linked
 

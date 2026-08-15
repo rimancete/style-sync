@@ -1,0 +1,87 @@
+name: Close issue on develop merge
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  close-issue:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const skip =
+              pr.labels?.some((l) => l.name === 'skip-issue-close-bot') ?? false;
+            if (skip) {
+              core.info('Label skip-issue-close-bot present; skipping.');
+              return;
+            }
+
+            const issueNums = new Set();
+            const ref = pr.head.ref || '';
+            const branchMatch = ref.match(/^(\d+)-/);
+            if (branchMatch) {
+              issueNums.add(parseInt(branchMatch[1], 10));
+            }
+
+            const body = pr.body || '';
+            const keywordRe = /(?:closes|fixes|resolves)\s+#(\d+)/gi;
+            let keywordMatch;
+            while ((keywordMatch = keywordRe.exec(body)) !== null) {
+              issueNums.add(parseInt(keywordMatch[1], 10));
+            }
+
+            if (issueNums.size === 0) {
+              core.info('No issue number from branch (N-slug) or body (Closes/Fixes/Resolves #n); skipping.');
+              return;
+            }
+
+            for (const issueNum of issueNums) {
+              let issue;
+              try {
+                const res = await github.rest.issues.get({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNum,
+                });
+                issue = res.data;
+              } catch (err) {
+                core.info(`#${issueNum} not found; skipping.`);
+                continue;
+              }
+
+              if (issue.pull_request) {
+                core.info(`#${issueNum} is a pull request, not an issue; skipping.`);
+                continue;
+              }
+
+              if (issue.state === 'closed') {
+                core.info(`#${issueNum} is already closed; skipping.`);
+                continue;
+              }
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNum,
+                body: `Closed automatically by merge of #${pr.number} into \`develop\`.`,
+              });
+
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNum,
+                state: 'closed',
+                state_reason: 'completed',
+              });
+
+              core.info(`Closed #${issueNum} (completed) via #${pr.number}.`);
+            }

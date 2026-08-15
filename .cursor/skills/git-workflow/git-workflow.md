@@ -4,7 +4,7 @@ This repository uses a **develop** integration branch and **main** for productio
 
 ## Issues and milestones
 
-- Every PR should link to an **Issue** (reference `#n` in the description; use `Closes #n` or `Fixes #n` when the PR should close the issue on merge).
+- Every PR should link to an **Issue** (reference `#n` in the description; use `Closes #n` or `Fixes #n`). GitHub native auto-close only runs on merge to the default branch (`main`). Feature PRs targeting `develop` are closed by the [close-issue-on-develop-merge](../../../.github/workflows/close-issue-on-develop-merge.yml) Action.
 - Use **Milestones** for larger or multi-step work; small tasks can stay without a milestone.
 
 ## Issue source of truth
@@ -45,7 +45,7 @@ Slugs may strip bracket prefixes; the issue number is the source of truth for tr
    ```
 
 3. Commit and push. Open a **Pull Request** with **base `develop`** and fill the matching type section in [.github/pull_request_template.md](../.github/pull_request_template.md).
-4. In the PR description, link the issue (`Closes #1`, etc.).
+4. In the PR description, link the issue (`Closes #1`, etc.). On merge into `develop`, the close-issue bot closes that Issue; on merge into `main`, GitHub native keywords do.
 5. Wait for review and CI; merge into **`develop`** when approved.
 
 **One issue, one branch, one PR.** Do not create a second PR for a branch that already has an open one. If you need to verify, run `gh pr list --head <branch>` before creating.
@@ -77,6 +77,19 @@ A GitHub Action sets the PR title from the linked issue when it can detect the i
 Default title format: `#n {issue title}`.
 
 To opt out for a specific PR, add the label **`skip-pr-title-bot`** to the pull request.
+
+## Issue auto-close on merge into develop
+
+GitHub only honors `Closes` / `Fixes` / `Resolves` when the PR merges into the **default branch** (`main`). Feature PRs target `develop`, so native auto-close does not run.
+
+[.github/workflows/close-issue-on-develop-merge.yml](../../../.github/workflows/close-issue-on-develop-merge.yml) closes the linked Issue when a PR is **merged** into `develop`. It unions:
+
+- the branch name prefix (`^123-`), and
+- every `Closes` / `Fixes` / `Resolves #n` in the PR body.
+
+Already-closed issues and numbers that resolve to a pull request are skipped. To opt out for a specific PR, add the label **`skip-issue-close-bot`**.
+
+Hotfix and release PRs targeting `main` still close Issues via GitHub native keywords.
 
 ## Release: merge develop into main
 
