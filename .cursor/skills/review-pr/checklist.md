@@ -134,7 +134,7 @@ The PR template at [.github/pull_request_template.md](../../../.github/pull_requ
 ### Always validate
 
 - `## Summary` is non-empty and not just the placeholder comment.
-- `## Issue` contains `Closes #N`, `Fixes #N`, or `Resolves #N` with a real, resolvable issue.
+- `## Issue` contains `Closes #N`, `Fixes #N`, or `Resolves #N` (Feature / Hotfix). The number must resolve to a real Issue (not a PR) and match the `{N}-` prefix of the head branch. Release / Back-merge may omit a closing keyword.
 - `## Type` has exactly one of the four checkboxes checked. Zero or multiple = Critical.
 
 ### Commit hygiene
