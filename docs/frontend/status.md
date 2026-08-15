@@ -46,6 +46,5 @@ This document tracks the progress of the frontend implementation.
 - [ ] Theme (Get dynamic config)
 
 ## 5. Current Focus
-- Integrate Login/Register with live API next
-- Improve test coverage
-- Update documentation
+
+Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: epic [#10](https://github.com/rimancete/style-sync/issues/10) — implement [#11](https://github.com/rimancete/style-sync/issues/11) (API and session foundation), then [#12](https://github.com/rimancete/style-sync/issues/12) (Login API integration).

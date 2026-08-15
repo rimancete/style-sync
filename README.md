@@ -103,13 +103,15 @@ cd server && pnpm <command>     # Server commands
 - Rate limit protection
 - Customer branding, including images management (cloud-based migration)
 
-## Roadmap (Frontend-first)
-- ✅ Docker Compose for local PostgreSQL (project-scoped)
-- 🔄 Add Prisma schema and migrations in `server/`
-- Booking flow UI: service selection → availability → calendar → confirmation
-- Client portal with authentication placeholder
-- Admin dashboard pages (occupancy, revenue, clients, marketing)
-- Integrate reminders (email/SMS/WhatsApp) and Stripe for payments
+## Roadmap
+
+Canonical sequencing lives in [`docs/roadmap.md`](docs/roadmap.md) (Portuguese). GitHub Issues remain the source of truth for each task.
+
+Current phases:
+
+1. Login flow epic ([#10](https://github.com/rimancete/style-sync/issues/10)) — API/session foundation ([#11](https://github.com/rimancete/style-sync/issues/11)) then Login API integration ([#12](https://github.com/rimancete/style-sync/issues/12))
+2. Register, tenant/branding, booking funnel, confirm/cancel by token, my bookings
+3. Backend follow-ups as needed (email, public catalog, profile update)
 
 ---
 Made with ❤️ for salon owners, stylists, and clients.

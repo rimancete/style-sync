@@ -19,6 +19,7 @@ This skill does **not** create branches or PRs. That is the job of [implement-cl
 ## Prerequisites
 
 - Read [git-workflow.md](./../git-workflow/git-workflow.md) once for the naming convention (heading prefix, slug, branch-name mapping).
+- Read [docs/roadmap.md](../../../docs/roadmap.md) for sequencing, prefix choice, and dependencies. Upcoming work is ordered there; do not rediscover the queue from `tasks/` (legacy, not maintained).
 - The Portuguese task body template lives in [task-template.md](task-template.md).
 - GitHub tooling must be configured: either `gh` CLI ([gh-setup.md](../git-workflow/gh-setup.md)) or the `user-github_style-sync` MCP ([mcp-setup.md](../git-workflow/mcp-setup.md)). Check `.cursor/skills/git-workflow/.last-tool`.
 
@@ -54,14 +55,15 @@ Every task entry starts with:
 
 ### Phase 2: Codebase analysis
 
-1. Explore the codebase to find code related to the request. Use the `Task` tool with `subagent_type="explore"` for broad searches; use `Grep` / `Glob` / `SemanticSearch` for targeted lookups.
-2. Identify the affected areas:
+1. Read [docs/roadmap.md](../../../docs/roadmap.md) and place the request in the sequence (what it depends on, what it unblocks, whether a GitHub Issue already exists). If the request jumps the queue, confirm with the developer before drafting.
+2. Explore the codebase to find code related to the request. Use the `Task` tool with `subagent_type="explore"` for broad searches; use `Grep` / `Glob` / `SemanticSearch` for targeted lookups.
+3. Identify the affected areas:
    - Files, modules, layers (controllers/services/repositories on the backend; pages/components/hooks/stores/api on the frontend).
    - Database schemas, Prisma models, or migrations involved.
    - External integrations or dependencies.
    - Shared utilities or helpers that may need changes.
    - Use `Multitask` agent mode: a worker for frontend (client) and another for backend (server) analysis. Each worker returns a clear analysis from each system side to the main worker.
-3. Build a mental model **before writing**: current behavior, gap to desired behavior, ripple effects.
+4. Build a mental model **before writing**: current behavior, gap to desired behavior, ripple effects. Cross-check the gap against the inventory in `docs/roadmap.md` (frontend file/line table and backend `BFU` list) so the Issue body stays consistent with the study.
 
 ### Phase 3: Decide the side(s)
 
@@ -75,7 +77,7 @@ Decide whether the work is part of the current sprint or queued for later. Ask i
 
 ### Phase 4: Choose prefix and number
 
-1. Inspect existing GitHub Issues (via `rtk gh issue list` or `list_issues` MCP) to decide which prefix fits the task.
+1. Prefer the prefix already assigned to this work in [docs/roadmap.md](../../../docs/roadmap.md) (sequence table or `BFU` list). If the request is not on the roadmap, inspect existing GitHub Issues (via `rtk gh issue list` or `list_issues` MCP) and the prefix list in the heading convention, then confirm a new prefix with the developer before inventing one.
 2. Pick a proposed `NNN` that does not collide with an open or closed Issue number:
    - **`gh`**: `rtk gh issue view <N>` — if 404, the number is free.
    - **`mcp`**: `issue_read` on `user-github_style-sync`.
@@ -137,5 +139,6 @@ Tell the developer:
 
 | Artifact       | Location      | Language                       | Purpose                      |
 | -------------- | ------------- | ------------------------------ | ---------------------------- |
+| Roadmap        | `docs/roadmap.md` | Portuguese                 | Sequencing, prefixes, deps   |
 | GitHub Issue   | GitHub `#N`   | English title, Portuguese body | Source of truth for the work |
 | Preview (chat) | Conversation  | Portuguese body                | Developer approval gate      |
