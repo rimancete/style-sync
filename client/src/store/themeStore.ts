@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { getThemeStorageKey } from '~/utils/env';
+
 type ThemeMode = 'light' | 'dark';
 
 interface ThemeConfig {
@@ -33,7 +35,7 @@ export const useThemeStore = create<ThemeState>()(
       },
     }),
     {
-      name: 'theme-storage',
+      name: getThemeStorageKey(),
     }
   )
 );

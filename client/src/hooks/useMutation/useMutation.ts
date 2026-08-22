@@ -1,44 +1,85 @@
-import { useMutation as useTanstackMutation, UseMutationOptions } from '@tanstack/react-query';
+import {
+  useMutation as useTanstackMutation,
+  useQueryClient,
+  type UseMutationOptions as TanstackMutationOptions,
+} from '@tanstack/react-query';
+
 import { useAuthStore } from '~/store/authStore';
 
-interface UseMutationConfig<TData, _TVariables> {
+import { errorTreatment } from '../utils/errorTreatment';
+import { notify } from '../utils/notify';
+import { request, SessionExpiredError, type HttpMethod } from '../utils/request';
+import { scopeQueryKey, type QueryKey } from '../useQuery/useQuery';
+
+type MutationPassthroughOptions<TData, TVariables> = Omit<
+  TanstackMutationOptions<TData, APIError, TVariables>,
+  'mutationFn'
+>;
+
+type UseMutationParams<TData, TVariables> = {
   endpoint: string;
-  method?: 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  mutationKey?: (string | number)[];
-  onSuccess?: (data: TData) => void;
-  onError?: (error: Error) => void;
-}
+  method?: HttpMethod;
+  headers?: Record<string, string>;
+  invalidateQueries?: QueryKey[];
+  refetchQueries?: QueryKey[];
+  showError?: boolean;
+  successMessage?: string;
+  mutationOptions?: MutationPassthroughOptions<TData, TVariables>;
+};
 
 export function useMutation<TData = unknown, TVariables = unknown>({
   endpoint,
   method = 'POST',
-  mutationKey,
-  onSuccess,
-  onError,
-}: UseMutationConfig<TData, TVariables>) {
-  const token = useAuthStore((state) => state.token);
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+  headers,
+  invalidateQueries,
+  refetchQueries,
+  showError = true,
+  successMessage,
+  mutationOptions,
+}: UseMutationParams<TData, TVariables>) {
+  const queryClient = useQueryClient();
+  const activeCustomerId = useAuthStore((state) => state.defaultCustomerId);
 
-  return useTanstackMutation({
-    mutationKey,
+  return useTanstackMutation<TData, APIError, TVariables>({
+    ...mutationOptions,
     mutationFn: async (variables: TVariables) => {
-      const response = await fetch(`${baseUrl}${endpoint}`, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: JSON.stringify(variables),
-      });
-
-      if (!response.ok) {
-        const body = (await response.json().catch(() => ({}))) as { message?: string };
-        throw new Error(body.message ?? response.statusText);
+      const response = await request({ endpoint, method, headers, body: variables });
+      return errorTreatment<TData>({ response });
+    },
+    onSuccess: async (data, variables, onMutateResult, context) => {
+      if (successMessage) {
+        notify.success(undefined, successMessage);
       }
 
-      return response.json() as Promise<TData>;
+      await Promise.all([
+        ...toScopedKeys(invalidateQueries, activeCustomerId).map((queryKey) =>
+          queryClient.invalidateQueries({ queryKey })
+        ),
+        ...toScopedKeys(refetchQueries, activeCustomerId).map((queryKey) =>
+          queryClient.refetchQueries({ queryKey })
+        ),
+      ]);
+
+      return mutationOptions?.onSuccess?.(data, variables, onMutateResult, context);
     },
-    onSuccess,
-    onError,
-  } as UseMutationOptions<TData, Error, TVariables>);
+    onError: (error, variables, onMutateResult, context) => {
+      // An expired session already redirects to login; a toast would be noise.
+      if (showError && !(error instanceof SessionExpiredError)) {
+        notify.error(undefined, describeError(error));
+      }
+
+      return mutationOptions?.onError?.(error, variables, onMutateResult, context);
+    },
+  });
+}
+
+function toScopedKeys(keys: QueryKey[] | undefined, customerId: string | null): QueryKey[] {
+  return (keys ?? []).map((key) => scopeQueryKey(key, customerId));
+}
+
+/** Validation failures carry per-field messages that are more useful than the summary. */
+function describeError(error: APIError): string {
+  const fieldMessages = Object.values(error.errors ?? {}).flat();
+
+  return fieldMessages.length > 0 ? fieldMessages.join('\n') : error.message;
 }

@@ -246,10 +246,16 @@ import { Icon } from 'components/Icons';
 Create a `.env` file based on `.env.example`:
 
 ```env
-VITE_API_BASE_URL=http://localhost:4000
+VITE_API_BASE_URL=http://localhost:3001
+VITE_ENABLE_MOCKS=false
+VITE_AUTH_STORAGE_KEY=StyleSync_Auth_Dev
+VITE_THEME_STORAGE_KEY=StyleSync_Theme_Dev
+VITE_I18N_STORAGE_KEY=StyleSync_I18n_Dev
 VITE_CUSTOMER_SUBDOMAIN=
 VITE_APP_ENV=development
 ```
+
+`VITE_*_STORAGE_KEY` values are the names written to `localStorage` (session, theme, i18n). Change the `_Dev` suffix per environment so keys stay identifiable in the Application tab and do not collide across Dev / Staging / Prod on the same origin.
 
 ## Git Workflow
 

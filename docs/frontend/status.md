@@ -19,6 +19,7 @@ This document tracks the progress of the frontend implementation.
 - [x] Form Components (Controlled with React Hook Form)
 - [x] shadcn primitives used by Login (`button`, `input`, `label`, `form`, `alert`)
 - [x] `FormElements.Input` wrapper (RHF Controller + shadcn Form a11y)
+- [x] Toast primitives (`toast`, `toaster`) + `notify` helper
 
 ## 3. Screens & Features
 - [x] Login Screen (modular layout refactor — Issue #6)
@@ -38,7 +39,10 @@ This document tracks the progress of the frontend implementation.
 - [ ] Booking History
 
 ## 4. API Integration
-- [ ] Auth (Login/Register)
+- [x] Transport (`request` + `errorTreatment`) and session foundation (Issue #11)
+- [x] Auth login mutation writes the real `AuthResponse` contract (UX polish is #12)
+- [x] Session probe: `GET /api/customers/my-customers` on authenticated Home
+- [ ] Auth register
 - [ ] Branches (List/Get)
 - [ ] Services (List/Get)
 - [ ] Professionals (List/Get)
@@ -47,4 +51,6 @@ This document tracks the progress of the frontend implementation.
 
 ## 5. Current Focus
 
-Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: epic [#10](https://github.com/rimancete/style-sync/issues/10) — implement [#11](https://github.com/rimancete/style-sync/issues/11) (API and session foundation), then [#12](https://github.com/rimancete/style-sync/issues/12) (Login API integration).
+Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: epic [#10](https://github.com/rimancete/style-sync/issues/10) — [#11](https://github.com/rimancete/style-sync/issues/11) API and session foundation validated locally; next is [#12](https://github.com/rimancete/style-sync/issues/12) Login API integration.
+
+Manual session checks: [`session-smooth-tests.md`](./session-smooth-tests.md).

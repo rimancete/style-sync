@@ -22,7 +22,9 @@ const ENDPOINT = '/api/auth/register';
 export const useRegister = () => {
   return useMutation<RegisterResponse, RegisterData>({
     endpoint: ENDPOINT,
-    mutationKey: ['auth', 'register'],
     method: 'POST',
+    mutationOptions: {
+      mutationKey: ['auth', 'register'],
+    },
   });
 };

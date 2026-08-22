@@ -1,6 +1,6 @@
 <!-- spec-kit: endpoints -->
-<!-- version: 1.0 -->
-<!-- last-updated: 2026-06-27 -->
+<!-- version: 1.1 -->
+<!-- last-updated: 2026-08-15 -->
 <!-- updated-by: agent -->
 
 # Endpoints
@@ -84,9 +84,9 @@ Guards: `JwtAuthGuard` → `CustomerContextGuard` (resolves slug → injects `ac
 |--------|------|------|---------|
 | GET | `/api/customers/context/:slug` | ADMIN | Get customer context |
 | GET | `/api/customers/my-customers` | JWT | Get user's accessible customers |
-| PATCH | `/api/salon/:slug/branding` | ADMIN | Update branding config |
-| POST | `/api/salon/:slug/branding/logo` | ADMIN | Upload logo (multipart) |
-| DELETE | `/api/salon/:slug/branding/logo` | ADMIN | Delete logo |
+| PUT | `/api/customers/:customerId/branding/config` | ADMIN | Update branding config (no files) |
+| POST | `/api/customers/:customerId/branding` | ADMIN | Initial branding setup (files + config) |
+| POST | `/api/customers/:customerId/branding/upload` | ADMIN | Update branding files |
 
 #### Branches
 

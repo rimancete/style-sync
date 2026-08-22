@@ -1,32 +1,29 @@
-import { useMutation } from '~/hooks/useMutation';
 import { useRouter } from '@tanstack/react-router';
-import { useAuthStore } from '~/store';
 
-export interface LoginCredentials {
+import { useMutation } from '~/hooks/useMutation';
+import { useAuthStore, type AuthResponse } from '~/store';
+
+export type LoginCredentials = {
   email: string;
   password: string;
-}
+};
 
-export interface LoginResponse {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    role: 'customer' | 'admin';
-  };
-  token: string;
-}
+const ENDPOINT = '/api/auth/login';
 
 export function useLogin() {
-  const setAuth = useAuthStore((state) => state.setAuth);
+  const setSession = useAuthStore((state) => state.setSession);
   const router = useRouter();
 
-  return useMutation<LoginResponse, LoginCredentials>({
-    endpoint: '/api/auth/login',
-    mutationKey: ['auth', 'login'],
-    onSuccess: (data) => {
-      setAuth(data.user, data.token);
-      router.navigate({ to: '/' });
+  return useMutation<AuthResponse, LoginCredentials>({
+    endpoint: ENDPOINT,
+    // Login surfaces failures through the inline alert, not a toast.
+    showError: false,
+    mutationOptions: {
+      mutationKey: ['auth', 'login'],
+      onSuccess: (data) => {
+        setSession(data);
+        router.navigate({ to: '/' });
+      },
     },
   });
 }

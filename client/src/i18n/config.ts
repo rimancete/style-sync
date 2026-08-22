@@ -2,6 +2,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+import { getI18nStorageKey } from '~/utils/env';
+
 // Import translations
 import enCommon from './locales/en/common.json';
 import enAuth from './locales/en/auth.json';
@@ -30,6 +32,7 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
+      lookupLocalStorage: getI18nStorageKey(),
     },
   });
 
