@@ -28,7 +28,7 @@ A chronological log of significant implementation milestones for the StyleSync f
 - **Refresh**: single-flight retry on 401 inside `request`; `restoreSession` waits for persist hydration, then runs in `__root` before the first paint so an expired access token does not flash login. Home probes the session with `GET /api/customers/my-customers`.
 - **Notify**: shadcn toast primitives + `notify.error` / `notify.success`. Login keeps `showError: false` (inline alert).
 - **Facades**: `useQuery` / `useMutation` no longer contain network logic; query keys are prefixed with the active customer id.
-- **Manual checks**: `docs/frontend/session-smooth-tests.md` (2026-08-22: scenarios 1–4 and 6–8 against the real API; 5 via the single-flight unit test; 9 deferred to #12).
+- **Manual checks**: signed off 2026-08-22 against the real API (scenarios 1–4 and 6–8; 5 via the single-flight unit test; 9 deferred to #12). Playbook removed after sign-off.
 
 ## 2026-09-05: Session review follow-up (PR #13)
 
