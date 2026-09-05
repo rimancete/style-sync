@@ -49,7 +49,6 @@ type PersistedSession = {
 
 type AuthActions = {
   setSession: (auth: AuthResponse) => void;
-  setTokens: (tokens: { token: string; refreshToken: string }) => void;
   clearAuth: () => void;
 };
 
@@ -83,7 +82,6 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       ...EMPTY_SESSION,
       setSession: (auth) => set(toSession(auth)),
-      setTokens: ({ token, refreshToken }) => set({ token, refreshToken }),
       clearAuth: () => set({ ...EMPTY_SESSION }),
     }),
     {

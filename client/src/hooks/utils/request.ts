@@ -1,7 +1,7 @@
 import { useAuthStore, type AuthResponse } from '~/store/authStore';
 import { getApiUrl } from '~/utils/env';
 
-import { errorTreatment } from './errorTreatment';
+import { ApiError, errorTreatment } from './errorTreatment';
 
 /**
  * The only place in the app that calls `fetch`.
@@ -11,7 +11,9 @@ import { errorTreatment } from './errorTreatment';
  * replays the original call, so callers never see the expiry.
  */
 
-export class SessionExpiredError extends Error {
+export class SessionExpiredError extends Error implements APIError {
+  readonly status = 401;
+
   constructor() {
     super('Session expired');
     this.name = 'SessionExpiredError';
@@ -104,8 +106,12 @@ async function performRefresh(): Promise<boolean> {
 
     useAuthStore.getState().setSession(auth);
     return true;
-  } catch {
-    return false;
+  } catch (error) {
+    if (error instanceof TypeError || error instanceof ApiError) {
+      return false;
+    }
+
+    throw error;
   }
 }
 

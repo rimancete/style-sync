@@ -50,19 +50,6 @@ describe('authStore', () => {
     expect(useAuthStore.getState().isAuthenticated).toBe(true);
   });
 
-  it('replaces only the tokens on setTokens', () => {
-    const auth = createMockAuthResponse({ email: 'client@test.com', role: 'CLIENT' });
-    useAuthStore.getState().setSession(auth);
-
-    useAuthStore.getState().setTokens({ token: 'next-access', refreshToken: 'next-refresh' });
-
-    const session = useAuthStore.getState();
-    expect(session.token).toBe('next-access');
-    expect(session.refreshToken).toBe('next-refresh');
-    expect(session.userId).toBe(auth.userId);
-    expect(session.isAuthenticated).toBe(true);
-  });
-
   it('clears every persisted field on clearAuth', () => {
     useAuthStore
       .getState()

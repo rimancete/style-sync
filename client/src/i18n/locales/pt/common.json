@@ -19,7 +19,18 @@
     "close": "Fechar",
     "next": "Próximo",
     "back": "Voltar",
-    "submit": "Enviar"
+    "submit": "Enviar",
+    "logout": "Sair"
+  },
+  "home": {
+    "user": {
+      "title": "Meus agendamentos",
+      "subtitle": "Veja e gerencie seus horários."
+    },
+    "admin": {
+      "title": "Painel",
+      "subtitle": "Bem-vindo ao painel administrativo."
+    }
   },
   "common": {
     "loading": "Carregando...",

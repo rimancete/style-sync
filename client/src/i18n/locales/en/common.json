@@ -19,7 +19,18 @@
     "close": "Close",
     "next": "Next",
     "back": "Back",
-    "submit": "Submit"
+    "submit": "Submit",
+    "logout": "Logout"
+  },
+  "home": {
+    "user": {
+      "title": "My Bookings",
+      "subtitle": "View and manage your appointments."
+    },
+    "admin": {
+      "title": "Dashboard",
+      "subtitle": "Welcome to your admin dashboard."
+    }
   },
   "common": {
     "loading": "Loading...",
