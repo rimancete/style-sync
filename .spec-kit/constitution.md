@@ -1,6 +1,6 @@
 <!-- spec-kit: constitution -->
-<!-- version: 1.1 -->
-<!-- last-updated: 2026-06-27 -->
+<!-- version: 1.2 -->
+<!-- last-updated: 2026-09-05 -->
 <!-- updated-by: agent -->
 
 # Constitution
@@ -128,7 +128,7 @@ Every entity has:
 - All API calls go through the `api` facade object (`src/api/api.ts`) — never call TanStack Query hooks directly
 - Queries: wrap in `useQuery<T>` custom hook with `endpoint`, `queryKey`, and `mockData`
 - Mutations: wrap in `useMutation<TResponse, TInput>` custom hook with `endpoint` and `mutationKey`
-- MSW mocks must be provided for every new query/mutation (enables UI development without the backend)
+- MSW and the `mockData` short-circuit run only when `VITE_ENABLE_MOCKS=true` (off by default). Provide handlers so the flag can be turned on for UI work without the backend.
 
 ### State Management
 
@@ -143,8 +143,8 @@ Every entity has:
 ### Testing (Frontend)
 
 - Vitest + MSW
-- Tests live in `src/test/`
-- MSW handlers mirror the `mockData` used in API hooks
+- Tests live next to the code they cover (`*.test.ts` / `*.test.tsx`). `src/test/` is not the only location.
+- MSW handlers mirror the `mockData` used in API hooks and stay behind `VITE_ENABLE_MOCKS`
 
 ### Forbidden Frontend Patterns
 

@@ -29,3 +29,11 @@ A chronological log of significant implementation milestones for the StyleSync f
 - **Notify**: shadcn toast primitives + `notify.error` / `notify.success`. Login keeps `showError: false` (inline alert).
 - **Facades**: `useQuery` / `useMutation` no longer contain network logic; query keys are prefixed with the active customer id.
 - **Manual checks**: `docs/frontend/session-smooth-tests.md` (2026-08-22: scenarios 1–4 and 6–8 against the real API; 5 via the single-flight unit test; 9 deferred to #12).
+
+## 2026-09-05: Session review follow-up (PR #13)
+
+- **Types**: `SessionExpiredError` implements `APIError` with `status: 401` so facades and the synthetic expiry share one failure shape. `performRefresh` only swallows `TypeError` / `ApiError`.
+- **Store**: unused `setTokens` removed; refresh already goes through `setSession`.
+- **UX**: `__root` shows `common.loading` while restoring; User/Admin Home copy goes through i18n.
+- **Tooling**: root `pnpm dev` filters `style-sync-server`. Constitution v1.2 documents `VITE_ENABLE_MOCKS` and colocated tests.
+- **Tests**: no new infrastructure tests. Business-rule coverage from the review is queued on Issue #12.
