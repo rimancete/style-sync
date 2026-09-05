@@ -8,13 +8,13 @@ export const Route = createFileRoute('/')({
 });
 
 function IndexPage() {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, role } = useAuthStore();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
-  if (user?.role === 'admin') {
+  if (role === 'ADMIN') {
     return <AdminHomeScreen />;
   }
 

@@ -6,6 +6,7 @@ graph TD
         Context[Constate/Local Context]
         Query[TanStack Query]
         Login[Login Screen Modules]
+        Toaster[Toaster / notify]
     end
 
     subgraph "Login Composition"
@@ -17,37 +18,42 @@ graph TD
 
     subgraph "Data & Logic Layer"
         API[Domain API Hooks]
-        Fetch[Native Fetch API]
-        Mocks[MSW Mocks]
+        Facades[useQuery / useMutation]
+        Request[request + errorTreatment]
+        Env[utils/env]
+        Jwt[jwt.util]
+        Mocks[MSW Mocks - VITE_ENABLE_MOCKS]
     end
 
     subgraph "External Services"
         Backend[NestJS Backend API]
-        Storage[Local Storage]
+        Storage[Local Storage StyleSync_Auth_Dev v2]
     end
 
-    %% UI interactions
     UI --> Router
     UI --> Store
     UI --> Context
     UI --> Query
     UI --> Login
+    UI --> Toaster
 
     Login --> Banner
     Login --> FormView
     FormView --> ViewTransition
     FormView --> FormElements
 
-    %% Data flow
     Query --> API
-    API --> Fetch
-    API --> Mocks
+    API --> Facades
+    Facades --> Request
+    Facades --> Mocks
+    Request --> Env
+    Request --> Jwt
     FormView --> API
+    Facades --> Toaster
 
-    %% External communication
-    Fetch --> Backend
+    Request --> Backend
     Store --> Storage
-    
-    %% Multi-tenant config
+    Store --> Jwt
+
     Backend -->|Theme Config| Store
     Store -->|CSS Variables| UI

@@ -1,6 +1,6 @@
 <!-- spec-kit: domain -->
-<!-- version: 1.0 -->
-<!-- last-updated: 2026-06-27 -->
+<!-- version: 1.1 -->
+<!-- last-updated: 2026-08-22 -->
 <!-- updated-by: agent -->
 
 # Domain
@@ -198,7 +198,7 @@ addressFormat: Json ← JSON schema for address validation per country
 6. **Cross-customer validation**: All entities in a booking (branch, service, professional) must belong to the same Customer.
 7. **Soft delete cascade**: Deleting a Branch soft-deletes it; dependent pricing and schedules remain for historical bookings but are excluded from future queries.
 8. **Cancellation**: Currently sets `status: CANCELLED`. No full cancellation policy implemented yet.
-9. **Operating hours (v1 hardcoded)**: Availability slots generated 09:00–18:00, 30-minute intervals. Schedule-based hours not yet enforced at booking time.
+9. **Operating hours**: Availability slots are derived from `BranchSchedule` and `ProfessionalSchedule` in the database, in 30-minute intervals. There is no hardcoded 09:00–18:00 window.
 10. **Reserved slugs**: `admin`, `api`, `health`, `auth`, `docs`, `swagger`, `about`, `pricing`, `contact`, `terms`, `privacy`, `login`, `register`, `salon` cannot be used as `urlSlug`.
 
 ---
@@ -208,18 +208,28 @@ addressFormat: Json ← JSON schema for address validation per country
 ### TypeScript Types (Zustand Stores)
 
 ```typescript
-// authStore
-interface User {
+// authStore (persisted as StyleSync_Auth_Dev via VITE_AUTH_STORAGE_KEY, schema version 2)
+type Role = 'CLIENT' | 'STAFF' | 'ADMIN';
+type CustomerSummary = {
   id: string;
-  email: string;
+  displayId: number;
   name: string;
-  role: 'customer' | 'admin';  // Note: maps from backend CLIENT/ADMIN
-}
-interface AuthState {
-  user: User | null;
+  urlSlug: string;
+  logoUrl?: string;
+};
+type AuthState = {
   token: string | null;
+  refreshToken: string | null;
+  userId: string | null;
+  userName: string | null;
+  phone: string | null;
+  email: string | null;          // decoded from JWT
+  role: Role | null;             // decoded from JWT
+  customers: CustomerSummary[];
+  defaultCustomerId: string | null;
   isAuthenticated: boolean;
-}
+};
+```
 
 // themeStore
 interface ThemeConfig {
@@ -241,7 +251,7 @@ interface BookingState {
 }
 ```
 
-> Note: Frontend `role: 'customer' | 'admin'` does not directly map to backend `UserRole: CLIENT | STAFF | ADMIN`. A STAFF role is not yet represented in the frontend store. <!-- inferred — confirm with tech lead -->
+> Note: `role` and `email` are decoded from the JWT on the client for navigation and presentation only. Authorisation is always enforced on the server. STAFF currently lands on the user Home (no staff area yet).
 
 ### Form Schemas (Zod — pattern)
 

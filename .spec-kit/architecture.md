@@ -1,6 +1,6 @@
 <!-- spec-kit: architecture -->
-<!-- version: 1.0 -->
-<!-- last-updated: 2026-06-27 -->
+<!-- version: 1.1 -->
+<!-- last-updated: 2026-08-22 -->
 <!-- updated-by: agent -->
 
 # Architecture
@@ -109,9 +109,10 @@ Browser
   → Screen Component (src/screens/)
   → api facade (src/api/)
   → Custom useQuery / useMutation wrappers
-  → TanStack Query (cache, background refetch)
+  → request() + errorTreatment()
   → Native Fetch → NestJS Backend
   → Zustand / Constate (global/page-level state)
+  → notify / Toaster (mutation feedback)
   → shadcn/ui + Tailwind CSS (presentation)
 ```
 
@@ -132,8 +133,8 @@ Browser
 
 | Store | File | Persisted | Purpose |
 |-------|------|-----------|---------|
-| `useAuthStore` | `store/authStore.ts` | localStorage (`auth-storage`) | user, token, isAuthenticated |
-| `useThemeStore` | `store/themeStore.ts` | localStorage (`theme-storage`) | mode (light/dark), dynamic CSS vars from branding API |
+| `useAuthStore` | `store/authStore.ts` | localStorage (`StyleSync_Auth_Dev` via `VITE_AUTH_STORAGE_KEY`, v2) | session tokens, user profile, `role`/`email` from JWT, customers |
+| `useThemeStore` | `store/themeStore.ts` | localStorage (`StyleSync_Theme_Dev` via `VITE_THEME_STORAGE_KEY`) | mode (light/dark), dynamic CSS vars from branding API |
 | `useBookingStore` | `store/bookingStore.ts` | no | multi-step booking funnel: branch → service → professional → dateTime |
 
 ### API Facade
@@ -143,6 +144,7 @@ Browser
 ```typescript
 api.auth.login       // useLogin mutation
 api.auth.register    // useRegister mutation
+api.customers.mine   // useGetMyCustomers query
 api.branches.list    // useGetBranches query
 api.services.list    // useGetServices query
 api.professionals.list // useGetProfessionals query
@@ -150,12 +152,12 @@ api.bookings.create  // useCreateBooking mutation
 api.theme.get        // useGetTheme query
 ```
 
-Every hook accepts `mockData` — development works without a running backend.
+Every hook accepts `mockData`. MSW and the `mockData` short-circuit run only when `VITE_ENABLE_MOCKS=true` (off by default).
 
 ### Multi-Tenancy / Theming on the Frontend
 
 1. `useCustomerUrl` parses the current hostname or URL param to identify the tenant slug
-2. `api.theme.get` (`GET /api/salon/:slug/branding`) fetches colors, logo, favicon
+2. `api.theme.get` (`GET /api/customers/branding/:slug`) fetches colors, logo, favicon
 3. `themeStore.setConfig(config)` applies them as CSS variables to `:root`
 4. All subsequent renders use the tenant's brand
 

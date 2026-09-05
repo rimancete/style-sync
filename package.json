@@ -6,7 +6,7 @@
   "email": "osvaldo.costajr@gmail.com",
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "pnpm --filter style-sync-client dev & pnpm --filter server start:dev",
+    "dev": "pnpm --filter style-sync-client dev & pnpm --filter style-sync-server start:dev",
     "dev:client": "pnpm --filter style-sync-client dev",
     "dev:server": "pnpm --filter style-sync-server start:dev",
     "build": "pnpm -r build",

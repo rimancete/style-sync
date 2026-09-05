@@ -6,7 +6,9 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import './index.css';
 import './i18n/config';
 
+import { Toaster } from './components/ui/toaster';
 import { routeTree } from './routeTree.gen';
+import { isMocksEnabled } from './utils/env';
 
 const router = createRouter({ routeTree });
 
@@ -16,27 +18,32 @@ declare module '@tanstack/react-router' {
   }
 }
 
+const STALE_TIME_MS = 1000 * 60 * 5;
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,
+      staleTime: STALE_TIME_MS,
       retry: 1,
     },
   },
 });
 
 async function enableMocking() {
-  if (import.meta.env.DEV) {
-    const { worker } = await import('./mocks/browser');
-    return worker.start({ onUnhandledRequest: 'bypass' });
+  if (!isMocksEnabled()) {
+    return;
   }
+
+  const { worker } = await import('./mocks/browser');
+  return worker.start({ onUnhandledRequest: 'bypass' });
 }
 
-enableMocking().then(() => {
+void enableMocking().then(() => {
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
+        <Toaster />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </React.StrictMode>

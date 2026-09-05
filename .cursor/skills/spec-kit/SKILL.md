@@ -14,7 +14,7 @@ description: >-
 
 Bootstrap or update the `.spec-kit/` knowledge base for a project.
 
-The kit lives at `.spec-kit/` in the root of the **target project** (not in truckpag-kit). It contains five versioned documents that act as the single source of truth for any AI skill operating on that project.
+The kit lives at `.spec-kit/` in the root of the **target project**. It contains five versioned documents that act as the single source of truth for any AI skill operating on that project.
 
 ---
 
