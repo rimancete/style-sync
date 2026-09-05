@@ -15,8 +15,7 @@ rehydrates. Editing localStorage while the app is running does not update memory
 
 1. `docker compose -f docker/docker-compose.yml up -d`
 2. In `server/`: `pnpm prisma:migrate` and `pnpm prisma:seed` (if the database is empty)
-3. From the repo root, two terminals (`nvm use` in each): `pnpm dev:server` and `pnpm dev:client`
-   (`pnpm dev` currently does not start the API — the workspace filter is wrong)
+3. From the repo root (`nvm use`): `pnpm dev`, or two terminals with `pnpm dev:server` and `pnpm dev:client`
 4. Confirm the client has **no** `VITE_ENABLE_MOCKS=true` in `client/.env`
 5. Seed users (password `123456`): `admin@stylesync.com`, `client@test.com`, `staff@stylesync.com`
 
