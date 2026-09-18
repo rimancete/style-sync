@@ -1,1 +1,1 @@
-export { useQuery } from './useQuery';
+export { scopeQueryKey, useQuery } from './useQuery';

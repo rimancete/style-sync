@@ -91,4 +91,19 @@ describe('restoreSession', () => {
 
     expect(mockedRefresh).toHaveBeenCalledTimes(1);
   });
+
+  it('clears the session when refresh fails for an expired access token', async () => {
+    mockedRefresh.mockResolvedValue(false);
+    useAuthStore.setState({
+      token: expiredJwt(),
+      refreshToken: validJwt(),
+      isAuthenticated: true,
+      userId: 'user-1',
+    });
+
+    await restoreSession();
+
+    expect(useAuthStore.getState().isAuthenticated).toBe(false);
+    expect(useAuthStore.getState().token).toBeNull();
+  });
 });
