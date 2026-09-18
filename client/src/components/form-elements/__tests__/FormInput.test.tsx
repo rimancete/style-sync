@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import userEvent from '@testing-library/user-event';
+import type { ReactNode } from 'react';
 
 import { render, screen } from '~/test/utils';
 import { FormElements } from '~/components/form-elements';
@@ -15,7 +16,7 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-function TestForm() {
+function TestForm({ endIcon }: { endIcon?: ReactNode }) {
   const methods = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { email: '' },
@@ -24,7 +25,13 @@ function TestForm() {
   return (
     <Form {...methods}>
       <form onSubmit={methods.handleSubmit(() => undefined)}>
-        <FormElements.Input control={methods.control} name="email" label="Email" required />
+        <FormElements.Input
+          control={methods.control}
+          name="email"
+          label="Email"
+          required
+          endIcon={endIcon}
+        />
         <Button type="submit">Submit</Button>
       </form>
     </Form>
@@ -47,5 +54,25 @@ describe('FormElements.Input', () => {
     const message = await screen.findByText('Invalid email address');
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input.getAttribute('aria-describedby') ?? '').toContain(message.id);
+  });
+
+  it('keeps id and htmlFor on the native input when endIcon is set', () => {
+    render(
+      <TestForm
+        endIcon={
+          <button type="button" aria-label="toggle visibility">
+            icon
+          </button>
+        }
+      />
+    );
+
+    const input = screen.getByLabelText(/email/i);
+    const toggle = screen.getByRole('button', { name: 'toggle visibility' });
+    const label = screen.getByText('Email', { selector: 'label' });
+
+    expect(input).toHaveAttribute('id');
+    expect(label).toHaveAttribute('for', input.id);
+    expect(toggle).not.toHaveAttribute('id', input.id);
   });
 });

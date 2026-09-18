@@ -28,6 +28,13 @@ describe('Icon', () => {
     expect(svg).toBeInTheDocument();
   });
 
+  it('renders Eye and EyeOff icons', () => {
+    const { rerender, container } = render(<Icon name="Eye" />);
+    expect(container.querySelector('svg')).toBeInTheDocument();
+    rerender(<Icon name="EyeOff" />);
+    expect(container.querySelector('svg')).toBeInTheDocument();
+  });
+
   it('returns null for non-existent icon', () => {
     // @ts-expect-error - Testing invalid icon name
     const { container } = render(<Icon name="NonExistent" />);
