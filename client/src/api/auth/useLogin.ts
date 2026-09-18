@@ -2,6 +2,7 @@ import { useRouter } from '@tanstack/react-router';
 
 import { useMutation } from '~/hooks/useMutation';
 import { useAuthStore, type AuthResponse } from '~/store';
+import { getSafeInternalPath } from '~/utils/redirect.util';
 
 export type LoginCredentials = {
   email: string;
@@ -10,7 +11,7 @@ export type LoginCredentials = {
 
 const ENDPOINT = '/api/auth/login';
 
-export function useLogin() {
+export function useLogin(redirect?: string) {
   const setSession = useAuthStore((state) => state.setSession);
   const router = useRouter();
 
@@ -22,7 +23,7 @@ export function useLogin() {
       mutationKey: ['auth', 'login'],
       onSuccess: (data) => {
         setSession(data);
-        router.navigate({ to: '/' });
+        void router.navigate({ href: getSafeInternalPath(redirect) });
       },
     },
   });
