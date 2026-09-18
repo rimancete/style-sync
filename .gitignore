@@ -67,3 +67,7 @@ temp/
 
 # Cursor skills - local-only state
 .cursor/skills/**/.env
+
+# Engram — keep project name, ignore local DB/sync chunks
+.engram/*
+!.engram/config.json

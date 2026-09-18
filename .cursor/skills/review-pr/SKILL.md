@@ -31,6 +31,7 @@ This skill is **never auto-invoked**. It runs when:
 - Tool selection is sourced from `.cursor/skills/git-workflow/.last-tool` (`gh` or `mcp`). Reuse the value — never re-prompt the developer here.
 - The PR template lives at [.github/pull_request_template.md](../../../.github/pull_request_template.md). The completeness rules in this skill are derived from it.
 - The detailed review checklist lives at [checklist.md](checklist.md).
+- Load Engram for this Issue/branch before judging the diff (`user-engram-personal`, `project: "style-sync"` — see [.cursor/rules/engram.mdc](../../rules/engram.mdc)).
 
 ## Workflow
 

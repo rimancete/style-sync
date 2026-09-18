@@ -37,6 +37,8 @@ For PR/Issue operations the agent can use either of two tools. At least one must
 
 Native git side-effect operations (`fetch`, `checkout`, `commit`) use plain `git`. Use `rtk git pull` and `rtk git push` for pull/push (see [.cursor/rules/rtk.mdc](../../rules/rtk.mdc)). PR/Issue reads use `rtk gh` where applicable.
 
+Load Engram for this Issue/branch before changing git state (`user-engram-personal`, `project: "style-sync"` — see [.cursor/rules/engram.mdc](../../rules/engram.mdc)).
+
 ---
 
 ## Workflow
@@ -227,7 +229,7 @@ Skipping the back-merge leaves `develop` missing the hotfix until someone catche
 
 ## MCP tool reference (when `.last-tool == mcp`)
 
-All tools are on the `user-github_style-sync` server. Always read the descriptor in `mcps/user-github_style-sync/tools/<tool>.json` if you are unsure about an argument.
+All tools are on the `user-github_style-sync` server. Discover the schema with `GetDynamicTools` (`namespace: "user-github_style-sync"`, then `toolName`) before every call; invoke with `CallDynamicTool`. Do not read `mcps/.../tools/*.json` as the required source of truth.
 
 | Action                                              | Tool                        | Key arguments                                                                                                        |
 | --------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------- |
