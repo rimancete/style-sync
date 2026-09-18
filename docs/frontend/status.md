@@ -27,6 +27,7 @@ This document tracks the progress of the frontend implementation.
   - [x] LoginFormView + ViewTransition
   - [x] Mobile decorative SVGs
   - [x] `/` → `/login` redirect when unauthenticated
+  - [x] Password visibility toggle (`endIcon` + Eye / EyeOff)
 - [ ] Registration Screen
 - [ ] Home Page
 - [ ] Booking Flow
@@ -41,6 +42,7 @@ This document tracks the progress of the frontend implementation.
 ## 4. API Integration
 - [x] Transport (`request` + `errorTreatment`) and session foundation (Issue #11)
 - [x] Auth login mutation writes the real `AuthResponse` contract (UX polish is #12)
+- [x] Login UX: status-mapped errors, safe `search.redirect`, ADMIN layout guard (Issue #12)
 - [x] Session probe: `GET /api/customers/my-customers` on authenticated Home
 - [ ] Auth register
 - [ ] Branches (List/Get)
@@ -51,4 +53,4 @@ This document tracks the progress of the frontend implementation.
 
 ## 5. Current Focus
 
-Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: epic [#10](https://github.com/rimancete/style-sync/issues/10) — [#11](https://github.com/rimancete/style-sync/issues/11) review follow-up on draft PR [#13](https://github.com/rimancete/style-sync/pull/13); next is [#12](https://github.com/rimancete/style-sync/issues/12) Login API integration. Automated tests focus on business rules; leftover review tests are noted on #12.
+Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: epic [#10](https://github.com/rimancete/style-sync/issues/10) — [#12](https://github.com/rimancete/style-sync/issues/12) Login API integration on branch `12-login-api-integration`. Manual playbook: [`docs/frontend/login-smooth-tests.md`](./login-smooth-tests.md). Next after sign-off: remaining epic #10 items (registration is still a stub).

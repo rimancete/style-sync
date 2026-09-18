@@ -37,3 +37,13 @@ A chronological log of significant implementation milestones for the StyleSync f
 - **UX**: `__root` shows `common.loading` while restoring; User/Admin Home copy goes through i18n.
 - **Tooling**: root `pnpm dev` filters `style-sync-server`. Constitution v1.2 documents `VITE_ENABLE_MOCKS` and colocated tests.
 - **Tests**: no new infrastructure tests. Business-rule coverage from the review is queued on Issue #12.
+
+## 2026-09-18: Login API integration (Issue #12)
+
+- **Errors**: login maps `APIError` by status — 401/unknown → `errors.loginFailed`, 422 → per-field `setError` (alert only if no field mapped), 429 → `errors.tooManyAttempts`. Inline `LoginViewAlert` only (`showError: false`).
+- **Redirect**: `/login` declares `search.redirect`. After `setSession`, navigation uses `getSafeInternalPath` (single leading `/`; rejects `//`, `://`, `javascript:`, backslashes) or `/` (role home via `index.tsx`). STAFF still lands on User Home.
+- **Admin guard**: `_authenticated/admin` `beforeLoad` requires `role === 'ADMIN'`; others go to `/`. Server remains the authorizer.
+- **Password**: `FormElements.Input` `endIcon` (wrapper outside `FormControl`). Eye / EyeOff toggle, `pr-10`, disabled while pending.
+- **Tests**: Login screen MSW coverage for ADMIN/CLIENT/STAFF destinations, 401 without refresh, 422 field errors, public bounce, admin guard, return URL, malicious redirect, password toggle. Leftovers from PR #13: `restoreSession` clears on failed refresh; `scopeQueryKey` isolates by tenant.
+- **Manual**: [`docs/frontend/login-smooth-tests.md`](./login-smooth-tests.md) — 10 scenarios against the real API.
+
