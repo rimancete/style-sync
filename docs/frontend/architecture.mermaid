@@ -22,6 +22,7 @@ graph TD
         Request[request + errorTreatment]
         Env[utils/env]
         Jwt[jwt.util]
+        Redirect[isSafeInternalPath]
         Mocks[MSW Mocks - VITE_ENABLE_MOCKS]
     end
 
@@ -37,6 +38,7 @@ graph TD
     UI --> Login
     UI --> Toaster
 
+    Router -->|ADMIN only| AdminHome[Admin layout guard]
     Login --> Banner
     Login --> FormView
     FormView --> ViewTransition
@@ -44,6 +46,7 @@ graph TD
 
     Query --> API
     API --> Facades
+    API --> Redirect
     Facades --> Request
     Facades --> Mocks
     Request --> Env

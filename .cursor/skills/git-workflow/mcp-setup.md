@@ -4,9 +4,11 @@ Use these steps to make the `mcp` path of the [git-workflow](SKILL.md) skill wor
 
 ## 1. Verify the server is enabled
 
-The server identifier is `user-github_style-sync`. In Cursor, open the MCP settings and confirm it is listed and connected. Tool descriptors live in `~/.cursor/projects/<workspace-hash>/mcps/user-github_style-sync/tools/*.json` — read them when you are unsure about a tool's arguments.
+The server identifier is `user-github_style-sync`. In Cursor, open the MCP settings and confirm it is listed and connected.
 
-A quick sanity check from a Cursor chat: ask the agent to call `get_me` on `user-github_style-sync`. If it returns your GitHub user, the server is wired correctly.
+Discover tools with `GetDynamicTools` (`namespace: "user-github_style-sync"`, then `toolName` when you need a schema). Invoke with `CallDynamicTool`. Do not treat `mcps/.../tools/*.json` as the required read.
+
+A quick sanity check from a Cursor chat: ask the agent to `GetDynamicTools` for `get_me` on `user-github_style-sync`, then `CallDynamicTool`. If it returns your GitHub user, the server is wired correctly.
 
 ## 2. Required permissions
 
@@ -21,7 +23,7 @@ If the agent gets `403` errors when calling `create_pull_request`, `issue_write`
 
 ## 3. Tool inventory (this project)
 
-These are the tools the `git-workflow` skill relies on. Always re-read the descriptor JSON before calling.
+These are the tools the `git-workflow` skill relies on. Always `GetDynamicTools` for the tool schema before `CallDynamicTool`.
 
 | Skill action                                                   | MCP tool                                                                                                          |
 | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -74,4 +76,4 @@ Both source branches are long-lived and must be preserved. The skill [SKILL.md](
 | `403 Resource not accessible by integration` | Token missing PR / Issue write scope.                                                                     |
 | `404 Not Found` on `create_pull_request`     | Wrong `owner`/`repo`, or the `head` branch was never pushed.                                              |
 | `422 No commits between <base> and <head>`   | Same SHA on both sides — push commits first.                                                              |
-| MCP tool not in inventory                    | Check `mcps/user-github_style-sync/tools/` for the actual tool name; descriptors are the source of truth. |
+| MCP tool not in inventory                    | Call `GetDynamicTools` on `user-github_style-sync` (no `toolName`, or a `pattern`) and use the live name. |

@@ -17,6 +17,11 @@ const MOCK_USERS = {
     userName: 'Test User',
     userId: 'client-1',
   },
+  'staff@stylesync.com': {
+    role: 'STAFF' as const,
+    userName: 'Staff User',
+    userId: 'staff-1',
+  },
 };
 
 export const handlers = [

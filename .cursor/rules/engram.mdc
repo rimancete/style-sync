@@ -1,0 +1,36 @@
+---
+description: Local Engram memory for style-sync — pin project and discover MCP schemas before calling
+alwaysApply: true
+---
+
+# Engram memory (style-sync)
+
+This repo’s memories live in the **personal** Engram store (`~/.engram-personal`), which is shared by every personal project folder. Isolation is the project key, not a private store.
+
+This folder’s key is `.engram/config.json` (`project_name`: `style-sync`). Other personal repos use the same store with their own keys. Do not treat the personal store as style-sync-only. Do not use `~/dev/tasks/active/` or `~/dev/active/` markdown files.
+
+## This repo owns the agent surface
+
+When the open folder is style-sync, follow **this repo’s** `.cursor/skills/` and `.cursor/rules/`. This repo’s skills win over any other workflow. Source of truth for work is GitHub Issue `#N`, `user-github_style-sync` (or `gh`), `implement-client` / `implement-server`, and `.spec-kit/`.
+
+## How to call Engram
+
+Namespace: `user-engram-personal`. Always inspect the schema with `GetDynamicTools` (`namespace`, then `toolName`) before `CallDynamicTool`. Never guess arguments.
+
+Pin `project: "style-sync"` on every mem call that accepts `project`. Call `mem_current_project` first; if the detected project is not `style-sync`, still pin `style-sync`. Never save into another project key in the personal store. If Engram returns `unknown_project`, surface it — do not invent a second store.
+
+Do not use `user-engram-shared` for this repo’s product, architecture, endpoints, or decisions. Shared is only for reusable technique that names no client, endpoint, business rule, or internal system. When in doubt, use `user-engram-personal` with `project: "style-sync"`.
+
+Do not dump file contents. Record where data lives and how it is shaped.
+
+## When to call
+
+- **Session start / after compaction:** `mem_save_prompt`, `mem_current_project`, `mem_context`, `mem_search` for the current task (Issue `#N`, branch, or topic).
+- **After decisions, bugfixes, conventions, gotchas:** `mem_save` with `title`, `type`, and content in `**What**` / `**Why**` / `**Where**` / `**Learned**`.
+- **Before saying done / handoff:** `mem_session_summary`.
+
+## Conflicts after `mem_save`
+
+If the response has `judgment_required`, iterate `candidates[]` and call `mem_judge` once per entry using that entry’s `judgment_id` (not a top-level id).
+
+Ask the user when confidence is below 0.7, or when the relation would be `supersedes` / `conflicts_with` and the type is architecture, policy, or decision. Otherwise resolve silently (`related`, `compatible`, `scoped`, `not_conflict`).

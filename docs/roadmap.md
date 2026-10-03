@@ -60,7 +60,7 @@ O épico [#10 Login flow](https://github.com/rimancete/style-sync/issues/10) cob
 | # | Prefixo | Título | Escopo | Depende de | GitHub |
 | --- | --- | --- | --- | --- | --- |
 | 1 | FFU | API and session foundation | Transporte (`request` + `errorTreatment`), sessão no contrato `AuthResponseDto`, refresh single-flight, toast/`notify`, mocks atrás de `VITE_ENABLE_MOCKS`, anonimização de docs/skills | — | [#11](https://github.com/rimancete/style-sync/issues/11) criada |
-| 2 | BUS | Login API integration | Mensagens por status, redirect por role, guard de `/admin`, testes de tela, `docs/frontend/login-smooth-tests.md` | #11 | [#12](https://github.com/rimancete/style-sync/issues/12) criada |
+| 2 | BUS | Login API integration | Mensagens por status, redirect por role, guard de `/admin`, testes de tela | #11 | [#12](https://github.com/rimancete/style-sync/issues/12) criada |
 | 3 | BUS | Register API integration | RHF + Zod, endpoint salon-scoped, fluxo `428` → diálogo de confirmação → `confirmLink: true` | #11 | ainda não criada |
 | 4 | FFU | Tenant context & branding | Resolução do slug, rotas `/salon/:slug`, branding → CSS vars, document title e favicons | #11 | ainda não criada |
 | 5 | BUS | Booking funnel | Branch → service → professional → availability → criar booking com `isoTimestamp`. Avaliar fatiar em duas Issues | #11, #12, tenant/branding | ainda não criada |

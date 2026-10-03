@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 
 import { FormElements } from '~/components/form-elements';
+import { Icon } from '~/components/Icon';
 import { Button } from '~/components/ui/button';
 import { Form } from '~/components/ui/form';
 
@@ -20,6 +22,7 @@ type LoginFormViewProps = {
 export function LoginFormView({ methods, onSubmit, isPending, errorMessage }: LoginFormViewProps) {
   const { t } = useTranslation('auth');
   const { handleSubmit, control } = methods;
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
     <ViewTransition
@@ -50,11 +53,22 @@ export function LoginFormView({ methods, onSubmit, isPending, errorMessage }: Lo
               control={control}
               required
               name="password"
-              type="password"
+              type={isPasswordVisible ? 'text' : 'password'}
               autoComplete="current-password"
               label={t('login.password')}
               placeholder="••••••••"
               disabled={isPending}
+              endIcon={
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
+                  disabled={isPending}
+                  aria-label={isPasswordVisible ? t('login.hidePassword') : t('login.showPassword')}
+                  onClick={() => setIsPasswordVisible((visible) => !visible)}
+                >
+                  <Icon name={isPasswordVisible ? 'EyeOff' : 'Eye'} className="h-4 w-4" />
+                </button>
+              }
             />
           </div>
 

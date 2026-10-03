@@ -1,93 +1,77 @@
 ---
 name: checkpoint
 description: >-
-  Saves the current chat context to ~/dev/active/<task>/ so it can be restored
-  in a new chat session. Writes three plain-markdown files (plan, context, tasks)
-  that are tool-agnostic and readable by any AI assistant. Use when the user says
-  "checkpoint", "save context", "prepare handoff", "context is getting full", or
-  "start a new chat".
+  Saves the current chat context to local Engram (user-engram-personal, project
+  style-sync) so it can be restored in a new chat session. Use when the user
+  says "checkpoint", "save context", "prepare handoff", "context is getting
+  full", or "start a new chat".
 disable-model-invocation: true
 ---
 
 # Checkpoint
 
-Snapshot the current conversation state so any AI tool can continue the work in a new session.
+Snapshot the current conversation state into local Engram so the next session can continue.
+
+Do **not** write markdown under `~/dev/active/` or `~/dev/tasks/active/`.
 
 ## Step 1 — Determine Task Name
 
 Infer the task name from the current conversation (kebab-case, concise, e.g. `refactor-auth-flow`).
 If ambiguous, ask: _"What should I call this task?"_
 
-## Step 2 — Create/Update Files
+## Step 2 — Persist to Engram
 
-Write all three files to `~/dev/active/<task-name>/`. Overwrite if they already exist.
+Follow `.cursor/rules/engram.mdc`: `GetDynamicTools` on `user-engram-personal`, then `CallDynamicTool`. Pin `project: "style-sync"` on every call.
 
-### `<task>-plan.md`
+1. `mem_save` — one observation covering the handoff:
+   - `title`: the task name
+   - `type`: `decision` (or `architecture` if that is the bulk of the work)
+   - `content` using `**What**` / `**Why**` / `**Where**` / `**Learned**`:
+     - What: objective and current state
+     - Why: agreed approach and key decisions that must not be revisited
+     - Where: files touched (paths only, not contents)
+     - Learned: blockers, open questions, env notes (branch, Issue `#N`, tool versions)
+   - Include completed vs pending work in **Learned** so the next session can resume the checklist.
+
+2. If `mem_save` returns `judgment_required`, resolve via `mem_judge` per the Engram rule.
+
+3. `mem_session_summary` with:
+
 ```
-# Plan: <task-name>
+## Goal
+[One sentence]
 
-## Objective
-[One-sentence goal]
+## Instructions
+[How the user wants this done, if notable]
 
-## Approach
-[Bullet points of the agreed strategy]
+## Discoveries
+- [Gotchas]
 
-## Key Decisions
-[Decisions already made that must not be revisited]
+## Accomplished
+- ✅ [Done]
+- 🔲 [Not yet]
 
-_Last Updated: <ISO timestamp>_
-```
+## Next Steps
+- [For the next session]
 
-### `<task>-context.md`
-```
-# Context: <task-name>
-
-## Current State
-[What has been done so far, in chronological order]
-
-## Files Touched
-[List of files created or modified, with brief note on each]
-
-## Blockers / Open Questions
-[Anything unresolved]
-
-## Environment Notes
-[Relevant env vars, branch names, tool versions, etc.]
-
-_Last Updated: <ISO timestamp>_
-```
-
-### `<task>-tasks.md`
-```
-# Tasks: <task-name>
-
-## Completed
-- [x] Task A
-- [x] Task B
-
-## Pending
-- [ ] Task C
-- [ ] Task D
-
-_Last Updated: <ISO timestamp>_
+## Relevant Files
+- path — [why it matters]
 ```
 
 ## Step 3 — Print Handoff Summary
 
-After writing the files, output a ready-to-paste block the user can drop into the next chat:
+After Engram accepts the save, output a ready-to-paste block for the next chat:
 
 ```
 ---
 ## Continuing: <task-name>
 
-Context files loaded from ~/dev/active/<task-name>/.
+Load local Engram (`user-engram-personal`, project `style-sync`): mem_context + mem_search for "<task-name>".
 Say "continue <task-name>" to resume.
 ---
 ```
 
 ## Notes
 
-- Files are plain Markdown — readable by Claude.ai, Gemini, Windsurf, or any other tool.
-- The `~/dev/active/` directory is outside any repo — nothing is committed.
-- Cursor-specific behavior (this skill + the `context-engineering` rule) is isolated in `~/.cursor/`.
-- A task is "done" when all items in `<task>-tasks.md` are `[x]`. Archive by moving the directory: `mv ~/dev/active/<task> ~/dev/done/<task>`.
+- Memories go in the personal Engram store (`~/.engram-personal`), keyed as `style-sync` from `.engram/config.json`. That store is shared by other personal projects — do not save under a different key.
+- A task is done when `mem_session_summary` has no remaining Next Steps / pending items. No filesystem archive step.

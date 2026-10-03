@@ -26,6 +26,7 @@ This skill orchestrates other skills: it calls [git-workflow](../git-workflow/SK
 
 - The `git-workflow` skill must be wired ([gh-setup](../git-workflow/gh-setup.md) or [mcp-setup](../git-workflow/mcp-setup.md)). Tooling choice persists in `.cursor/skills/git-workflow/.last-tool`.
 - A linked GitHub Issue `#N` must exist. If not, use [create-task](../create-task/SKILL.md) first to create it.
+- Load Engram for this Issue/branch before planning (`user-engram-personal`, `project: "style-sync"` — see [.cursor/rules/engram.mdc](../../rules/engram.mdc)). Save decisions with `mem_save` as they land.
 
 ## Mandatory startup reads
 
@@ -97,7 +98,7 @@ Update the PR description as implementation progresses (see Phase 5).
    - Implement.
    - Commit using Conventional Commits: `feat(server/<scope>): ...`, `fix(server/<scope>): ...`, `refactor(server/<scope>): ...`, etc.
    - Mark `completed`.
-3. Parallel execution is allowed only for large, clearly independent tasks (4+ tasks, no shared files, no ordering dependencies). Use up to 4 subagents via the `Multitask` tool; integrate their output afterwards.
+3. Parallel execution is allowed only for large, clearly independent tasks (4+ tasks, no shared files, no ordering dependencies). Use up to 4 `Task` subagents; integrate their output afterwards.
 
 #### TypeScript / NestJS guidelines
 
@@ -123,7 +124,7 @@ Do **not** push at this stage unless the PR is already open and continuous updat
 
 Generate a playbook with manual tests by developer and wait the developer approval. Use the "Critérios de Aceitação" section from GitHub Issue `#N` as reference for manual tests.
 
-If there would be any implementation issue, the developer can ask for fix, You have to clarify intention using one of the `AskUser`, `Plan` or `Multitask` mode.
+If there would be any implementation issue, the developer can ask for a fix. Clarify intention with `AskQuestion` or `SwitchMode` → `plan`. Use parallel `Task` subagents only when the work is large and independent (see Decision: when to parallelize).
 
 ### Phase 7: Final validation and doc updates
 
