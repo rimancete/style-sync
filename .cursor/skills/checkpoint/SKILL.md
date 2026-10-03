@@ -73,5 +73,5 @@ Say "continue <task-name>" to resume.
 
 ## Notes
 
-- Memories go in the personal Engram store (`~/.engram-personal`), keyed as `style-sync` from `.engram/config.json`. That store is shared by other personal projects — do not save under a different key. Do not commit `.engram/` DB files (see `.gitignore`).
+- Memories go in the personal Engram store (`~/.engram-personal`), keyed as `style-sync` from `.engram/config.json`. That store is shared by other personal projects — do not save under a different key.
 - A task is done when `mem_session_summary` has no remaining Next Steps / pending items. No filesystem archive step.

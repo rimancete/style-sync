@@ -45,5 +45,4 @@ A chronological log of significant implementation milestones for the StyleSync f
 - **Admin guard**: `_authenticated/admin` `beforeLoad` requires `role === 'ADMIN'`; others go to `/`. Server remains the authorizer.
 - **Password**: `FormElements.Input` `endIcon` (wrapper outside `FormControl`). Eye / EyeOff toggle, `pr-10`, disabled while pending.
 - **Tests**: Login screen MSW coverage for ADMIN/CLIENT/STAFF destinations, 401 without refresh, 422 field errors, public bounce, admin guard, return URL, malicious redirect, password toggle. Leftovers from PR #13: `restoreSession` clears on failed refresh; `scopeQueryKey` isolates by tenant.
-- **Manual**: [`docs/frontend/login-smooth-tests.md`](./login-smooth-tests.md) — 10 scenarios against the real API.
 

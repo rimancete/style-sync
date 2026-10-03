@@ -53,4 +53,4 @@ This document tracks the progress of the frontend implementation.
 
 ## 5. Current Focus
 
-Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: epic [#10](https://github.com/rimancete/style-sync/issues/10) — [#12](https://github.com/rimancete/style-sync/issues/12) Login API integration on branch `12-login-api-integration`. Manual playbook: [`docs/frontend/login-smooth-tests.md`](./login-smooth-tests.md). Next after sign-off: remaining epic #10 items (registration is still a stub).
+Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: epic [#10](https://github.com/rimancete/style-sync/issues/10) — [#12](https://github.com/rimancete/style-sync/issues/12) Login API integration on branch `12-login-api-integration`. Next after sign-off: remaining epic #10 items (registration is still a stub).
