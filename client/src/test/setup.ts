@@ -4,6 +4,14 @@ import { afterEach, beforeAll, afterAll } from 'vitest';
 
 import { server } from '../mocks/server';
 
+class ResizeObserverStub {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+globalThis.ResizeObserver = ResizeObserverStub;
+
 beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' });
 });

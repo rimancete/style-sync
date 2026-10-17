@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as AuthenticatedUserRouteRouteImport } from './routes/_authenticated/user/route'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
@@ -21,6 +20,7 @@ import { Route as AuthenticatedAdminProfileRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminPlanRouteImport } from './routes/_authenticated/admin/plan'
 import { Route as AuthenticatedAdminClubRouteImport } from './routes/_authenticated/admin/club'
 import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authenticated/admin/bookings'
+import { Route as PublicSalonSlugRegisterRouteImport } from './routes/_public/salon/$slug/register'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -34,11 +34,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const PublicRegisterRoute = PublicRegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => PublicRoute,
 } as any)
 const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
@@ -83,30 +78,35 @@ const AuthenticatedAdminBookingsRoute =
     path: '/bookings',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const PublicSalonSlugRegisterRoute = PublicSalonSlugRegisterRouteImport.update({
+  id: '/salon/$slug/register',
+  path: '/salon/$slug/register',
+  getParentRoute: () => PublicRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/user': typeof AuthenticatedUserRouteRouteWithChildren
   '/login': typeof PublicLoginRoute
-  '/register': typeof PublicRegisterRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
   '/admin/club': typeof AuthenticatedAdminClubRoute
   '/admin/plan': typeof AuthenticatedAdminPlanRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/user/profile': typeof AuthenticatedUserProfileRoute
+  '/salon/$slug/register': typeof PublicSalonSlugRegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/user': typeof AuthenticatedUserRouteRouteWithChildren
   '/login': typeof PublicLoginRoute
-  '/register': typeof PublicRegisterRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
   '/admin/club': typeof AuthenticatedAdminClubRoute
   '/admin/plan': typeof AuthenticatedAdminPlanRoute
   '/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/user/profile': typeof AuthenticatedUserProfileRoute
+  '/salon/$slug/register': typeof PublicSalonSlugRegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,12 +116,12 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/user': typeof AuthenticatedUserRouteRouteWithChildren
   '/_public/login': typeof PublicLoginRoute
-  '/_public/register': typeof PublicRegisterRoute
   '/_authenticated/admin/bookings': typeof AuthenticatedAdminBookingsRoute
   '/_authenticated/admin/club': typeof AuthenticatedAdminClubRoute
   '/_authenticated/admin/plan': typeof AuthenticatedAdminPlanRoute
   '/_authenticated/admin/profile': typeof AuthenticatedAdminProfileRoute
   '/_authenticated/user/profile': typeof AuthenticatedUserProfileRoute
+  '/_public/salon/$slug/register': typeof PublicSalonSlugRegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -130,24 +130,24 @@ export interface FileRouteTypes {
     | '/admin'
     | '/user'
     | '/login'
-    | '/register'
     | '/admin/bookings'
     | '/admin/club'
     | '/admin/plan'
     | '/admin/profile'
     | '/user/profile'
+    | '/salon/$slug/register'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
     | '/user'
     | '/login'
-    | '/register'
     | '/admin/bookings'
     | '/admin/club'
     | '/admin/plan'
     | '/admin/profile'
     | '/user/profile'
+    | '/salon/$slug/register'
   id:
     | '__root__'
     | '/'
@@ -156,12 +156,12 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/user'
     | '/_public/login'
-    | '/_public/register'
     | '/_authenticated/admin/bookings'
     | '/_authenticated/admin/club'
     | '/_authenticated/admin/plan'
     | '/_authenticated/admin/profile'
     | '/_authenticated/user/profile'
+    | '/_public/salon/$slug/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -192,13 +192,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_public/register': {
-      id: '/_public/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof PublicRegisterRouteImport
-      parentRoute: typeof PublicRoute
     }
     '/_public/login': {
       id: '/_public/login'
@@ -256,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBookingsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_public/salon/$slug/register': {
+      id: '/_public/salon/$slug/register'
+      path: '/salon/$slug/register'
+      fullPath: '/salon/$slug/register'
+      preLoaderRoute: typeof PublicSalonSlugRegisterRouteImport
+      parentRoute: typeof PublicRoute
+    }
   }
 }
 
@@ -309,12 +309,12 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 
 interface PublicRouteChildren {
   PublicLoginRoute: typeof PublicLoginRoute
-  PublicRegisterRoute: typeof PublicRegisterRoute
+  PublicSalonSlugRegisterRoute: typeof PublicSalonSlugRegisterRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
   PublicLoginRoute: PublicLoginRoute,
-  PublicRegisterRoute: PublicRegisterRoute,
+  PublicSalonSlugRegisterRoute: PublicSalonSlugRegisterRoute,
 }
 
 const PublicRouteWithChildren =

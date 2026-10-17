@@ -71,14 +71,19 @@ export const handlers = [
     });
   }),
 
-  http.post(`${baseUrl}/api/auth/register`, () => {
-    return HttpResponse.json({
-      data: createMockAuthResponse({
-        email: 'test@example.com',
-        role: 'CLIENT',
-        userName: 'Test User',
-      }),
-    });
+  http.post(`${baseUrl}/api/salon/:slug/auth/register`, async ({ request }) => {
+    const body = (await request.json()) as { email?: string; name?: string };
+
+    return HttpResponse.json(
+      {
+        data: createMockAuthResponse({
+          email: body.email ?? 'test@example.com',
+          role: 'CLIENT',
+          userName: body.name ?? 'Test User',
+        }),
+      },
+      { status: 201 }
+    );
   }),
 
   http.get(`${baseUrl}/api/customers/my-customers`, () => {

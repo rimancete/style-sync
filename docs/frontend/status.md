@@ -17,7 +17,7 @@ This document tracks the progress of the frontend implementation.
 - [x] UI Library (Button, Input, Card, Modal, etc.)
 - [x] Icon System (Custom SVG)
 - [x] Form Components (Controlled with React Hook Form)
-- [x] shadcn primitives used by Login (`button`, `input`, `label`, `form`, `alert`)
+- [x] shadcn primitives used by Login and Register (`button`, `input`, `label`, `form`, `alert`, `checkbox`, `alert-dialog`)
 - [x] `FormElements.Input` wrapper (RHF Controller + shadcn Form a11y)
 - [x] Toast primitives (`toast`, `toaster`) + `notify` helper
 
@@ -28,7 +28,9 @@ This document tracks the progress of the frontend implementation.
   - [x] Mobile decorative SVGs
   - [x] `/` → `/login` redirect when unauthenticated
   - [x] Password visibility toggle (`endIcon` + Eye / EyeOff)
-- [ ] Registration Screen
+- [x] Registration Screen (Issue #15)
+  - [x] `/salon/:slug/register` with the login card shell and a register-specific banner
+  - [x] RHF + Zod, inline alert, 428 link dialog
 - [ ] Home Page
 - [ ] Booking Flow
   - [ ] Branch Selection
@@ -44,7 +46,7 @@ This document tracks the progress of the frontend implementation.
 - [x] Auth login mutation writes the real `AuthResponse` contract (UX polish is #12)
 - [x] Login UX: status-mapped errors, safe `search.redirect`, ADMIN layout guard (Issue #12)
 - [x] Session probe: `GET /api/customers/my-customers` on authenticated Home
-- [ ] Auth register
+- [x] Auth register (`POST /api/salon/:slug/auth/register`, Issue #15)
 - [ ] Branches (List/Get)
 - [ ] Services (List/Get)
 - [ ] Professionals (List/Get)
@@ -53,4 +55,4 @@ This document tracks the progress of the frontend implementation.
 
 ## 5. Current Focus
 
-Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: epic [#10](https://github.com/rimancete/style-sync/issues/10) — [#12](https://github.com/rimancete/style-sync/issues/12) Login API integration on branch `12-login-api-integration`. Next after sign-off: remaining epic #10 items (registration is still a stub).
+Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Login (#10–#12) is done. Current slice: [#15](https://github.com/rimancete/style-sync/issues/15) Register API integration on branch `15-register-api-integration`. Next after sign-off: tenant context and branding. Manual checks live in [`register-smooth-tests.md`](./register-smooth-tests.md).
