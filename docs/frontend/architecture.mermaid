@@ -6,6 +6,7 @@ graph TD
         Context[Constate/Local Context]
         Query[TanStack Query]
         Login[Login Screen Modules]
+        Register[Register Screen Modules]
         Toaster[Toaster / notify]
     end
 
@@ -14,6 +15,12 @@ graph TD
         FormView[LoginFormView]
         ViewTransition[ViewTransition]
         FormElements[FormElements.Input]
+    end
+
+    subgraph "Register Composition"
+        RegisterBanner[Register Banner lg+]
+        RegisterForm[RegisterFormView]
+        LinkDialog[LinkAccountDialog 428]
     end
 
     subgraph "Data & Logic Layer"
@@ -36,13 +43,18 @@ graph TD
     UI --> Context
     UI --> Query
     UI --> Login
+    UI --> Register
     UI --> Toaster
 
     Router -->|ADMIN only| AdminHome[Admin layout guard]
     Login --> Banner
     Login --> FormView
+    Register --> RegisterBanner
+    Register --> RegisterForm
+    Register --> LinkDialog
     FormView --> ViewTransition
     FormView --> FormElements
+    RegisterForm --> FormElements
 
     Query --> API
     API --> Facades

@@ -1,121 +1,161 @@
-import { Link } from '@tanstack/react-router';
+import { useMemo, useRef, useState } from 'react';
+import { useForm, type UseFormSetError } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
-export function RegisterScreen() {
+import { useRegister, type RegisterPayload } from '~/api/auth';
+import { ConfirmDialog } from '~/components/dialogs';
+
+import { Banner } from './components/Banner/Banner';
+import { RegisterFormView } from './components/RegisterFormView';
+import {
+  createRegisterSchema,
+  HTTP_BAD_REQUEST,
+  HTTP_CONFLICT,
+  HTTP_PRECONDITION_REQUIRED,
+  HTTP_UNPROCESSABLE_ENTITY,
+  REGISTER_DEFAULT_VALUES,
+  REGISTER_FIELD_NAMES,
+  type RegisterFieldName,
+  type RegisterFormSchema,
+} from './constants';
+
+type RegisterScreenProps = {
+  slug: string;
+};
+
+export function RegisterScreen({ slug }: RegisterScreenProps) {
   const { t } = useTranslation('auth');
+  const { mutate: register, isPending, error } = useRegister(slug);
+  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
+  const pendingPayload = useRef<RegisterPayload | null>(null);
+
+  const schema = useMemo(() => createRegisterSchema(t), [t]);
+  const methods = useForm<RegisterFormSchema>({
+    resolver: zodResolver(schema),
+    defaultValues: REGISTER_DEFAULT_VALUES,
+  });
+
+  function handleError(apiError: APIError) {
+    if (apiError.status === HTTP_PRECONDITION_REQUIRED) {
+      setIsLinkDialogOpen(true);
+      return;
+    }
+
+    applyRegisterFieldErrors(apiError, methods.setError, t);
+  }
+
+  function onSubmit(data: RegisterFormSchema) {
+    const payload = toRegisterPayload(data);
+    pendingPayload.current = payload;
+    register(payload, { onError: handleError });
+  }
+
+  function confirmLink() {
+    const payload = pendingPayload.current;
+    if (!payload) {
+      return;
+    }
+
+    register({ ...payload, confirmLink: true }, { onError: handleError });
+  }
 
   return (
-    <div className="flex h-screen">
-      <div className="hidden lg:flex lg:w-1/2 bg-primary items-center justify-center p-12">
-        <div className="max-w-md text-primary-foreground">
-          <h1 className="text-5xl font-bold mb-6">Join Our Community</h1>
-          <p className="text-xl">
-            Create your account and start booking your appointments with ease.
-          </p>
-          <ul className="mt-8 space-y-3">
-            <li className="flex items-center gap-3">
-              <span className="text-2xl">✓</span>
-              <span>Easy online booking 24/7</span>
-            </li>
-            <li className="flex items-center gap-3">
-              <span className="text-2xl">✓</span>
-              <span>Exclusive member discounts</span>
-            </li>
-            <li className="flex items-center gap-3">
-              <span className="text-2xl">✓</span>
-              <span>Loyalty rewards program</span>
-            </li>
-          </ul>
+    <div className="relative box-border flex min-h-screen w-full max-w-[100vw] min-w-0 flex-col items-center justify-center gap-4 overflow-x-hidden bg-background px-4 py-4 lg:grid lg:grid-cols-2 lg:items-center lg:gap-6 lg:px-6">
+      <Banner />
+
+      <div className="relative flex h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)] min-h-0 w-full min-w-0 flex-col justify-center overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-md flex-col items-stretch justify-center gap-3">
+          <RegisterFormView
+            methods={methods}
+            onSubmit={onSubmit}
+            isPending={isPending}
+            errorMessage={getRegisterAlertMessage(error, t)}
+          />
         </div>
       </div>
 
-      <div className="flex w-full lg:w-1/2 items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold">{t('register.title')}</h2>
-            <p className="text-muted-foreground mt-2">{t('register.subtitle')}</p>
-          </div>
+      <img
+        src="/login-topo-top.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute right-0 top-0 w-full text-foreground lg:hidden"
+      />
+      <img
+        src="/login-topo-bottom.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 right-0 w-full text-foreground lg:hidden"
+      />
 
-          <form className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">{t('register.fullName')}</label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="John Doe"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">{t('register.email')}</label>
-              <input
-                type="email"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="you@example.com"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">{t('register.phoneNumber')}</label>
-              <input
-                type="tel"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="+1 (555) 000-0000"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">{t('register.password')}</label>
-              <input
-                type="password"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                {t('register.confirmPassword')}
-              </label>
-              <input
-                type="password"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div className="flex items-start gap-2">
-              <input type="checkbox" className="mt-1" />
-              <label className="text-sm text-muted-foreground">
-                {t('register.terms')}{' '}
-                <a href="#" className="text-primary hover:underline">
-                  {t('register.termsOfService')}
-                </a>{' '}
-                {t('register.and')}{' '}
-                <a href="#" className="text-primary hover:underline">
-                  {t('register.privacyPolicy')}
-                </a>
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-medium hover:opacity-90"
-            >
-              {t('register.createAccount')}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              {t('register.alreadyHaveAccount')}{' '}
-              <Link to="/login" className="text-primary hover:underline font-medium">
-                {t('register.signIn')}
-              </Link>
-            </p>
-          </div>
-        </div>
-      </div>
+      <ConfirmDialog
+        open={isLinkDialogOpen}
+        isPending={isPending}
+        title={t('register.linkTitle')}
+        description={t('register.linkDescription')}
+        cancelLabel={t('register.linkCancel')}
+        confirmLabel={t('register.linkConfirm')}
+        onOpenChange={setIsLinkDialogOpen}
+        onConfirm={confirmLink}
+      />
     </div>
   );
+}
+
+function toRegisterPayload(values: RegisterFormSchema): RegisterPayload {
+  const phone = values.phone.trim();
+
+  return {
+    name: values.name.trim(),
+    email: values.email.trim(),
+    password: values.password,
+    ...(phone.length > 0 ? { phone } : {}),
+  };
+}
+
+function isRegisterField(field: string): field is RegisterFieldName {
+  return REGISTER_FIELD_NAMES.some((name) => name === field);
+}
+
+function applyRegisterFieldErrors(
+  error: APIError,
+  setError: UseFormSetError<RegisterFormSchema>,
+  t: TFunction<'auth'>
+) {
+  if (error.status !== HTTP_UNPROCESSABLE_ENTITY || !error.errors) {
+    return;
+  }
+
+  for (const [field, messages] of Object.entries(error.errors)) {
+    if (!isRegisterField(field)) {
+      continue;
+    }
+
+    setError(field, {
+      type: 'server',
+      message: messages[0] ?? t('errors.validation'),
+    });
+  }
+}
+
+function getRegisterAlertMessage(error: APIError | null, t: TFunction<'auth'>): string | undefined {
+  if (!error || error.status === HTTP_PRECONDITION_REQUIRED) {
+    return undefined;
+  }
+
+  if (error.status === HTTP_UNPROCESSABLE_ENTITY) {
+    const hasMappedField = REGISTER_FIELD_NAMES.some((field) => error.errors?.[field]?.[0]);
+    return hasMappedField ? undefined : t('errors.validation');
+  }
+
+  if (error.status === HTTP_CONFLICT) {
+    return t('errors.alreadyLinked');
+  }
+
+  if (error.status === HTTP_BAD_REQUEST) {
+    return t('errors.salonUnavailable');
+  }
+
+  return t('errors.registerFailed');
 }

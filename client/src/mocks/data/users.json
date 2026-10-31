@@ -1,0 +1,20 @@
+{
+  "password": "123456",
+  "users": {
+    "admin@stylesync.com": {
+      "role": "ADMIN",
+      "userName": "Admin User",
+      "userId": "admin-1"
+    },
+    "client@test.com": {
+      "role": "CLIENT",
+      "userName": "Test User",
+      "userId": "client-1"
+    },
+    "staff@stylesync.com": {
+      "role": "STAFF",
+      "userName": "Staff User",
+      "userId": "staff-1"
+    }
+  }
+}

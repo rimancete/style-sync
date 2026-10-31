@@ -46,3 +46,11 @@ A chronological log of significant implementation milestones for the StyleSync f
 - **Password**: `FormElements.Input` `endIcon` (wrapper outside `FormControl`). Eye / EyeOff toggle, `pr-10`, disabled while pending.
 - **Tests**: Login screen MSW coverage for ADMIN/CLIENT/STAFF destinations, 401 without refresh, 422 field errors, public bounce, admin guard, return URL, malicious redirect, password toggle. Leftovers from PR #13: `restoreSession` clears on failed refresh; `scopeQueryKey` isolates by tenant.
 
+## 2026-10-17: Register API integration (Issue #15)
+
+- **Route**: public `/register` replaced by `/salon/:slug/register`. The create-account link left `/login` until tenant context exists. Register still links back to `/login`.
+- **API**: `useRegister(slug)` posts `{ name, email, password, phone? }` to `POST /api/salon/:slug/auth/register`, stores `AuthResponse`, and navigates to `/`. `confirmPassword` and the terms checkbox stay on the client. A blank slug does not POST.
+- **428**: inline dialog asks to link an existing account. Cancel does not retry. Confirm resends the same payload with `confirmLink: true`. The copy says the typed password is not checked against the existing account. `409` and `400` use the inline alert (`showError: false`).
+- **Banner**: register keeps its own headline, subtitle, and three benefits, in the login banner card (gradient, parallax, rotating slides), translated in EN and PT.
+- **Manual checks**: signed off against the real API. Playbook removed after sign-off.
+

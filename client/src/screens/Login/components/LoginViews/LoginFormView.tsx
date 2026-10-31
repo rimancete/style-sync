@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Link } from '@tanstack/react-router';
 
 import { FormElements } from '~/components/form-elements';
 import { Icon } from '~/components/Icon';
@@ -77,13 +76,6 @@ export function LoginFormView({ methods, onSubmit, isPending, errorMessage }: Lo
           </Button>
         </form>
       </Form>
-
-      <p className="text-center text-sm text-muted-foreground">
-        {t('login.noAccount')}{' '}
-        <Link to="/register" className="font-medium text-primary hover:underline">
-          {t('login.signUp')}
-        </Link>
-      </p>
     </ViewTransition>
   );
 }

@@ -1,2 +1,2 @@
 export { useLogin } from './useLogin';
-export { useRegister } from './useRegister';
+export { useRegister, type RegisterPayload } from './useRegister';

@@ -176,6 +176,13 @@ describe('Login screen', () => {
     expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
   });
 
+  it('does not offer a link to registration', async () => {
+    await renderApp('/login');
+    await waitForLoginForm();
+
+    expect(screen.queryByRole('link', { name: /sign up/i })).not.toBeInTheDocument();
+  });
+
   it('toggles password visibility without changing the submitted value', async () => {
     await renderApp('/login');
     await waitForLoginForm();

@@ -1,0 +1,5 @@
+[
+  { "id": "1", "name": "Social + Beard", "price": 85.0, "duration": 60 },
+  { "id": "2", "name": "Social (Scissors or Clipper)", "price": 40.0, "duration": 45 },
+  { "id": "3", "name": "Eyebrow", "price": 15.0, "duration": 15 }
+]
