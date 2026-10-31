@@ -55,4 +55,4 @@ This document tracks the progress of the frontend implementation.
 
 ## 5. Current Focus
 
-Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Login (#10–#12) is done. Current slice: [#15](https://github.com/rimancete/style-sync/issues/15) Register API integration on branch `15-register-api-integration`. Next after sign-off: tenant context and branding. Manual checks live in [`register-smooth-tests.md`](./register-smooth-tests.md).
+Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Login (#10–#12) is done. Current slice: [#15](https://github.com/rimancete/style-sync/issues/15) Register API integration on branch `15-register-api-integration`. Next after sign-off: tenant context and branding.

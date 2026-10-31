@@ -4,6 +4,7 @@ import { afterEach, beforeAll, afterAll } from 'vitest';
 
 import { server } from '../mocks/server';
 
+// jsdom has no ResizeObserver; Radix alert dialog reads it while mounting.
 class ResizeObserverStub {
   observe() {}
   unobserve() {}

@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,32 +9,38 @@ import {
   AlertDialogTitle,
 } from '~/components/ui/alert-dialog';
 
-type LinkAccountDialogProps = {
+export type ConfirmDialogProps = {
   open: boolean;
-  isPending: boolean;
+  isPending?: boolean;
+  title: string;
+  description: string;
+  confirmLabel: string;
+  cancelLabel: string;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
 };
 
-export function LinkAccountDialog({
+export function ConfirmDialog({
   open,
-  isPending,
+  isPending = false,
+  title,
+  description,
+  confirmLabel,
+  cancelLabel,
   onOpenChange,
   onConfirm,
-}: LinkAccountDialogProps) {
-  const { t } = useTranslation('auth');
-
+}: ConfirmDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t('register.linkTitle')}</AlertDialogTitle>
-          <AlertDialogDescription>{t('register.linkDescription')}</AlertDialogDescription>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>{t('register.linkCancel')}</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>{cancelLabel}</AlertDialogCancel>
           <AlertDialogAction type="button" disabled={isPending} onClick={onConfirm}>
-            {t('register.linkConfirm')}
+            {confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

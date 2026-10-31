@@ -5,9 +5,9 @@ import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
 import { useRegister, type RegisterPayload } from '~/api/auth';
+import { ConfirmDialog } from '~/components/dialogs';
 
 import { Banner } from './components/Banner/Banner';
-import { LinkAccountDialog } from './components/LinkAccountDialog';
 import { RegisterFormView } from './components/RegisterFormView';
 import {
   createRegisterSchema,
@@ -89,9 +89,13 @@ export function RegisterScreen({ slug }: RegisterScreenProps) {
         className="pointer-events-none absolute bottom-0 right-0 w-full text-foreground lg:hidden"
       />
 
-      <LinkAccountDialog
+      <ConfirmDialog
         open={isLinkDialogOpen}
         isPending={isPending}
+        title={t('register.linkTitle')}
+        description={t('register.linkDescription')}
+        cancelLabel={t('register.linkCancel')}
+        confirmLabel={t('register.linkConfirm')}
         onOpenChange={setIsLinkDialogOpen}
         onConfirm={confirmLink}
       />

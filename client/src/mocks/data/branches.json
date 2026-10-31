@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1",
+    "name": "Unit 1",
+    "address": "98 Mario Pedro Vercellino Avenue",
+    "phoneNumber": "+1 (555) 123-4567"
+  },
+  {
+    "id": "2",
+    "name": "Unit 2",
+    "address": "152 Professor José Assad Atalla Júnior Street",
+    "phoneNumber": "+1 (555) 987-6543"
+  }
+]

@@ -1,28 +1,25 @@
 import { http, HttpResponse } from 'msw';
 
 import { createMockAuthResponse, MOCK_CUSTOMER } from './auth';
+import booking from './data/booking.json';
+import branches from './data/branches.json';
+import professionals from './data/professionals.json';
+import services from './data/services.json';
+import usersFixture from './data/users.json';
 
 const baseUrl = 'http://localhost:3001';
 
-const VALID_PASSWORD = '123456';
+const VALID_PASSWORD = usersFixture.password;
 
-const MOCK_USERS = {
-  'admin@stylesync.com': {
-    role: 'ADMIN' as const,
-    userName: 'Admin User',
-    userId: 'admin-1',
-  },
-  'client@test.com': {
-    role: 'CLIENT' as const,
-    userName: 'Test User',
-    userId: 'client-1',
-  },
-  'staff@stylesync.com': {
-    role: 'STAFF' as const,
-    userName: 'Staff User',
-    userId: 'staff-1',
-  },
+type MockRole = 'ADMIN' | 'CLIENT' | 'STAFF';
+
+type MockUser = {
+  role: MockRole;
+  userName: string;
+  userId: string;
 };
+
+const MOCK_USERS = usersFixture.users as Record<string, MockUser>;
 
 export const handlers = [
   http.post(`${baseUrl}/api/auth/login`, async ({ request }) => {
@@ -39,7 +36,7 @@ export const handlers = [
       );
     }
 
-    const user = MOCK_USERS[body.email as keyof typeof MOCK_USERS];
+    const user = MOCK_USERS[body.email];
 
     if (!user || body.password !== VALID_PASSWORD) {
       return HttpResponse.json({ status: 401, message: 'Invalid credentials' }, { status: 401 });
@@ -94,54 +91,25 @@ export const handlers = [
 
   http.get(`${baseUrl}/api/branches`, () => {
     return HttpResponse.json({
-      data: [
-        {
-          id: '1',
-          name: 'Unit 1',
-          address: '98 Mario Pedro Vercellino Avenue',
-          phoneNumber: '+1 (555) 123-4567',
-        },
-        {
-          id: '2',
-          name: 'Unit 2',
-          address: '152 Professor José Assad Atalla Júnior Street',
-          phoneNumber: '+1 (555) 987-6543',
-        },
-      ],
+      data: branches,
     });
   }),
 
   http.get(`${baseUrl}/api/services`, () => {
     return HttpResponse.json({
-      data: [
-        { id: '1', name: 'Social + Beard', price: 85.0, duration: 60 },
-        { id: '2', name: 'Social (Scissors or Clipper)', price: 40.0, duration: 45 },
-        { id: '3', name: 'Eyebrow', price: 15.0, duration: 15 },
-      ],
+      data: services,
     });
   }),
 
   http.get(`${baseUrl}/api/professionals`, () => {
     return HttpResponse.json({
-      data: [
-        { id: '1', name: 'Michel' },
-        { id: '2', name: 'Luis' },
-        { id: '3', name: 'Dario' },
-        { id: '4', name: 'Andre' },
-      ],
+      data: professionals,
     });
   }),
 
   http.post(`${baseUrl}/api/bookings`, () => {
     return HttpResponse.json({
-      data: {
-        id: '1',
-        branchId: '1',
-        serviceId: '1',
-        professionalId: '2',
-        dateTime: '2026-01-20T14:50:00Z',
-        status: 'pending',
-      },
+      data: booking,
     });
   }),
 ];

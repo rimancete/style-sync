@@ -52,5 +52,5 @@ A chronological log of significant implementation milestones for the StyleSync f
 - **API**: `useRegister(slug)` posts `{ name, email, password, phone? }` to `POST /api/salon/:slug/auth/register`, stores `AuthResponse`, and navigates to `/`. `confirmPassword` and the terms checkbox stay on the client. A blank slug does not POST.
 - **428**: inline dialog asks to link an existing account. Cancel does not retry. Confirm resends the same payload with `confirmLink: true`. The copy says the typed password is not checked against the existing account. `409` and `400` use the inline alert (`showError: false`).
 - **Banner**: register keeps its own headline, subtitle, and three benefits, in the login banner card (gradient, parallax, rotating slides), translated in EN and PT.
-- **Manual checks**: [`register-smooth-tests.md`](./register-smooth-tests.md).
+- **Manual checks**: signed off against the real API. Playbook removed after sign-off.
 

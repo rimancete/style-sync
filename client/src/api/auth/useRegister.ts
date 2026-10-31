@@ -27,6 +27,9 @@ export function useRegister(slug: string) {
     },
   });
 
+  /**
+   * Skips the request when the salon slug is blank, so a route without a slug never POSTs.
+   */
   function mutate(variables: RegisterPayload, options?: Parameters<typeof mutation.mutate>[1]) {
     if (slug.trim().length === 0) {
       return;
