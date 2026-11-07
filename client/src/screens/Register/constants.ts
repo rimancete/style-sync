@@ -3,6 +3,8 @@ import { z } from 'zod';
 
 import { PASSWORD_MIN_LENGTH } from '~/screens/Login/constants';
 
+import { isValidRegisterPhone, SUPPORTED_PHONE_COUNTRIES } from './phone';
+
 export const HTTP_BAD_REQUEST = 400;
 export const HTTP_CONFLICT = 409;
 export const HTTP_UNPROCESSABLE_ENTITY = 422;
@@ -18,6 +20,7 @@ export function createRegisterSchema(t: TFunction<'auth'>) {
       name: z.string().min(1, { message: t('errors.required') }),
       email: z.string().email({ message: t('errors.invalidEmail') }),
       phone: z.string(),
+      phoneCountry: z.enum(SUPPORTED_PHONE_COUNTRIES),
       password: z.string().min(PASSWORD_MIN_LENGTH, {
         message: t('errors.minLength', { count: PASSWORD_MIN_LENGTH }),
       }),
@@ -29,7 +32,15 @@ export function createRegisterSchema(t: TFunction<'auth'>) {
     .refine((values) => values.password === values.confirmPassword, {
       path: ['confirmPassword'],
       message: t('errors.passwordMismatch'),
-    });
+    })
+    .refine(
+      (values) =>
+        values.phone.trim().length === 0 || isValidRegisterPhone(values.phone, values.phoneCountry),
+      {
+        path: ['phone'],
+        message: t('errors.invalidPhone'),
+      }
+    );
 }
 
 export type RegisterFormSchema = z.infer<ReturnType<typeof createRegisterSchema>>;
@@ -38,6 +49,7 @@ export const REGISTER_DEFAULT_VALUES: RegisterFormSchema = {
   name: '',
   email: '',
   phone: '',
+  phoneCountry: 'US',
   password: '',
   confirmPassword: '',
   acceptedTerms: false,

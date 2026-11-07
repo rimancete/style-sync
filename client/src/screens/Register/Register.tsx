@@ -20,13 +20,14 @@ import {
   type RegisterFieldName,
   type RegisterFormSchema,
 } from './constants';
+import { defaultPhoneCountry } from './phone';
 
 type RegisterScreenProps = {
   slug: string;
 };
 
 export function RegisterScreen({ slug }: RegisterScreenProps) {
-  const { t } = useTranslation('auth');
+  const { t, i18n } = useTranslation('auth');
   const { mutate: register, isPending, error } = useRegister(slug);
   const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
   const pendingPayload = useRef<RegisterPayload | null>(null);
@@ -34,7 +35,10 @@ export function RegisterScreen({ slug }: RegisterScreenProps) {
   const schema = useMemo(() => createRegisterSchema(t), [t]);
   const methods = useForm<RegisterFormSchema>({
     resolver: zodResolver(schema),
-    defaultValues: REGISTER_DEFAULT_VALUES,
+    defaultValues: {
+      ...REGISTER_DEFAULT_VALUES,
+      phoneCountry: defaultPhoneCountry(i18n.language),
+    },
   });
 
   function handleError(apiError: APIError) {
