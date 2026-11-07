@@ -115,7 +115,7 @@ describe('Register screen', () => {
     );
 
     await renderApp(REGISTER_PATH);
-    await submitRegister({ phone: '+15550001111' });
+    await submitRegister({ phone: '2025550123' });
 
     expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
     expect(url).toBe(`${API_ORIGIN}/api/salon/stylesync/auth/register`);
@@ -123,10 +123,132 @@ describe('Register screen', () => {
       name: 'Ada Lovelace',
       email: 'ada@example.com',
       password: VALID_PASSWORD,
-      phone: '+15550001111',
+      phone: '(202) 555-0123',
     });
     expect(useAuthStore.getState().isAuthenticated).toBe(true);
     expect(useAuthStore.getState().role).toBe('CLIENT');
+  });
+
+  it('drops digits past the national maximum', async () => {
+    let body: RegisterBody | undefined;
+
+    server.use(
+      http.post(`${API_ORIGIN}/api/salon/:slug/auth/register`, async ({ request }) => {
+        body = (await request.json()) as RegisterBody;
+        return HttpResponse.json(
+          {
+            data: createMockAuthResponse({
+              email: 'ada@example.com',
+              role: 'CLIENT',
+              userName: 'Ada Lovelace',
+            }),
+          },
+          { status: 201 }
+        );
+      })
+    );
+
+    await renderApp(REGISTER_PATH);
+    await waitForRegisterForm();
+    await userEvent.setup().type(screen.getByLabelText(/phone number/i), '20255501239999');
+    expect(screen.getByLabelText(/phone number/i)).toHaveValue('(202) 555-0123');
+
+    await submitRegister();
+
+    expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
+    expect(body?.phone).toBe('(202) 555-0123');
+  });
+
+  it('shows the national example and clears the phone when the country changes', async () => {
+    await renderApp(REGISTER_PATH);
+    await waitForRegisterForm();
+    const user = userEvent.setup();
+    const phone = screen.getByLabelText(/phone number/i);
+
+    expect(phone).toHaveAccessibleName('Phone Number');
+    expect(phone).toHaveAttribute('placeholder', '(201) 555-0123');
+
+    await user.type(phone, '2025550123');
+    expect(phone).toHaveValue('(202) 555-0123');
+
+    await user.selectOptions(screen.getByLabelText(/phone country/i), 'PT');
+
+    expect(phone).toHaveValue('');
+    expect(phone).toHaveAccessibleName('Phone Number');
+    expect(phone).toHaveAttribute('placeholder', '912 345 678');
+  });
+
+  it('backspace removes the digit before a closing parenthesis', async () => {
+    await renderApp(REGISTER_PATH);
+    await waitForRegisterForm();
+    const user = userEvent.setup();
+    const phone = screen.getByLabelText(/phone number/i);
+
+    await user.type(phone, '202');
+    expect(phone).toHaveValue('(202)');
+
+    await user.type(phone, '{Backspace}');
+    expect(phone).toHaveValue('20');
+  });
+
+  it('blocks submit when the phone is incomplete', async () => {
+    let calls = 0;
+    server.use(
+      http.post(`${API_ORIGIN}/api/salon/:slug/auth/register`, () => {
+        calls += 1;
+        return HttpResponse.json({ status: 500, message: 'unexpected' }, { status: 500 });
+      })
+    );
+
+    await renderApp(REGISTER_PATH);
+    await submitRegister({ phone: '1' });
+
+    expect(await screen.findByText('Enter a valid phone number')).toBeInTheDocument();
+    expect(calls).toBe(0);
+    expect(screen.getByRole('heading', { name: 'Create Account' })).toBeInTheDocument();
+  });
+
+  it('shows and hides both password fields together', async () => {
+    let body: RegisterBody | undefined;
+    server.use(
+      http.post(`${API_ORIGIN}/api/salon/:slug/auth/register`, async ({ request }) => {
+        body = (await request.json()) as RegisterBody;
+        return HttpResponse.json(
+          {
+            data: createMockAuthResponse({
+              email: 'ada@example.com',
+              role: 'CLIENT',
+            }),
+          },
+          { status: 201 }
+        );
+      })
+    );
+
+    await renderApp(REGISTER_PATH);
+    await waitForRegisterForm();
+    const user = userEvent.setup();
+    const password = screen.getByLabelText(/^password/i);
+    const confirmPassword = screen.getByLabelText(/confirm password/i);
+
+    expect(screen.getAllByRole('button', { name: 'Show password' })).toHaveLength(1);
+    await user.click(screen.getByRole('button', { name: 'Show password' }));
+    expect(password).toHaveAttribute('type', 'text');
+    expect(confirmPassword).toHaveAttribute('type', 'text');
+
+    await user.click(screen.getByRole('button', { name: 'Hide password' }));
+    expect(password).toHaveAttribute('type', 'password');
+    expect(confirmPassword).toHaveAttribute('type', 'password');
+
+    await user.type(screen.getByLabelText(/full name/i), 'Ada Lovelace');
+    await user.type(screen.getByLabelText(/^email/i), 'ada@example.com');
+    await user.type(password, VALID_PASSWORD);
+    await user.type(confirmPassword, VALID_PASSWORD);
+    await user.click(screen.getByRole('checkbox'));
+    await user.click(screen.getByRole('button', { name: /create account/i }));
+
+    expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
+    expect(body?.password).toBe(VALID_PASSWORD);
   });
 
   it('omits phone when the field is blank', async () => {

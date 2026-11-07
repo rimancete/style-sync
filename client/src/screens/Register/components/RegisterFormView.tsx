@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 
 import { FormElements } from '~/components/form-elements';
+import { Icon } from '~/components/Icon';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
 import {
@@ -13,9 +15,17 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
 import { LoginViewAlert } from '~/screens/Login/components/LoginViewAlert';
 
 import type { RegisterFormSchema } from '../constants';
+import {
+  formatPhoneInput,
+  isSupportedPhoneCountry,
+  phoneCountryOptionLabel,
+  phoneExampleNational,
+  SUPPORTED_PHONE_COUNTRIES,
+} from '../phone';
 
 type RegisterFormViewProps = {
   methods: UseFormReturn<RegisterFormSchema>;
@@ -31,7 +41,30 @@ export function RegisterFormView({
   errorMessage,
 }: RegisterFormViewProps) {
   const { t } = useTranslation('auth');
-  const { handleSubmit, control } = methods;
+  const { handleSubmit, control, setValue, watch } = methods;
+  const phoneCountry = watch('phoneCountry');
+  const phoneExample = phoneExampleNational(phoneCountry);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  function handlePhoneChange(value: string, previous: string) {
+    const formatted = formatPhoneInput(value, phoneCountry, previous);
+    setValue('phone', formatted.text, { shouldDirty: true });
+    if (formatted.country !== phoneCountry) {
+      setValue('phoneCountry', formatted.country);
+    }
+  }
+
+  function handleCountryChange(nextCountry: string) {
+    if (!isSupportedPhoneCountry(nextCountry)) {
+      return;
+    }
+
+    setValue('phoneCountry', nextCountry);
+    setValue('phone', '', {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  }
 
   return (
     <div className="flex w-full max-w-md flex-col items-stretch gap-6 text-left">
@@ -63,30 +96,69 @@ export function RegisterFormView({
             placeholder={t('register.placeholders.email')}
             disabled={isPending}
           />
-          <FormElements.Input
-            control={control}
+          <FormField
             name="phone"
-            type="tel"
-            autoComplete="tel"
-            label={t('register.phoneNumber')}
-            placeholder={t('register.placeholders.phone')}
-            disabled={isPending}
+            control={control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('register.phoneNumber')}</FormLabel>
+                <div className="flex items-center gap-2">
+                  <select
+                    aria-label={t('register.phoneCountry')}
+                    className="h-10 w-[5.75rem] shrink-0 rounded-md border border-input bg-background px-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={phoneCountry}
+                    disabled={isPending}
+                    onChange={(event) => handleCountryChange(event.target.value)}
+                  >
+                    {SUPPORTED_PHONE_COUNTRIES.map((country) => (
+                      <option key={country} value={country}>
+                        {phoneCountryOptionLabel(country)}
+                      </option>
+                    ))}
+                  </select>
+                  <FormControl>
+                    <Input
+                      type="tel"
+                      autoComplete="tel"
+                      placeholder={phoneExample}
+                      disabled={isPending}
+                      {...field}
+                      onChange={(event) => {
+                        handlePhoneChange(event.target.value, field.value);
+                      }}
+                    />
+                  </FormControl>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
           />
           <FormElements.Input
             control={control}
             required
             name="password"
-            type="password"
+            type={isPasswordVisible ? 'text' : 'password'}
             autoComplete="new-password"
             label={t('register.password')}
             placeholder={t('register.placeholders.password')}
             disabled={isPending}
+            endIcon={
+              <button
+                type="button"
+                className="text-muted-foreground hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
+                disabled={isPending}
+                aria-label={isPasswordVisible ? t('login.hidePassword') : t('login.showPassword')}
+                onClick={() => setIsPasswordVisible((visible) => !visible)}
+              >
+                <Icon name={isPasswordVisible ? 'EyeOff' : 'Eye'} className="h-4 w-4" />
+              </button>
+            }
           />
           <FormElements.Input
             control={control}
             required
             name="confirmPassword"
-            type="password"
+            type={isPasswordVisible ? 'text' : 'password'}
             autoComplete="new-password"
             label={t('register.confirmPassword')}
             placeholder={t('register.placeholders.password')}

@@ -1,5 +1,5 @@
 import * as request from 'supertest';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthModule } from './auth.module';
 import { ConfigModule } from '@nestjs/config';
@@ -134,7 +134,14 @@ describe('Auth API Contracts', () => {
 
     app = moduleRef.createNestApplication();
 
-    // Apply the same interceptors and filters as main app
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        errorHttpStatusCode: 422,
+      }),
+    );
     app.useGlobalInterceptors(new ResponseTransformInterceptor());
     app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -255,6 +262,28 @@ describe('Auth API Contracts', () => {
           ]),
           defaultCustomerId: 'customer_elite',
         }),
+      });
+    });
+
+    it('POST /salon/:customerSlug/auth/register should return 422 for an invalid phone', async () => {
+      const res = await request(
+        app.getHttpServer() as Parameters<typeof request>[0],
+      )
+        .post('/salon/acme/auth/register')
+        .send({
+          email: 'badphone@test.com',
+          password: '123456',
+          name: 'Bad Phone',
+          phone: '1',
+        })
+        .expect(422);
+
+      expect(res.body).toEqual({
+        status: 422,
+        message: 'Validation failed',
+        errors: {
+          phone: ['phone must be a valid phone number'],
+        },
       });
     });
 

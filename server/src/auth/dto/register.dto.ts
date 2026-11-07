@@ -5,7 +5,10 @@ import {
   IsOptional,
   IsString,
   MinLength,
+  Validate,
 } from 'class-validator';
+
+import { IsSupportedPhoneConstraint } from './is-supported-phone.constraint';
 
 export class RegisterDto {
   @ApiProperty({ example: 'newuser@example.com' })
@@ -24,6 +27,7 @@ export class RegisterDto {
   @ApiProperty({ example: '(11) 99999-9999', required: false })
   @IsOptional()
   @IsString()
+  @Validate(IsSupportedPhoneConstraint)
   phone?: string;
 
   @ApiProperty({
