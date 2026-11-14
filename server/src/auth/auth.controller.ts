@@ -18,6 +18,9 @@ import {
   ApiBadRequestResponse,
   ApiConflictResponse,
   ApiResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -30,8 +33,16 @@ import { Public } from '../common/decorators/public.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @ApiOperation({ summary: 'User login' })
+  @ApiOperation({
+    summary: 'Staff and admin login',
+    description:
+      'Neutral login for ADMIN and STAFF. CLIENT accounts get 403 and must use POST /salon/:customerSlug/auth/login.',
+  })
   @ApiOkResponse({ type: AuthResponseDto })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
+  @ApiForbiddenResponse({
+    description: 'CLIENT accounts must use the salon login',
+  })
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
@@ -133,5 +144,35 @@ export class CustomerAuthController {
     @Body() dto: RegisterDto,
   ): Promise<AuthResponseDto> {
     return this.authService.registerWithCustomer(dto, customerSlug);
+  }
+
+  @ApiOperation({
+    summary: 'Salon-scoped client login',
+    description:
+      'Login for CLIENT accounts linked to the salon. The salon becomes the defaultCustomerId of the session.',
+  })
+  @ApiParam({
+    name: 'customerSlug',
+    description: 'Customer URL slug (e.g., "acme", "elite-beauty")',
+    example: 'acme',
+  })
+  @ApiOkResponse({ type: AuthResponseDto })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
+  @ApiForbiddenResponse({
+    description: 'User is not a CLIENT or is not linked to this salon',
+  })
+  @ApiNotFoundResponse({ description: 'Customer not found or inactive' })
+  @HttpCode(HttpStatus.OK)
+  @Public()
+  @Post('login')
+  async loginWithCustomer(
+    @Param('customerSlug') customerSlug: string,
+    @Body() dto: LoginDto,
+  ): Promise<AuthResponseDto> {
+    return this.authService.loginWithCustomer(
+      dto.email,
+      dto.password,
+      customerSlug,
+    );
   }
 }

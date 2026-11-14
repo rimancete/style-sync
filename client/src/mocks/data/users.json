@@ -4,17 +4,32 @@
     "admin@stylesync.com": {
       "role": "ADMIN",
       "userName": "Admin User",
-      "userId": "admin-1"
+      "userId": "admin-1",
+      "customerSlugs": ["acme", "elite-beauty"]
+    },
+    "admin@acme.com": {
+      "role": "ADMIN",
+      "userName": "Acme Admin",
+      "userId": "admin-acme",
+      "customerSlugs": ["acme"]
     },
     "client@test.com": {
       "role": "CLIENT",
       "userName": "Test User",
-      "userId": "client-1"
+      "userId": "client-1",
+      "customerSlugs": ["acme"]
+    },
+    "client2@multi.com": {
+      "role": "CLIENT",
+      "userName": "Multi Customer Client",
+      "userId": "client-2",
+      "customerSlugs": ["acme", "elite-beauty"]
     },
     "staff@stylesync.com": {
       "role": "STAFF",
       "userName": "Staff User",
-      "userId": "staff-1"
+      "userId": "staff-1",
+      "customerSlugs": ["acme"]
     }
   }
 }

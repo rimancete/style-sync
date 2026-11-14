@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { request, resetRequestState, SessionExpiredError } from '~/hooks/utils/request';
-import { createMockAuthResponse } from '~/mocks/auth';
+import { createMockAuthResponse, MOCK_ACME, MOCK_ELITE } from '~/mocks/auth';
 import { useAuthStore } from '~/store/authStore';
 
 const API_URL = 'http://localhost:3001';
@@ -133,40 +133,69 @@ describe('request', () => {
     expect(third.status).toBe(200);
   });
 
-  it('clears the session and throws SessionExpiredError when refresh fails', async () => {
-    seedSession();
-    const assign = vi.fn();
-    vi.stubGlobal('location', { pathname: '/admin', assign });
-
+  function failRefresh() {
     fetchMock
       .mockResolvedValueOnce(jsonResponse({ status: 401, message: 'Unauthorized' }, 401))
       .mockResolvedValueOnce(jsonResponse({ status: 401, message: 'Invalid refresh token' }, 401));
+  }
 
-    await expect(request({ endpoint: '/api/salon/stylesync/branches' })).rejects.toBeInstanceOf(
+  it('clears the session and sends a CLIENT to the active salon login when refresh fails', async () => {
+    useAuthStore.getState().setSession(
+      createMockAuthResponse({
+        email: 'client2@multi.com',
+        role: 'CLIENT',
+        customers: [MOCK_ACME, MOCK_ELITE],
+        defaultCustomerId: MOCK_ELITE.id,
+      })
+    );
+    useAuthStore.getState().setActiveCustomer(MOCK_ACME.id);
+    const assign = vi.fn();
+    vi.stubGlobal('location', { pathname: '/salon/acme/user', assign });
+    failRefresh();
+
+    await expect(request({ endpoint: '/api/salon/acme/branches' })).rejects.toBeInstanceOf(
       SessionExpiredError
     );
 
     expect(useAuthStore.getState().isAuthenticated).toBe(false);
+    expect(assign).toHaveBeenCalledWith('/salon/acme/login');
+  });
+
+  it('sends an ADMIN to the neutral login when refresh fails', async () => {
+    useAuthStore
+      .getState()
+      .setSession(createMockAuthResponse({ email: 'admin@acme.com', role: 'ADMIN' }));
+    const assign = vi.fn();
+    vi.stubGlobal('location', { pathname: '/admin', assign });
+    failRefresh();
+
+    await expect(request({ endpoint: '/api/salon/acme/branches' })).rejects.toBeInstanceOf(
+      SessionExpiredError
+    );
+
     expect(assign).toHaveBeenCalledWith('/login');
   });
 
-  it('does not refresh or log out on a 401 from the login endpoint', async () => {
-    const assign = vi.fn();
-    vi.stubGlobal('location', { pathname: '/login', assign });
+  it.each(['/api/auth/login', '/api/salon/acme/auth/login'])(
+    'does not refresh or log out on a 401 from %s',
+    async (endpoint) => {
+      const assign = vi.fn();
+      vi.stubGlobal('location', { pathname: '/login', assign });
+      seedSession();
 
-    fetchMock.mockResolvedValueOnce(
-      jsonResponse({ status: 401, message: 'Invalid credentials' }, 401)
-    );
+      fetchMock.mockResolvedValueOnce(
+        jsonResponse({ status: 401, message: 'Invalid credentials' }, 401)
+      );
 
-    const response = await request({
-      endpoint: '/api/auth/login',
-      method: 'POST',
-      body: { email: 'a@b.c', password: 'wrong' },
-    });
+      const response = await request({
+        endpoint,
+        method: 'POST',
+        body: { email: 'a@b.c', password: 'wrong' },
+      });
 
-    expect(response.status).toBe(401);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(assign).not.toHaveBeenCalled();
-    expect(useAuthStore.getState().isAuthenticated).toBe(false);
-  });
+      expect(response.status).toBe(401);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(assign).not.toHaveBeenCalled();
+    }
+  );
 });

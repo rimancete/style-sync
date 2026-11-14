@@ -7,6 +7,7 @@ graph TD
         Query[TanStack Query]
         Login[Login Screen Modules]
         Register[Register Screen Modules]
+        Shells[AppShell / ClientShell / AdminShell]
         Toaster[Toaster / notify]
     end
 
@@ -29,13 +30,14 @@ graph TD
         Request[request + errorTreatment]
         Env[utils/env]
         Jwt[jwt.util]
-        Redirect[isSafeInternalPath]
+        Redirect[session-paths + isSafeInternalPath]
+        Theme[brandingToCssVars / tenantTheme]
         Mocks[MSW Mocks - VITE_ENABLE_MOCKS]
     end
 
     subgraph "External Services"
         Backend[NestJS Backend API]
-        Storage[Local Storage StyleSync_Auth_Dev v2]
+        Storage[Local Storage StyleSync_Auth_Dev v3]
     end
 
     UI --> Router
@@ -44,9 +46,12 @@ graph TD
     UI --> Query
     UI --> Login
     UI --> Register
+    UI --> Shells
     UI --> Toaster
 
-    Router -->|ADMIN only| AdminHome[Admin layout guard]
+    Router -->|ADMIN / STAFF| AdminHome[AdminShell]
+    Router -->|CLIENT + slug| ClientHome[ClientShell]
+    Router -->|unknown slug| SalonNotFound[SalonNotFound]
     Login --> Banner
     Login --> FormView
     Register --> RegisterBanner
@@ -69,6 +74,7 @@ graph TD
     Request --> Backend
     Store --> Storage
     Store --> Jwt
+    Query --> Theme
+    Theme --> UI
 
-    Backend -->|Theme Config| Store
-    Store -->|CSS Variables| UI
+    Backend -->|Customer branding| Query

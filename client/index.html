@@ -2,9 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <link id="favicon-32" rel="icon" sizes="32x32" href="/favicon.ico" />
+    <link id="favicon-16" rel="icon" sizes="16x16" href="/favicon.ico" />
+    <link id="apple-touch-icon" rel="apple-touch-icon" href="/logo192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Style Sync - Barbershop Booking</title>
+    <script>
+      // Applies the saved (or OS) color mode before the bundle loads, so the
+      // first paint never shows the wrong mode. Mirrors store/themeStore.ts.
+      (function () {
+        var key = '%VITE_THEME_STORAGE_KEY%';
+        if (key.charAt(0) === '%') key = 'StyleSync_Theme_Dev';
+        var preference = null;
+        try {
+          var saved = JSON.parse(localStorage.getItem(key) || 'null');
+          preference = saved && saved.state ? saved.state.preference : null;
+        } catch (error) {
+          preference = null;
+        }
+        var isDark =
+          preference === 'dark' ||
+          (preference !== 'light' &&
+            !!window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', isDark);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

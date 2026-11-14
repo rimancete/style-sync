@@ -1,22 +1,22 @@
-import { createFileRoute, Navigate } from '@tanstack/react-router';
-import { useAuthStore } from '~/store';
-import { AdminHomeScreen } from '~/screens/Admin/Home';
-import { UserHomeScreen } from '~/screens/User/Home';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+
+import { useAuthStore } from '~/store/authStore';
+import { getHomePath } from '~/utils/session-paths.util';
 
 export const Route = createFileRoute('/')({
-  component: IndexPage,
+  beforeLoad: ({ location }) => {
+    const session = useAuthStore.getState();
+
+    if (!session.isAuthenticated) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
+      throw redirect({
+        to: '/login',
+        search: { redirect: location.href },
+      });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/only-throw-error
+    throw redirect({ href: getHomePath(session) });
+  },
+  component: () => null,
 });
-
-function IndexPage() {
-  const { isAuthenticated, role } = useAuthStore();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-
-  if (role === 'ADMIN') {
-    return <AdminHomeScreen />;
-  }
-
-  return <UserHomeScreen />;
-}

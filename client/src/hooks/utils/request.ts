@@ -1,5 +1,6 @@
 import { useAuthStore, type AuthResponse } from '~/store/authStore';
 import { getApiUrl } from '~/utils/env';
+import { getLoginPath } from '~/utils/session-paths.util';
 
 import { ApiError, errorTreatment } from './errorTreatment';
 
@@ -30,9 +31,9 @@ export type RequestParams = {
 };
 
 const HTTP_UNAUTHORIZED = 401;
-const LOGIN_PATH = '/login';
 const LOGIN_ENDPOINT = '/api/auth/login';
 const REFRESH_ENDPOINT = '/api/auth/refresh';
+const SALON_AUTH_ENDPOINT_PATTERN = /^\/api\/salon\/[^/]+\/auth\/(login|register)$/;
 
 /** Shared across concurrent callers so a burst of 401s triggers a single refresh. */
 let inFlightRefresh: Promise<boolean> | null = null;
@@ -129,20 +130,26 @@ function shouldRecoverSession(endpoint: string, status: number): boolean {
 
 function isAuthEndpoint(endpoint: string): boolean {
   const { pathname } = resolveUrl(endpoint);
-  return pathname === LOGIN_ENDPOINT || pathname === REFRESH_ENDPOINT;
+  return (
+    pathname === LOGIN_ENDPOINT ||
+    pathname === REFRESH_ENDPOINT ||
+    SALON_AUTH_ENDPOINT_PATTERN.test(pathname)
+  );
 }
 
+/** The login path is read before clearing, while the role and salon are still known. */
 function endSession(): void {
+  const loginPath = getLoginPath(useAuthStore.getState());
   useAuthStore.getState().clearAuth();
-  redirectToLogin();
+  redirectToLogin(loginPath);
 }
 
-function redirectToLogin(): void {
-  if (typeof window === 'undefined' || window.location.pathname === LOGIN_PATH) {
+function redirectToLogin(loginPath: string): void {
+  if (typeof window === 'undefined' || window.location.pathname === loginPath) {
     return;
   }
 
-  window.location.assign(LOGIN_PATH);
+  window.location.assign(loginPath);
 }
 
 function resolveUrl(endpoint: string): URL {

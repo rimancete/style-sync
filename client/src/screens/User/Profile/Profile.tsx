@@ -1,9 +1,13 @@
+import { Card, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+
 function UserProfileScreen() {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Profile</h1>
-      <p className="text-muted-foreground mt-2">Manage your personal account.</p>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle as="h1">Profile</CardTitle>
+        <CardDescription>Manage your personal account.</CardDescription>
+      </CardHeader>
+    </Card>
   );
 }
 

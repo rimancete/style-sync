@@ -2,6 +2,7 @@ import { useRouter } from '@tanstack/react-router';
 
 import { useMutation } from '~/hooks/useMutation';
 import { useAuthStore, type AuthResponse } from '~/store';
+import { getHomePath } from '~/utils/session-paths.util';
 
 export type RegisterPayload = {
   name: string;
@@ -22,7 +23,7 @@ export function useRegister(slug: string) {
       mutationKey: ['auth', 'register', slug],
       onSuccess: (data) => {
         setSession(data);
-        void router.navigate({ href: '/' });
+        void router.navigate({ href: getHomePath(useAuthStore.getState()) });
       },
     },
   });

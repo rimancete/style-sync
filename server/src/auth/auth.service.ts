@@ -3,7 +3,10 @@ import {
   UnauthorizedException,
   ConflictException,
   BadRequestException,
+  ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
+import { User, UserRole } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -14,6 +17,14 @@ import {
   CustomerSummary,
 } from '../common/interfaces/api-response.interface';
 import { PreconditionRequiredException } from '../common/exceptions/precondition-required.exception';
+import { resolveFileUrl } from '../common/config/multer.config';
+
+export const CLIENT_NEUTRAL_LOGIN_MESSAGE =
+  'Clients must sign in through their salon link';
+export const SALON_LOGIN_ROLE_MESSAGE =
+  'Only clients can sign in through a salon link';
+export const SALON_LOGIN_NOT_LINKED_MESSAGE =
+  'This account is not registered with this salon';
 
 @Injectable()
 export class AuthService {
@@ -146,20 +157,68 @@ export class AuthService {
     return user;
   }
 
+  /**
+   * Neutral login for ADMIN and STAFF. CLIENT accounts must use the salon login.
+   * @throws UnauthorizedException when the credentials are invalid
+   * @throws ForbiddenException when the user is a CLIENT
+   */
   async login(email: string, password: string): Promise<AuthResponseData> {
     const user = await this.validateUser(email, password);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    // Load user's customer associations
-    const userCustomers = await this.getUserCustomers(user.id);
-    const customerIds = userCustomers.map(c => c.id);
-    const defaultCustomerId = customerIds[0] || undefined;
+    if (user.role === UserRole.CLIENT) {
+      throw new ForbiddenException(CLIENT_NEUTRAL_LOGIN_MESSAGE);
+    }
 
+    const userCustomers = await this.getUserCustomers(user.id);
+    return this.buildAuthResponse(user, userCustomers, userCustomers[0]?.id);
+  }
+
+  /**
+   * Salon-scoped login. Only a CLIENT linked to the salon can sign in, and
+   * that salon becomes the default customer of the session.
+   * @param customerSlug - Salon URL slug
+   * @throws NotFoundException when the salon does not exist or is inactive
+   * @throws UnauthorizedException when the credentials are invalid
+   * @throws ForbiddenException when the user is not a CLIENT or is not linked to the salon
+   */
+  async loginWithCustomer(
+    email: string,
+    password: string,
+    customerSlug: string,
+  ): Promise<AuthResponseData> {
+    const customer = await this.db.customer.findUnique({
+      where: { urlSlug: customerSlug },
+    });
+    if (!customer?.isActive) {
+      throw new NotFoundException('Customer not found or inactive');
+    }
+
+    const user = await this.validateUser(email, password);
+    if (!user) throw new UnauthorizedException('Invalid credentials');
+
+    if (user.role !== UserRole.CLIENT) {
+      throw new ForbiddenException(SALON_LOGIN_ROLE_MESSAGE);
+    }
+
+    const userCustomers = await this.getUserCustomers(user.id);
+    if (!userCustomers.some(c => c.id === customer.id)) {
+      throw new ForbiddenException(SALON_LOGIN_NOT_LINKED_MESSAGE);
+    }
+
+    return this.buildAuthResponse(user, userCustomers, customer.id);
+  }
+
+  private buildAuthResponse(
+    user: Pick<User, 'id' | 'email' | 'role' | 'name' | 'phone'>,
+    userCustomers: CustomerSummary[],
+    defaultCustomerId: string | undefined,
+  ): AuthResponseData {
     const tokens = this.generateTokens(
       user.id,
       user.email,
       user.role,
-      customerIds,
+      userCustomers.map(c => c.id),
       defaultCustomerId,
     );
     return {
@@ -278,7 +337,9 @@ export class AuthService {
         displayId: uc.customer.displayId,
         name: uc.customer.name,
         urlSlug: uc.customer.urlSlug,
-        logoUrl: uc.customer.logoUrl || undefined,
+        logoUrl: uc.customer.logoUrl
+          ? resolveFileUrl(uc.customer.logoUrl, uc.customer.id)
+          : undefined,
       }));
   }
 }

@@ -59,6 +59,58 @@ export class Customer {
   backgroundColor: string;
 
   @ApiProperty()
+  foregroundColor: string;
+
+  @ApiProperty()
+  surfaceColor: string;
+
+  @ApiProperty()
+  borderColor: string;
+
+  @ApiProperty()
+  mutedForegroundColor: string;
+
+  // Theme Colors (Dark theme)
+  @ApiProperty()
+  darkPrimaryMain: string;
+
+  @ApiProperty()
+  darkPrimaryLight: string;
+
+  @ApiProperty()
+  darkPrimaryDark: string;
+
+  @ApiProperty()
+  darkPrimaryContrast: string;
+
+  @ApiProperty()
+  darkSecondaryMain: string;
+
+  @ApiProperty()
+  darkSecondaryLight: string;
+
+  @ApiProperty()
+  darkSecondaryDark: string;
+
+  @ApiProperty()
+  darkSecondaryContrast: string;
+
+  @ApiProperty()
+  darkBackgroundColor: string;
+
+  @ApiProperty()
+  darkForegroundColor: string;
+
+  @ApiProperty()
+  darkSurfaceColor: string;
+
+  @ApiProperty()
+  darkBorderColor: string;
+
+  @ApiProperty()
+  darkMutedForegroundColor: string;
+
+  @ApiProperty()
   isActive: boolean;
 
   @ApiProperty()

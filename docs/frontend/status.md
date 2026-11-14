@@ -28,6 +28,7 @@ This document tracks the progress of the frontend implementation.
   - [x] Mobile decorative SVGs
   - [x] `/` → `/login` redirect when unauthenticated
   - [x] Password visibility toggle (`endIcon` + Eye / EyeOff)
+  - [x] Neutral `/login` for ADMIN/STAFF; salon `/salon/:slug/login` for CLIENT (Issue #19)
 - [x] Registration Screen (Issue #15)
   - [x] `/salon/:slug/register` with the login card shell and a register-specific banner
   - [x] RHF + Zod, inline alert, 428 link dialog
@@ -51,8 +52,8 @@ This document tracks the progress of the frontend implementation.
 - [ ] Services (List/Get)
 - [ ] Professionals (List/Get)
 - [ ] Bookings (List/Create)
-- [ ] Theme (Get dynamic config)
+- [x] Theme (salon branding via `GET /api/customers/branding/:slug`, Issue #19)
 
 ## 5. Current Focus
 
-Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Login (#10–#12) is done. Current slice: [#15](https://github.com/rimancete/style-sync/issues/15) Register API integration on branch `15-register-api-integration`. Next after sign-off: tenant context and branding.
+Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: [#19](https://github.com/rimancete/style-sync/issues/19) Tenant context & branding on branch `19-tenant-context-branding`. Smooth tests signed off; Acme uses gold/cream branding, Elite stays pink, the design-system cyan stays on `/login` and the admin shell. Next: draft PR.
