@@ -19,6 +19,10 @@ Namespace: `user-engram-personal`. Always inspect the schema with `GetDynamicToo
 
 Pin `project: "style-sync"` on every mem call that accepts `project`. Call `mem_current_project` first; if the detected project is not `style-sync`, still pin `style-sync`. Never save into another project key in the personal store. If Engram returns `unknown_project`, surface it — do not invent a second store.
 
+Engram 3.4 treats a missing `project` as the server's current project, which in a mixed window may not be style-sync. Do not rely on that default. A search that must span every project in the personal store passes `all_projects: true`.
+
+`mem_update` and `mem_delete` require `expected_project`. For an observation owned by this repo that value is `"style-sync"`. A missing or different owner is rejected and the observation stays unchanged. `mem_judge` does not take `expected_project`.
+
 Do not use `user-engram-shared` for this repo’s product, architecture, endpoints, or decisions. Shared is only for reusable technique that names no client, endpoint, business rule, or internal system. When in doubt, use `user-engram-personal` with `project: "style-sync"`.
 
 Do not dump file contents. Record where data lives and how it is shaped.

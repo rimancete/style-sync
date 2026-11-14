@@ -14,15 +14,17 @@ Ao planejar uma nova tarefa:
 
 Os arquivos em `tasks/client/` e `tasks/server/` são legado e não devem ser usados como referência.
 
-_Última atualização: 2026-10-17._
+_Última atualização: 2026-11-14._
+
+Este roadmap e as regras Engram 3.4 em `.cursor/rules/engram.mdc` (`project` explícito, `expected_project`) entram neste branch da [#19](https://github.com/rimancete/style-sync/issues/19); a atualização do sequenciamento não ficou para uma Issue à parte.
 
 ## 2. Estado atual
 
-O **backend continua à frente do frontend** no registro, no branding, no catálogo e no booking. O fluxo de login está fechado: o épico [#10 Login flow](https://github.com/rimancete/style-sync/issues/10) e as partes [#11](https://github.com/rimancete/style-sync/issues/11) e [#12](https://github.com/rimancete/style-sync/issues/12) foram concluídas. O client autentica contra a API real (`AuthResponse`), com erros inline por status, `redirect` interno seguro e guard de `/admin`. O layout da tela veio da Issue [#6](https://github.com/rimancete/style-sync/issues/6).
+O **backend continua à frente do frontend** no catálogo e no booking. O fluxo de login está fechado: o épico [#10 Login flow](https://github.com/rimancete/style-sync/issues/10) e as partes [#11](https://github.com/rimancete/style-sync/issues/11) e [#12](https://github.com/rimancete/style-sync/issues/12) foram concluídas. O registro também: a integração [#15](https://github.com/rimancete/style-sync/issues/15) e a máscara e validação do telefone [#17](https://github.com/rimancete/style-sync/issues/17) (PR [#18](https://github.com/rimancete/style-sync/pull/18)) estão em `develop`. **[BUS-19: Tenant context & branding](https://github.com/rimancete/style-sync/issues/19)** está neste branch (`19-tenant-context-branding`). O client autentica contra a API real (`AuthResponse`), com erros inline por status, `redirect` interno seguro e guard de `/admin`. O layout da tela veio da Issue [#6](https://github.com/rimancete/style-sync/issues/6).
 
 Pronto para consumo no NestJS:
 
-- Login (`POST /api/auth/login`) e refresh (`POST /api/auth/refresh`)
+- Login global (`POST /api/auth/login`) e refresh (`POST /api/auth/refresh`). A [#19](https://github.com/rimancete/style-sync/issues/19) restringe esse login a ADMIN e STAFF e acrescenta o login de CLIENT em `POST /api/salon/:slug/auth/login`
 - Registro salon-scoped (`POST /api/salon/:customerSlug/auth/register`) com fluxo `428` + `confirmLink`
 - Branding público
 - Catálogo (branches, services, professionals) protegido por JWT
@@ -37,6 +39,7 @@ Estas limitações são o motivo do sequenciamento, não detalhes de implementa�
 
 - **Não há envio de e-mail.** O `confirmationToken` só volta no corpo da resposta. Páginas de confirm/cancel por token existem no backend, mas o usuário não recebe o link por e-mail até uma issue `BFU` de notificação.
 - **O catálogo exige JWT.** Não existe browse anônimo. O funil de booking vem depois do login, não antes.
+- **O login global não distingue role nem salão.** `POST /api/auth/login` aceita CLIENT, STAFF e ADMIN e não recebe slug. A [#19](https://github.com/rimancete/style-sync/issues/19) separa a entrada: CLIENT só entra por `/salon/:slug/login`, com vínculo ativo naquele salão.
 - **Não existe endpoint de atualização de perfil.** A tela Profile não pode ser fechada agora.
 
 ## 4. Lacunas do frontend
@@ -45,9 +48,9 @@ Inventário do que ainda diverge. A fundação de sessão (#11) e a integração
 
 | Área | Situação | Correto |
 | --- | --- | --- |
-| Registro | [`useRegister.ts:20`](../client/src/api/auth/useRegister.ts) aponta para `/api/auth/register`; [`:6`](../client/src/api/auth/useRegister.ts) envia `phoneNumber`. A rota pública é `/register`, sem slug. | `/salon/:slug/register` e `POST /api/salon/:slug/auth/register`; campo `phone` |
-| Registro UI | [`Register.tsx`](../client/src/screens/Register/Register.tsx) é HTML cru, strings hardcoded, sem React Hook Form nem Zod | Mesmo padrão da tela de Login (#12): RHF + Zod, i18n, alerta inline. Confirmação de senha e termos ficam só no client. |
-| Branding | [`useGetTheme.ts:9`](../client/src/api/theme/useGetTheme.ts) aponta para `/api/theme`; `themeStore` não está ligado ao branding | `/api/customers/branding/:slug` |
+| Registro | Entregue na [#15](https://github.com/rimancete/style-sync/issues/15). [`useRegister(slug)`](../client/src/api/auth/useRegister.ts) envia `phone` opcional para `POST /api/salon/:slug/auth/register`. | — |
+| Telefone do registro | Entregue na [#17](https://github.com/rimancete/style-sync/issues/17). Máscara nacional dos países suportados, validação no client e 422 no servidor. Trocar o país limpa o campo. O rótulo permanece "Phone Number"; o exemplo nacional fica só no placeholder. | — |
+| Branding | Entregue neste branch da [#19](https://github.com/rimancete/style-sync/issues/19): `GET /api/customers/branding/:slug` com `theme.light` e `theme.dark`, seed de Acme (ouro/creme) e Elite (rosa), tema do sistema no `index.css`. | — |
 | Catálogo | [`useGetBranches.ts:25`](../client/src/api/branches/useGetBranches.ts) → `/api/branches`; [`useGetServices.ts:20`](../client/src/api/services/useGetServices.ts) → `/api/services`; [`useGetProfessionals.ts:16`](../client/src/api/professionals/useGetProfessionals.ts) → `/api/professionals` | Endpoints salon-scoped `/api/salon/:slug/...` |
 | Booking | [`bookingStore`](../client/src/store/bookingStore.ts) e [`useCreateBooking.ts:19`](../client/src/api/bookings/useCreateBooking.ts) (`/api/bookings`) existem | Funil de telas + `POST /api/salon/:slug/bookings` com `isoTimestamp` |
 
@@ -61,9 +64,9 @@ O épico [#10 Login flow](https://github.com/rimancete/style-sync/issues/10) cob
 | --- | --- | --- | --- | --- | --- |
 | 1 | FFU | API and session foundation | Transporte (`request` + `errorTreatment`), sessão no contrato `AuthResponseDto`, refresh single-flight, toast/`notify`, mocks atrás de `VITE_ENABLE_MOCKS`, anonimização de docs/skills | — | [#11](https://github.com/rimancete/style-sync/issues/11) concluída |
 | 2 | BUS | Login API integration | Mensagens por status, redirect por role, guard de `/admin`, testes de tela | #11 | [#12](https://github.com/rimancete/style-sync/issues/12) concluída |
-| 3 | BUS | Register API integration | RHF + Zod, rota `/salon/:slug/register`, fluxo `428` → diálogo de confirmação → `confirmLink: true`. Confirmação de senha e termos só no client. O link de criar conta sai de `/login` (não há slug) e volta na tarefa de tenant. | #11 | [#15](https://github.com/rimancete/style-sync/issues/15) criada |
-| 4 | FFU | Tenant context & branding | Branding → CSS vars, document title e favicons. A rota `/salon/:slug/register` entra na tarefa de registro; esta tarefa aplica o contexto de tenant no restante do app e restaura o link de login para o registro. Slug desconhecido ou inativo não abre a página do cliente: o tenant é resolvido antes de pintar e a tela não é renderizada. | #11, registro | ainda não criada |
-| 5 | BUS | Booking funnel | Branch → service → professional → availability → criar booking com `isoTimestamp`. Avaliar fatiar em duas Issues | tenant/branding (#12 concluída) | ainda não criada |
+| 3 | BUS | Register API integration | RHF + Zod, rota `/salon/:slug/register`, fluxo `428` → diálogo de confirmação → `confirmLink: true`. Confirmação de senha e termos só no client. O link de criar conta sai de `/login` (não há slug) e volta na tarefa de tenant. A máscara e a validação do telefone fecharam na [#17](https://github.com/rimancete/style-sync/issues/17). | #11 | [#15](https://github.com/rimancete/style-sync/issues/15) e [#17](https://github.com/rimancete/style-sync/issues/17) concluídas |
+| 4 | BUS | Tenant context & branding | **Em andamento neste branch.** Issue única, client e servidor. `/salon/:slug/login` e `/salon/:slug/register` usam o tema do salão; `/login` fica neutro, só para ADMIN e STAFF. A área do CLIENT passa para `/salon/:slug/...` e a troca de salão muda o slug da URL e reaplica branding, sem reload. Admin escolhe a empresa ativa e mantém o tema do sistema. Modo claro e escuro em todo o app, seguindo o SO e com escolha persistida. Shell de usuário e admin segue o design system. No servidor: login salon-scoped, paletas `theme.light` e `theme.dark`, seed de Acme (ouro) e Elite (rosa). | #11, #15 e #17 concluídas | [#19](https://github.com/rimancete/style-sync/issues/19) |
+| 5 | BUS | Booking funnel | Branch → service → professional → availability → criar booking com `isoTimestamp`. Avaliar fatiar em duas Issues | tenant/branding ([#19](https://github.com/rimancete/style-sync/issues/19)) | ainda não criada |
 | 6 | BUS | Confirm/cancel by token | Páginas públicas de confirmação e cancelamento | Booking funnel; e-mail é `BFU` paralelo (o token já volta na resposta) | ainda não criada |
 | 7 | BUS | My bookings | Listagem e cancelamento dos agendamentos do usuário | Booking funnel | ainda não criada |
 | 8 | FFU | Test structure and docs | Herda `FFU-005`, `FFU-006`, `FFU-008` do backlog legado. Decidir entre Issue própria ou diluir em cada entrega | — | ainda não criada |
