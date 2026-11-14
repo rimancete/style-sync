@@ -16,10 +16,11 @@ Global prefix: `/api`. All responses wrapped in `{ "data": ... }` except `/healt
 | GET | `/api/health` | Basic liveness check |
 | GET | `/api/health/database` | Database connectivity |
 | GET | `/api/health/detailed` | Full system status |
-| POST | `/api/auth/login` | User login → access + refresh tokens |
+| POST | `/api/auth/login` | Neutral login for ADMIN and STAFF → access + refresh tokens. CLIENT → 403 (`Clients must sign in through their salon link`); bad credentials → 401 |
 | POST | `/api/auth/refresh` | Refresh access token |
+| POST | `/api/salon/:customerSlug/auth/login` | Salon login for a CLIENT linked to the salon; that salon becomes `defaultCustomerId`. 401 bad credentials, 403 non-CLIENT or not linked, 404 unknown/inactive salon |
 | POST | `/api/salon/:customerSlug/auth/register` | Customer-scoped user registration (creates or links user) |
-| GET | `/api/customers/branding/:slug` | Get tenant branding config (logo, colors, favicons) |
+| GET | `/api/customers/branding/:slug` | Get tenant branding: favicons, `documentTitle`, `theme.light` and `theme.dark` (see below) |
 | GET | `/api/salon/:customerSlug/availability` | Public availability check for a branch+service+date |
 
 ### Admin Endpoints (JWT + ADMIN role)
@@ -87,6 +88,23 @@ Guards: `JwtAuthGuard` → `CustomerContextGuard` (resolves slug → injects `ac
 | PUT | `/api/customers/:customerId/branding/config` | ADMIN | Update branding config (no files) |
 | POST | `/api/customers/:customerId/branding` | ADMIN | Initial branding setup (files + config) |
 | POST | `/api/customers/:customerId/branding/upload` | ADMIN | Update branding files |
+
+Branding payload (`CustomerBrandingResponseDto`, mapped by `server/src/customers/branding-theme.mapper.ts`):
+
+```ts
+branding: {
+  favicon32x32: string | null; favicon16x16: string | null; appleTouch: string | null; // absolute URLs
+  documentTitle: string;
+  theme: { light: BrandingPalette; dark: BrandingPalette };
+}
+BrandingPalette = {
+  logoUrl: string | null; logoAlt: string; // same logo in both palettes
+  primary: { main; light; dark; contrast }; secondary: { main; light; dark; contrast };
+  background; foreground; surface; border; mutedForeground;
+}
+```
+
+`PUT …/branding/config` and the multipart `config` field accept partial `theme.light` / `theme.dark`. Every color must be hex (`#RGB`, `#RRGGBB`, `#RRGGBBAA`), otherwise 422.
 
 #### Branches
 

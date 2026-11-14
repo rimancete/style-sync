@@ -227,7 +227,8 @@
 								"auth",
 								"login"
 							]
-						}
+						},
+						"description": "Neutral login for ADMIN and STAFF. admin@stylesync.com is linked to Acme and Elite Beauty (company picker). CLIENT accounts get 403."
 					},
 					"response": []
 				},
@@ -305,20 +306,23 @@
 							"raw": "{\n  \"email\": \"client@test.com\",\n  \"password\": \"123456\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/auth/login",
+							"raw": "{{baseUrl}}/salon/acme/auth/login",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"salon",
+								"acme",
 								"auth",
 								"login"
 							]
-						}
+						},
+						"description": "Salon-scoped CLIENT login. 403 when the account is not a CLIENT or is not linked to the salon, 404 for an unknown or inactive salon."
 					},
 					"response": []
 				},
 				{
-					"name": "Client(multi) Login",
+					"name": "Client(multi) Login via Elite Beauty",
 					"event": [
 						{
 							"listen": "test",
@@ -348,15 +352,18 @@
 							"raw": "{\n  \"email\": \"client2@multi.com\",\n  \"password\": \"123456\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/auth/login",
+							"raw": "{{baseUrl}}/salon/elite-beauty/auth/login",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"salon",
+								"elite-beauty",
 								"auth",
 								"login"
 							]
-						}
+						},
+						"description": "Salon-scoped CLIENT login. 403 when the account is not a CLIENT or is not linked to the salon, 404 for an unknown or inactive salon."
 					},
 					"response": []
 				},
@@ -391,6 +398,54 @@
 							"raw": "{\n  \"email\": \"client@elitebeauty.com\",\n  \"password\": \"123456\"\n}"
 						},
 						"url": {
+							"raw": "{{baseUrl}}/salon/elite-beauty/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"salon",
+								"elite-beauty",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Salon-scoped CLIENT login. 403 when the account is not a CLIENT or is not linked to the salon, 404 for an unknown or inactive salon."
+					},
+					"response": []
+				},
+				{
+					"name": "Staff Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const json = pm.response.json();",
+									"    pm.collectionVariables.set('authToken', json.data.token);",
+									"    pm.collectionVariables.set('refreshToken', json.data.refreshToken);",
+									"    console.log('Tokens saved successfully');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"staff@stylesync.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
 							"raw": "{{baseUrl}}/auth/login",
 							"host": [
 								"{{baseUrl}}"
@@ -399,7 +454,66 @@
 								"auth",
 								"login"
 							]
-						}
+						},
+						"description": "Neutral login for STAFF (linked to Acme)."
+					},
+					"response": []
+				},
+				{
+					"name": "Client on Neutral Login (403)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"client@test.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Expected 403: \"Clients must sign in through their salon link\"."
+					},
+					"response": []
+				},
+				{
+					"name": "Client(acme) on Elite Beauty Login (403)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"client@test.com\",\n  \"password\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/salon/elite-beauty/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"salon",
+								"elite-beauty",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Expected 403: \"This account is not registered with this salon\"."
 					},
 					"response": []
 				},
@@ -989,7 +1103,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"documentTitle\": \"Acme Barbershop - Premium Haircuts & Styling\",\n  \"logoAlt\": \"Acme Premium Barbershop\",\n  \"theme\": {\n    \"light\": {\n      \"primary\": {\n        \"main\": \"#1E40AF\",\n        \"light\": \"#3B82F6\",\n        \"dark\": \"#1E3A8A\",\n        \"contrast\": \"#FFFFFF\"\n      },\n      \"background\": \"#F8FAFC\"\n    }\n  }\n}"
+							"raw": "{\n  \"documentTitle\": \"Acme Barbershop - Premium Haircuts & Styling\",\n  \"logoAlt\": \"Acme Premium Barbershop\",\n  \"theme\": {\n    \"light\": {\n      \"primary\": {\n        \"main\": \"#0E7490\",\n        \"light\": \"#CFFAFE\",\n        \"dark\": \"#155E75\",\n        \"contrast\": \"#FFFFFF\"\n      },\n      \"background\": \"#F8FAFC\",\n      \"foreground\": \"#0F172A\",\n      \"surface\": \"#FFFFFF\",\n      \"border\": \"#E2E8F0\",\n      \"mutedForeground\": \"#475569\"\n    },\n    \"dark\": {\n      \"primary\": {\n        \"main\": \"#CFFAFE\",\n        \"light\": \"#ECFEFF\",\n        \"dark\": \"#A5F3FC\",\n        \"contrast\": \"#020617\"\n      },\n      \"background\": \"#080C14\",\n      \"foreground\": \"#F1F5F9\",\n      \"surface\": \"#0B1220\",\n      \"border\": \"#1C1F27\",\n      \"mutedForeground\": \"#94A3B8\"\n    }\n  }\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/customers/:customerId/branding/config",
@@ -1010,7 +1124,7 @@
 								}
 							]
 						},
-						"description": "Update customer branding configuration. Admin only - requires authentication."
+						"description": "Partial update of theme.light and theme.dark. Every color must be hex (#RGB, #RRGGBB or #RRGGBBAA); anything else returns 422."
 					},
 					"response": [
 						{

@@ -51,9 +51,13 @@ displayId: Int (auto-increment, unique)
 name: String
 urlSlug: String (unique) ← tenant identifier in URLs
 documentTitle, logoUrl, logoAlt, favicon32x32, favicon16x16, appleTouch: branding assets
-primaryMain, primaryLight, primaryDark, primaryContrast: hex colors
-secondaryMain, secondaryLight, secondaryDark, secondaryContrast: hex colors
-backgroundColor: hex color
+  (stored as filenames under uploads/customers/<id>/; URLs resolved at read time)
+Light palette (one column per token):
+  primaryMain, primaryLight, primaryDark, primaryContrast
+  secondaryMain, secondaryLight, secondaryDark, secondaryContrast
+  backgroundColor, foregroundColor, surfaceColor, borderColor, mutedForegroundColor
+Dark palette: same tokens with the `dark` prefix
+  (darkPrimaryMain … darkMutedForegroundColor)
 currency: ISO 4217 (default "USD")
 defaultTimezone: IANA (default "UTC")
 isActive: Boolean
@@ -200,6 +204,8 @@ addressFormat: Json ← JSON schema for address validation per country
 8. **Cancellation**: Currently sets `status: CANCELLED`. No full cancellation policy implemented yet.
 9. **Operating hours**: Availability slots are derived from `BranchSchedule` and `ProfessionalSchedule` in the database, in 30-minute intervals. There is no hardcoded 09:00–18:00 window.
 10. **Reserved slugs**: `admin`, `api`, `health`, `auth`, `docs`, `swagger`, `about`, `pricing`, `contact`, `terms`, `privacy`, `login`, `register`, `salon` cannot be used as `urlSlug`.
+11. **Login entry by audience**: `POST /api/auth/login` accepts ADMIN and STAFF only. A CLIENT signs in through `POST /api/salon/:slug/auth/login` and must have a `UserCustomer` link to that salon; that salon becomes the session default. Role stays global on `User`.
+12. **Seeded branding**: Acme (`acme`) uses the system design system palette; Elite Beauty (`elite-beauty`) uses the pink palette. Both ship light and dark palettes plus logo and favicons from `server/prisma/seed-assets/<slug>/`.
 
 ---
 

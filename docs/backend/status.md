@@ -34,6 +34,15 @@
     - [X] Branch operating hours configuration
     - [X] **Contract tests** (4 test suites, all endpoints covered)
 
+### Tenant context & branding (Issue #19)
+- [X] Customer light palette gains foreground, surface, border and muted tokens; dark palette added as `dark*` columns (migration `add_theme_palettes_to_customer`)
+- [X] Branding response exposes `theme.light` and `theme.dark`; config DTOs validate hex colors (422)
+- [X] `POST /api/salon/:customerSlug/auth/login` for linked CLIENTs (401 / 403 / 404)
+- [X] `POST /api/auth/login` rejects CLIENT with 403
+- [X] `customers[].logoUrl` in auth and `my-customers` responses resolved to absolute URLs
+- [X] Seed: Acme and Elite palettes, logos and favicons copied from `prisma/seed-assets/`; `admin@stylesync.com` → Acme + Elite, `staff@stylesync.com` → Acme
+- [X] Contract tests for salon login, neutral login and both palettes
+
 ### Phase 4 (Advanced Business Features)
 - [ ] Enhanced booking features
     - [ ] Buffer times between appointments
