@@ -4,7 +4,7 @@ Use the seeded API (`pnpm prisma:seed` in `server/`) with mocks off. Default pas
 
 ## Public salon
 
-1. Open `/salon/acme/login` — design-system colors, Acme document title, light/dark toggle present.
+1. Open `/salon/acme/login` — gold primary (`#76520e`) with cream contrast and secondary (`#fdf8e1`), gold-tinted dark surfaces (not the design-system navy), Acme document title, light/dark toggle present. The design-system cyan stays on `/login` and the admin shell.
 2. Open `/salon/elite-beauty/login` — pink primary (`#B92777`) with white label text.
 3. Open `/salon/no-such-salon/login` and `/salon/no-such-salon/register` — “Salon not found”, no form.
 4. From Acme login, Sign up → `/salon/acme/register`; Sign in on register → `/salon/acme/login`.

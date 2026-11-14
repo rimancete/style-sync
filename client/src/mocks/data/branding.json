@@ -15,43 +15,43 @@
           "logoUrl": null,
           "logoAlt": "Acme Barbershop",
           "primary": {
-            "main": "#0E7490",
-            "light": "#CFFAFE",
-            "dark": "#155E75",
-            "contrast": "#FFFFFF"
+            "main": "#76520e",
+            "light": "#E4C56A",
+            "dark": "#54390A",
+            "contrast": "#fdf8e1"
           },
           "secondary": {
-            "main": "#CFFAFE",
-            "light": "#ECFEFF",
-            "dark": "#A5F3FC",
-            "contrast": "#155E75"
+            "main": "#fdf8e1",
+            "light": "#FFFDF6",
+            "dark": "#F3E7BE",
+            "contrast": "#76520e"
           },
-          "background": "#F8FAFC",
-          "foreground": "#0F172A",
+          "background": "#FBF6E8",
+          "foreground": "#2B1E0A",
           "surface": "#FFFFFF",
-          "border": "#E2E8F0",
-          "mutedForeground": "#475569"
+          "border": "#F0E4C8",
+          "mutedForeground": "#7A6640"
         },
         "dark": {
           "logoUrl": null,
           "logoAlt": "Acme Barbershop",
           "primary": {
-            "main": "#CFFAFE",
-            "light": "#ECFEFF",
-            "dark": "#A5F3FC",
-            "contrast": "#020617"
+            "main": "#fdf8e1",
+            "light": "#FFFDF4",
+            "dark": "#F0E6C4",
+            "contrast": "#76520e"
           },
           "secondary": {
-            "main": "#22D3EE",
-            "light": "#67E8F9",
-            "dark": "#0891B2",
-            "contrast": "#020617"
+            "main": "#76520e",
+            "light": "#A67C2D",
+            "dark": "#54390A",
+            "contrast": "#fdf8e1"
           },
-          "background": "#080C14",
-          "foreground": "#F1F5F9",
-          "surface": "#0B1220",
-          "border": "#1C1F27",
-          "mutedForeground": "#94A3B8"
+          "background": "#1B1509",
+          "foreground": "#FDF8E1",
+          "surface": "#282011",
+          "border": "#3D301A",
+          "mutedForeground": "#D4B896"
         }
       }
     }
