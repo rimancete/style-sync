@@ -32,6 +32,9 @@
       "subtitle": "Welcome to your admin dashboard."
     }
   },
+  "theme": {
+    "darkMode": "Dark mode"
+  },
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",

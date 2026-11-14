@@ -7,8 +7,11 @@ import './index.css';
 import './i18n/config';
 
 import { Toaster } from './components/ui/toaster';
+import { syncThemeMode } from './lib/theme/syncThemeMode';
 import { routeTree } from './routeTree.gen';
 import { isMocksEnabled } from './utils/env';
+
+syncThemeMode();
 
 const router = createRouter({ routeTree });
 

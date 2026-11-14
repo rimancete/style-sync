@@ -32,6 +32,9 @@
       "subtitle": "Bem-vindo ao painel administrativo."
     }
   },
+  "theme": {
+    "darkMode": "Modo escuro"
+  },
   "common": {
     "loading": "Carregando...",
     "error": "Ocorreu um erro",
