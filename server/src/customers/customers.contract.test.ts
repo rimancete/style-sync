@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import * as request from 'supertest';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CustomersModule } from './customers.module';
 import { ConfigModule } from '@nestjs/config';
@@ -13,6 +13,60 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { CustomerAccessGuard } from '../common/guards/customer-access.guard';
 
 // Contract tests - types are validated through API responses
+
+const LIGHT_EXTRA_COLUMNS = {
+  foregroundColor: '#0F172A',
+  surfaceColor: '#FFFFFF',
+  borderColor: '#E2E8F0',
+  mutedForegroundColor: '#475569',
+};
+
+const DARK_COLUMNS = {
+  darkPrimaryMain: '#CFFAFE',
+  darkPrimaryLight: '#ECFEFF',
+  darkPrimaryDark: '#A5F3FC',
+  darkPrimaryContrast: '#020617',
+  darkSecondaryMain: '#22D3EE',
+  darkSecondaryLight: '#67E8F9',
+  darkSecondaryDark: '#0891B2',
+  darkSecondaryContrast: '#020617',
+  darkBackgroundColor: '#080C14',
+  darkForegroundColor: '#F1F5F9',
+  darkSurfaceColor: '#0B1220',
+  darkBorderColor: '#1C1F27',
+  darkMutedForegroundColor: '#94A3B8',
+};
+
+const LIGHT_EXTRA_TOKENS = {
+  foreground: '#0F172A',
+  surface: '#FFFFFF',
+  border: '#E2E8F0',
+  mutedForeground: '#475569',
+};
+
+function expectedDarkPalette(logoAlt: string) {
+  return {
+    logoUrl: null,
+    logoAlt,
+    primary: {
+      main: '#CFFAFE',
+      light: '#ECFEFF',
+      dark: '#A5F3FC',
+      contrast: '#020617',
+    },
+    secondary: {
+      main: '#22D3EE',
+      light: '#67E8F9',
+      dark: '#0891B2',
+      contrast: '#020617',
+    },
+    background: '#080C14',
+    foreground: '#F1F5F9',
+    surface: '#0B1220',
+    border: '#1C1F27',
+    mutedForeground: '#94A3B8',
+  };
+}
 
 describe('Customers API Contracts', () => {
   let app: INestApplication;
@@ -38,6 +92,7 @@ describe('Customers API Contracts', () => {
       secondaryContrast: string;
       backgroundColor: string;
       isActive: boolean;
+      [column: string]: unknown;
       createdAt: Date;
       updatedAt: Date;
     }> = [
@@ -56,6 +111,8 @@ describe('Customers API Contracts', () => {
         secondaryDark: '#3B3B3BFF',
         secondaryContrast: '#1B1B1BFF',
         backgroundColor: '#F7F7F7FF',
+        ...LIGHT_EXTRA_COLUMNS,
+        ...DARK_COLUMNS,
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -75,6 +132,8 @@ describe('Customers API Contracts', () => {
         secondaryDark: '#333333',
         secondaryContrast: '#FFFFFF',
         backgroundColor: '#FFFFFF',
+        ...LIGHT_EXTRA_COLUMNS,
+        ...DARK_COLUMNS,
         isActive: false,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -134,6 +193,14 @@ describe('Customers API Contracts', () => {
       .compile();
 
     app = moduleRef.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        errorHttpStatusCode: 422,
+      }),
+    );
     app.useGlobalInterceptors(new ResponseTransformInterceptor());
     app.useGlobalFilters(new HttpExceptionFilter());
     app.setGlobalPrefix('api');
@@ -179,7 +246,9 @@ describe('Customers API Contracts', () => {
                 contrast: '#1B1B1BFF',
               },
               background: '#F7F7F7FF',
+              ...LIGHT_EXTRA_TOKENS,
             },
+            dark: expectedDarkPalette('Acme Barbershop Logo'),
           },
         },
         isActive: true,
@@ -255,7 +324,9 @@ describe('Customers API Contracts', () => {
                 contrast: '#1B1B1BFF',
               },
               background: '#F0F0F0',
+              ...LIGHT_EXTRA_TOKENS,
             },
+            dark: expectedDarkPalette('Updated Logo Alt'),
           },
         },
         isActive: true,
@@ -295,6 +366,39 @@ describe('Customers API Contracts', () => {
         status: 404,
         message: "Customer with ID 'nonexistent-customer' not found",
       });
+    });
+
+    it('should update dark palette tokens without touching light ones', async () => {
+      const response = await request(app.getHttpServer())
+        .put('/api/customers/customer-1/branding/config')
+        .send({
+          theme: {
+            dark: {
+              primary: { main: '#F472B6' },
+              surface: '#26101B',
+            },
+          },
+        })
+        .expect(200);
+
+      const { light, dark } = response.body.data.branding.theme;
+      expect(dark.primary.main).toBe('#F472B6');
+      expect(dark.surface).toBe('#26101B');
+      expect(dark.background).toBe('#080C14');
+      expect(light.primary.main).toBe('#FF0000');
+      expect(light.surface).toBe('#FFFFFF');
+    });
+
+    it('should reject a theme color that is not hex', async () => {
+      await request(app.getHttpServer())
+        .put('/api/customers/customer-1/branding/config')
+        .send({ theme: { light: { primary: { main: 'pink' } } } })
+        .expect(422);
+
+      await request(app.getHttpServer())
+        .put('/api/customers/customer-1/branding/config')
+        .send({ theme: { dark: { border: '#12345' } } })
+        .expect(422);
     });
 
     it('should handle empty update payload', async () => {

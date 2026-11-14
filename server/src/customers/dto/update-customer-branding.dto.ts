@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, IsObject } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ThemeConfigDto } from './theme-config.dto';
 
 export class UpdateCustomerBrandingDto {
   @ApiProperty({ required: false })
@@ -12,24 +14,9 @@ export class UpdateCustomerBrandingDto {
   @IsString()
   logoAlt?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: ThemeConfigDto })
   @IsOptional()
-  @IsObject()
-  theme?: {
-    light?: {
-      primary?: {
-        main?: string;
-        light?: string;
-        dark?: string;
-        contrast?: string;
-      };
-      secondary?: {
-        main?: string;
-        light?: string;
-        dark?: string;
-        contrast?: string;
-      };
-      background?: string;
-    };
-  };
+  @ValidateNested()
+  @Type(() => ThemeConfigDto)
+  theme?: ThemeConfigDto;
 }

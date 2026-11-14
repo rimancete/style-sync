@@ -1,55 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-
-class ThemeColorsDto {
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  main?: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  light?: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  dark?: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  contrast?: string;
-}
-
-class LightThemeDto {
-  @ApiProperty({ required: false, type: ThemeColorsDto })
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ThemeColorsDto)
-  primary?: ThemeColorsDto;
-
-  @ApiProperty({ required: false, type: ThemeColorsDto })
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ThemeColorsDto)
-  secondary?: ThemeColorsDto;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  background?: string;
-}
-
-class ThemeDto {
-  @ApiProperty({ required: false, type: LightThemeDto })
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => LightThemeDto)
-  light?: LightThemeDto;
-}
+import { ThemeConfigDto } from './theme-config.dto';
 
 /**
  * DTO for the JSON config field in multipart form data
@@ -74,13 +26,13 @@ export class CreateCustomerBrandingConfigDto {
 
   @ApiProperty({
     required: false,
-    type: ThemeDto,
-    description: 'Theme configuration including colors',
+    type: ThemeConfigDto,
+    description: 'Light and dark palettes',
   })
   @IsOptional()
   @ValidateNested()
-  @Type(() => ThemeDto)
-  theme?: ThemeDto;
+  @Type(() => ThemeConfigDto)
+  theme?: ThemeConfigDto;
 }
 
 /**

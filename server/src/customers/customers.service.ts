@@ -2,8 +2,12 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  UnprocessableEntityException,
   Logger,
 } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import { validateSync, ValidationError } from 'class-validator';
+import { toBrandingTheme, toThemeUpdateData } from './branding-theme.mapper';
 import { DatabaseService } from '../database/database.service';
 import { CustomerBrandingResponseDto } from './dto/customer-branding.response.dto';
 import { UpdateCustomerBrandingDto } from './dto/update-customer-branding.dto';
@@ -61,25 +65,10 @@ export class CustomersService {
         favicon16x16: fileUrls.favicon16x16 || null,
         appleTouch: fileUrls.appleTouch || null,
         documentTitle: customer.documentTitle || '',
-        theme: {
-          light: {
-            logoUrl: fileUrls.logo || null,
-            logoAlt: customer.logoAlt || '',
-            primary: {
-              main: customer.primaryMain || '#272726FF',
-              light: customer.primaryLight || '#706E6DFF',
-              dark: customer.primaryDark || '#1B1B1BFF',
-              contrast: customer.primaryContrast || '#ECE8E6FF',
-            },
-            secondary: {
-              main: customer.secondaryMain || '#8D8C8BFF',
-              light: customer.secondaryLight || '#E7E7E6FF',
-              dark: customer.secondaryDark || '#3B3B3BFF',
-              contrast: customer.secondaryContrast || '#1B1B1BFF',
-            },
-            background: customer.backgroundColor || '#F7F7F7FF',
-          },
-        },
+        theme: toBrandingTheme(customer, {
+          logoUrl: fileUrls.logo || null,
+          logoAlt: customer.logoAlt || '',
+        }),
       },
       isActive: customer.isActive,
     };
@@ -98,50 +87,7 @@ export class CustomersService {
     }
 
     const updateData: Prisma.CustomerUpdateInput = {};
-
-    if (updateDto.documentTitle !== undefined) {
-      updateData.documentTitle = updateDto.documentTitle;
-    }
-
-    if (updateDto.logoAlt !== undefined) {
-      updateData.logoAlt = updateDto.logoAlt;
-    }
-
-    if (updateDto.theme?.light?.primary?.main !== undefined) {
-      updateData.primaryMain = updateDto.theme.light.primary.main;
-    }
-
-    if (updateDto.theme?.light?.primary?.light !== undefined) {
-      updateData.primaryLight = updateDto.theme.light.primary.light;
-    }
-
-    if (updateDto.theme?.light?.primary?.dark !== undefined) {
-      updateData.primaryDark = updateDto.theme.light.primary.dark;
-    }
-
-    if (updateDto.theme?.light?.primary?.contrast !== undefined) {
-      updateData.primaryContrast = updateDto.theme.light.primary.contrast;
-    }
-
-    if (updateDto.theme?.light?.secondary?.main !== undefined) {
-      updateData.secondaryMain = updateDto.theme.light.secondary.main;
-    }
-
-    if (updateDto.theme?.light?.secondary?.light !== undefined) {
-      updateData.secondaryLight = updateDto.theme.light.secondary.light;
-    }
-
-    if (updateDto.theme?.light?.secondary?.dark !== undefined) {
-      updateData.secondaryDark = updateDto.theme.light.secondary.dark;
-    }
-
-    if (updateDto.theme?.light?.secondary?.contrast !== undefined) {
-      updateData.secondaryContrast = updateDto.theme.light.secondary.contrast;
-    }
-
-    if (updateDto.theme?.light?.background !== undefined) {
-      updateData.backgroundColor = updateDto.theme.light.background;
-    }
+    this.applyConfigurationUpdates(updateData, updateDto);
 
     const updatedCustomer = await this.prisma.customer.update({
       where: { id: customerId },
@@ -324,12 +270,33 @@ export class CustomersService {
    * Parse configuration JSON string
    */
   parseConfigurationJson(configJson: string): CreateCustomerBrandingConfigDto {
+    let parsed: unknown;
     try {
-      return JSON.parse(configJson) as CreateCustomerBrandingConfigDto;
+      parsed = JSON.parse(configJson);
     } catch (error) {
       this.logger.error('Error parsing configuration JSON', error);
       throw new BadRequestException('Invalid JSON in config field');
     }
+
+    const config = plainToInstance(CreateCustomerBrandingConfigDto, parsed);
+    const errors = validateSync(config, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
+    if (errors.length > 0) {
+      throw new UnprocessableEntityException(
+        `Invalid branding config: ${this.formatValidationErrors(errors).join('; ')}`,
+      );
+    }
+
+    return config;
+  }
+
+  private formatValidationErrors(errors: ValidationError[]): string[] {
+    return errors.flatMap(error => [
+      ...Object.values(error.constraints ?? {}),
+      ...this.formatValidationErrors(error.children ?? []),
+    ]);
   }
 
   /**
@@ -337,7 +304,7 @@ export class CustomersService {
    */
   private applyConfigurationUpdates(
     updateData: Prisma.CustomerUpdateInput,
-    config: CreateCustomerBrandingConfigDto,
+    config: CreateCustomerBrandingConfigDto | UpdateCustomerBrandingDto,
   ): void {
     if (config.documentTitle !== undefined) {
       updateData.documentTitle = config.documentTitle;
@@ -347,41 +314,7 @@ export class CustomersService {
       updateData.logoAlt = config.logoAlt;
     }
 
-    if (config.theme?.light?.primary?.main !== undefined) {
-      updateData.primaryMain = config.theme.light.primary.main;
-    }
-
-    if (config.theme?.light?.primary?.light !== undefined) {
-      updateData.primaryLight = config.theme.light.primary.light;
-    }
-
-    if (config.theme?.light?.primary?.dark !== undefined) {
-      updateData.primaryDark = config.theme.light.primary.dark;
-    }
-
-    if (config.theme?.light?.primary?.contrast !== undefined) {
-      updateData.primaryContrast = config.theme.light.primary.contrast;
-    }
-
-    if (config.theme?.light?.secondary?.main !== undefined) {
-      updateData.secondaryMain = config.theme.light.secondary.main;
-    }
-
-    if (config.theme?.light?.secondary?.light !== undefined) {
-      updateData.secondaryLight = config.theme.light.secondary.light;
-    }
-
-    if (config.theme?.light?.secondary?.dark !== undefined) {
-      updateData.secondaryDark = config.theme.light.secondary.dark;
-    }
-
-    if (config.theme?.light?.secondary?.contrast !== undefined) {
-      updateData.secondaryContrast = config.theme.light.secondary.contrast;
-    }
-
-    if (config.theme?.light?.background !== undefined) {
-      updateData.backgroundColor = config.theme.light.background;
-    }
+    Object.assign(updateData, toThemeUpdateData(config.theme));
   }
 
   /**
