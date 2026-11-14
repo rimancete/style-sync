@@ -1,6 +1,6 @@
 <!-- spec-kit: domain -->
-<!-- version: 1.1 -->
-<!-- last-updated: 2026-08-22 -->
+<!-- version: 1.2 -->
+<!-- last-updated: 2026-11-14 -->
 <!-- updated-by: agent -->
 
 # Domain
@@ -233,19 +233,17 @@ type AuthState = {
   role: Role | null;             // decoded from JWT
   customers: CustomerSummary[];
   defaultCustomerId: string | null;
+  activeCustomerId: string | null;
+  activeCustomerSlug: string | null;
   isAuthenticated: boolean;
 };
 ```
 
 // themeStore
-interface ThemeConfig {
-  colors?: Record<string, string>;
-  fonts?: Record<string, string>;
-  spacing?: Record<string, string>;
-}
 interface ThemeState {
-  mode: 'light' | 'dark';
-  config: ThemeConfig | null;
+  preference: 'light' | 'dark' | null;
+  systemMode: 'light' | 'dark';
+  mode: 'light' | 'dark'; // preference ?? systemMode
 }
 
 // bookingStore (multi-step funnel, NOT persisted)
@@ -257,7 +255,7 @@ interface BookingState {
 }
 ```
 
-> Note: `role` and `email` are decoded from the JWT on the client for navigation and presentation only. Authorisation is always enforced on the server. STAFF currently lands on the user Home (no staff area yet).
+> Note: `role` and `email` are decoded from the JWT on the client for navigation and presentation only. Authorisation is always enforced on the server. STAFF uses the admin shell. A CLIENT's active salon comes from the URL slug.
 
 ### Form Schemas (Zod — pattern)
 

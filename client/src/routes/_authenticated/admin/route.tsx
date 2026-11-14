@@ -1,12 +1,23 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
+import { AdminShell } from '~/components/layout';
 import { useAuthStore } from '~/store';
+import { getHomePath, SELECT_COMPANY_PATH, withRedirectQuery } from '~/utils/session-paths.util';
 
 export const Route = createFileRoute('/_authenticated/admin')({
-  beforeLoad: () => {
-    if (useAuthStore.getState().role !== 'ADMIN') {
+  beforeLoad: ({ location }) => {
+    const session = useAuthStore.getState();
+
+    if (session.role !== 'ADMIN' && session.role !== 'STAFF') {
       // eslint-disable-next-line @typescript-eslint/only-throw-error
-      throw redirect({ to: '/' });
+      throw redirect({ href: getHomePath(session) });
+    }
+
+    if (!session.activeCustomerId) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
+      throw redirect({
+        href: withRedirectQuery(SELECT_COMPANY_PATH, location.href),
+      });
     }
   },
   component: AdminLayout,
@@ -14,10 +25,8 @@ export const Route = createFileRoute('/_authenticated/admin')({
 
 function AdminLayout() {
   return (
-    <div className="flex h-screen bg-background">
-      <main className="flex-1 overflow-auto">
-        <Outlet />
-      </main>
-    </div>
+    <AdminShell>
+      <Outlet />
+    </AdminShell>
   );
 }

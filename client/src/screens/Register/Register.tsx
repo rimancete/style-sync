@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useRegister, type RegisterPayload } from '~/api/auth';
 import { ConfirmDialog } from '~/components/dialogs';
+import { ThemeModeToggle } from '~/components/theme-mode-toggle';
 
 import { Banner } from './components/Banner/Banner';
 import { RegisterFormView } from './components/RegisterFormView';
@@ -70,12 +71,14 @@ export function RegisterScreen({ slug }: RegisterScreenProps) {
       <Banner />
 
       <div className="relative flex h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)] min-h-0 w-full min-w-0 flex-col justify-center overflow-y-auto">
+        <ThemeModeToggle className="absolute right-0 top-0 z-20" />
         <div className="mx-auto flex w-full max-w-md flex-col items-stretch justify-center gap-3">
           <RegisterFormView
             methods={methods}
             onSubmit={onSubmit}
             isPending={isPending}
             errorMessage={getRegisterAlertMessage(error, t)}
+            slug={slug}
           />
         </div>
       </div>

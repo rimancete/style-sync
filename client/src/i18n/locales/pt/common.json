@@ -5,6 +5,7 @@
   },
   "navigation": {
     "home": "Início",
+    "dashboard": "Painel",
     "bookings": "Agendamentos",
     "club": "Clube",
     "plan": "Plano",
@@ -34,6 +35,21 @@
   },
   "theme": {
     "darkMode": "Modo escuro"
+  },
+  "shell": {
+    "navigation": "Navegação principal",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "switchSalon": "Trocar de salão",
+    "switchCompany": "Trocar de empresa"
+  },
+  "salonNotFound": {
+    "title": "Salão não encontrado",
+    "description": "Este salão está indisponível ou o link está incorreto."
+  },
+  "selectCompany": {
+    "title": "Escolha uma empresa",
+    "subtitle": "Selecione a empresa em que você quer trabalhar."
   },
   "common": {
     "loading": "Carregando...",

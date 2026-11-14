@@ -32,12 +32,14 @@ type RegisterFormViewProps = {
   onSubmit: (data: RegisterFormSchema) => void;
   isPending: boolean;
   errorMessage?: string;
+  slug: string;
 };
 
 export function RegisterFormView({
   methods,
   onSubmit,
   isPending,
+  slug,
   errorMessage,
 }: RegisterFormViewProps) {
   const { t } = useTranslation('auth');
@@ -202,7 +204,11 @@ export function RegisterFormView({
 
       <p className="text-center text-sm text-muted-foreground">
         {t('register.alreadyHaveAccount')}{' '}
-        <Link to="/login" className="font-medium text-primary hover:underline">
+        <Link
+          to="/salon/$slug/login"
+          params={{ slug }}
+          className="font-medium text-primary hover:underline"
+        >
           {t('register.signIn')}
         </Link>
       </p>

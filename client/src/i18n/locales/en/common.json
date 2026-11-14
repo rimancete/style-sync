@@ -5,6 +5,7 @@
   },
   "navigation": {
     "home": "Home",
+    "dashboard": "Dashboard",
     "bookings": "Bookings",
     "club": "Club",
     "plan": "Plan",
@@ -34,6 +35,21 @@
   },
   "theme": {
     "darkMode": "Dark mode"
+  },
+  "shell": {
+    "navigation": "Main navigation",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "switchSalon": "Switch salon",
+    "switchCompany": "Switch company"
+  },
+  "salonNotFound": {
+    "title": "Salon not found",
+    "description": "This salon is unavailable or the link is incorrect."
+  },
+  "selectCompany": {
+    "title": "Choose a company",
+    "subtitle": "Select the company you want to work in."
   },
   "common": {
     "loading": "Loading...",

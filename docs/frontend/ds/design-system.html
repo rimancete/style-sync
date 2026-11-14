@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="5000" name="preview-ready-after-ms"/>
+<title>Design system — Pulsedesk</title>
+
+<link href="../../../../style-sync_refs_booking-flow/ds/pulsedesk-saas.aura.build/assets/4bcb63d746dc1754_css2.css" rel="stylesheet"/>
+<link href="../../../../style-sync_refs_booking-flow/ds/pulsedesk-saas.aura.build/assets/b626255d7795be45_css2.css" rel="stylesheet"/>
+<link rel="stylesheet" href="../../../../style-sync_refs_booking-flow/ds/pulsedesk-saas.aura.build/assets/css/fonts.css"/>
+<link rel="stylesheet" href="../../../../style-sync_refs_booking-flow/ds/pulsedesk-saas.aura.build/assets/css/animations.css"/>
+
+<script src="../../../../style-sync_refs_booking-flow/ds/pulsedesk-saas.aura.build/assets/176e894661aa9cdc_3.4.17"></script>
+<script src="../../../../style-sync_refs_booking-flow/ds/pulsedesk-saas.aura.build/assets/758d94838db0cafd_iconify-icon.min.js"></script>
+
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body class="min-h-screen overflow-x-hidden antialiased selection:bg-cyan-300/20 selection:text-cyan-100 text-slate-100 font-sans bg-[#080c14]" style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+
+<div class="pointer-events-none fixed inset-0 -z-50" style="background: radial-gradient(circle at 50% -10%, rgba(88, 166, 255, 0.16), transparent 36%), radial-gradient(circle at 82% 18%, rgba(103, 232, 249, 0.08), transparent 28%), linear-gradient(180deg, #0b1020 0%, #080c14 42%, #0a0d13 100%);"></div>
+<div class="pointer-events-none fixed inset-0 -z-40 opacity-[0.035]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.75%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');"></div>
+
+<div class="mx-auto min-h-screen w-full max-w-[1360px] border-x border-white/[0.06]">
+<div class="pointer-events-none fixed left-1/2 top-0 -z-30 hidden h-full w-full max-w-[1360px] -translate-x-1/2 grid-cols-4 md:grid">
+<div class="border-r border-white/[0.045]"></div>
+<div class="border-r border-white/[0.045]"></div>
+<div class="border-r border-white/[0.045]"></div>
+<div></div>
+</div>
+
+<header class="sticky border-white/[0.06] [animation:animationIn_0.8s_ease-out_0.1s_both] z-50 bg-[#080c14]/70 border-b top-0 backdrop-blur-2xl">
+<nav class="mx-auto flex h-16 w-full max-w-[1280px] items-center justify-between px-5 sm:px-8 lg:px-10">
+<a class="group flex items-center gap-3" href="#blueprint">
+<span class="text-base font-semibold text-white tracking-[-0.035em] font-geist">Pulsedesk</span>
+</a>
+<div class="hidden items-center gap-8 md:flex">
+<a class="relative text-sm text-slate-400 transition duration-300 ease-out hover:text-white font-geist" href="#blueprint">Hero<span class="absolute -bottom-2 left-0 h-px w-0 bg-cyan-200/70 transition-all duration-300 ease-out hover:w-full"></span></a>
+<a class="relative text-sm text-slate-400 transition duration-300 ease-out hover:text-white font-geist" href="#tipografia">Tipografia<span class="absolute -bottom-2 left-0 h-px w-0 bg-cyan-200/70 transition-all duration-300 ease-out hover:w-full"></span></a>
+<a class="relative text-sm text-slate-400 transition duration-300 ease-out hover:text-white font-geist" href="#cores">Cores<span class="absolute -bottom-2 left-0 h-px w-0 bg-cyan-200/70 transition-all duration-300 ease-out hover:w-full"></span></a>
+<a class="relative text-sm text-slate-400 transition duration-300 ease-out hover:text-white font-geist" href="#componentes">Componentes<span class="absolute -bottom-2 left-0 h-px w-0 bg-cyan-200/70 transition-all duration-300 ease-out hover:w-full"></span></a>
+<a class="relative text-sm text-slate-400 transition duration-300 ease-out hover:text-white font-geist" href="#layout">Layout<span class="absolute -bottom-2 left-0 h-px w-0 bg-cyan-200/70 transition-all duration-300 ease-out hover:w-full"></span></a>
+<a class="relative text-sm text-slate-400 transition duration-300 ease-out hover:text-white font-geist" href="#movimento">Movimento<span class="absolute -bottom-2 left-0 h-px w-0 bg-cyan-200/70 transition-all duration-300 ease-out hover:w-full"></span></a>
+<a class="relative text-sm text-slate-400 transition duration-300 ease-out hover:text-white font-geist" href="#icones">Ícones<span class="absolute -bottom-2 left-0 h-px w-0 bg-cyan-200/70 transition-all duration-300 ease-out hover:w-full"></span></a>
+<a class="relative text-sm text-slate-400 transition duration-300 ease-out hover:text-white font-geist" href="#telas">Telas<span class="absolute -bottom-2 left-0 h-px w-0 bg-cyan-200/70 transition-all duration-300 ease-out hover:w-full"></span></a>
+</div>
+<a class="hidden rounded-full border border-cyan-200/20 bg-cyan-100 px-4 py-2 text-sm font-medium text-slate-950 shadow-lg shadow-cyan-950/20 transition duration-300 ease-out hover:scale-[1.03] hover:border-cyan-200/35 hover:bg-cyan-50 hover:shadow-cyan-900/25 sm:inline-flex font-geist" href="#telas">Ver telas privadas</a>
+<button aria-label="Abrir menu" class="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 md:hidden">
+<iconify-icon height="20" icon="solar:hamburger-menu-linear" width="20"></iconify-icon>
+</button>
+</nav>
+</header>
+
+<main>
+
+<section class="overflow-hidden sm:px-8 sm:pb-28 sm:pt-28 lg:px-10 lg:pt-24 lg:pb-24 pt-20 pr-5 pb-24 pl-5 relative" id="blueprint">
+<canvas class="absolute inset-0 z-0 pointer-events-none opacity-60 mix-blend-screen w-full h-full" id="webgl-canvas"></canvas>
+<div class="pointer-events-none absolute left-1/2 top-24 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-200/10 blur-3xl"></div>
+<div class="grid gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12 w-full max-w-[1280px] mr-auto ml-auto gap-x-14 gap-y-14 items-center">
+<div class="reveal [animation:animationIn_0.8s_ease-out_0.1s_both] z-10 relative">
+<div class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 shadow-2xl shadow-black/20 backdrop-blur-xl font-geist">
+<span class="h-1.5 w-1.5 rounded-full bg-cyan-200 shadow-lg shadow-cyan-200/40"></span>
+Biblioteca visual do salão, com os mesmos tokens e componentes
+</div>
+<h1 class="sm:text-6xl lg:text-7xl text-5xl font-medium text-white tracking-tighter font-jakarta max-w-4xl">Sistema visual sem sobrecarga.</h1>
+<p class="mt-7 max-w-2xl text-base leading-7 text-slate-400 sm:text-lg font-geist">Esta página reúne tipografia, cores, componentes, layout e movimento do Pulsedesk, mais as telas de agendamento do salão, sem inventar estilo novo nem trocar as classes originais.</p>
+<div class="mt-9 flex flex-col gap-3 sm:flex-row">
+<a class="group inline-flex items-center justify-center gap-2 shadow-cyan-950/30 transition duration-300 ease-out hover:scale-[1.03] hover:bg-cyan-50 hover:shadow-cyan-300/10 text-sm font-semibold text-slate-950 bg-cyan-100 rounded-full pt-3 pr-5 pb-3 pl-5 shadow-2xl font-geist" href="#tipografia">
+Ver tipografia
+<iconify-icon class="transition duration-300 ease-out group-hover:translate-x-0.5" height="18" icon="solar:arrow-right-linear" width="18"></iconify-icon>
+</a>
+<a class="inline-flex items-center justify-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.04] px-5 py-3 text-sm font-medium text-slate-200 shadow-2xl shadow-black/20 backdrop-blur-xl transition duration-300 ease-out hover:scale-[1.02] hover:border-white/[0.18] hover:bg-white/[0.07] font-geist" href="#componentes">
+Ver componentes
+<iconify-icon height="18" icon="solar:checklist-minimalistic-linear" width="18"></iconify-icon>
+</a>
+</div>
+</div>
+<div class="reveal transition-all duration-700 ease-out lg:h-[43rem] group [animation:animationIn_0.8s_ease-out_0.1s_both] w-full h-[34rem] max-w-[42rem] mr-auto ml-auto relative" id="heroObject" style="perspective: 1200px;">
+<div aria-hidden="true" class="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/[0.08] blur-[100px] transition-all duration-500 group-hover:bg-cyan-400/[0.12]"></div>
+<div aria-hidden="true" class="absolute left-[62%] top-[22%] h-44 w-44 -translate-x-1/2 rounded-full bg-emerald-400/[0.06] blur-[80px]"></div>
+<div aria-hidden="true" class="absolute left-1/2 top-[68%] h-48 w-[88%] -translate-x-1/2 rounded-full bg-black/60 blur-3xl"></div>
+<div aria-hidden="true" class="absolute left-1/2 top-[69%] h-28 w-[78%] -translate-x-1/2 rounded-full bg-cyan-950/30 blur-2xl transition-all duration-700 group-hover:w-[82%]" style="transform-style: preserve-3d;"></div>
+<div class="absolute left-1/2 top-1/2 w-[98%] -translate-x-1/2 -translate-y-1/2 transition-transform duration-700 ease-out" style="transform-style: preserve-3d;">
+<div class="animate-float-3d floating-panel rounded-[2rem] border border-white/[0.15] bg-slate-950/70 p-3 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-3xl transition duration-500 ease-out hover:border-cyan-200/30">
+<div class="overflow-hidden rounded-[1.55rem] border border-white/[0.08] bg-[#0b1220]/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+<div class="flex items-center justify-between border-b border-white/[0.07] bg-white/[0.02] px-5 py-4">
+<div class="flex items-center gap-3">
+<div>
+<p class="text-xs text-slate-400 font-geist">Workspace Pulsedesk</p>
+<p class="mt-0.5 text-sm font-medium text-slate-100 font-geist">Painel do plano de lançamento</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="hidden items-center gap-1.5 rounded-full border border-white/[0.1] bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 sm:flex transition-colors hover:bg-white/[0.08] font-geist">
+<span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>Ao vivo
+</div>
+<div class="flex -space-x-2 transition-transform hover:-space-x-1">
+<span class="h-7 w-7 rounded-full border-2 border-[#0b1220] bg-cyan-200 shadow-sm"></span>
+<span class="h-7 w-7 rounded-full border-2 border-[#0b1220] bg-slate-300 shadow-sm"></span>
+<span class="h-7 w-7 rounded-full border-2 border-[#0b1220] bg-emerald-300 shadow-sm"></span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-[0.28fr_1fr]">
+<aside class="hidden border-r border-white/[0.07] bg-white/[0.01] p-4 sm:block">
+<div class="space-y-1">
+<div class="flex items-center gap-2 rounded-xl bg-cyan-400/[0.1] px-3 py-2.5 text-xs font-medium text-cyan-200 cursor-pointer transition-colors hover:bg-cyan-400/[0.15] font-geist">
+<span class="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_rgba(103,232,249,0.8)]"></span>Visão geral
+</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-xs text-slate-400 cursor-pointer transition-colors hover:bg-white/[0.05] hover:text-slate-200 font-geist">
+<span class="h-1.5 w-1.5 rounded-full bg-white/20"></span>Tarefas
+</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-xs text-slate-400 cursor-pointer transition-colors hover:bg-white/[0.05] hover:text-slate-200 font-geist">
+<span class="h-1.5 w-1.5 rounded-full bg-white/20"></span>Calendário
+</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-xs text-slate-400 cursor-pointer transition-colors hover:bg-white/[0.05] hover:text-slate-200 font-geist">
+<span class="h-1.5 w-1.5 rounded-full bg-white/20"></span>Relatórios
+</div>
+</div>
+<div class="mt-8 rounded-2xl border border-white/[0.05] bg-white/[0.02] p-4 backdrop-blur-sm">
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Foco do time</p>
+<div class="mt-4 space-y-3">
+<div class="group/progress">
+<div class="mb-1.5 flex justify-between text-[10px] text-slate-400 group-hover/progress:text-slate-300 transition-colors">
+<span class="font-geist">Design</span><span class="text-cyan-200 font-geist">68%</span>
+</div>
+<div class="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+<div class="h-full w-2/3 rounded-full bg-cyan-300/70 transition-all duration-1000 group-hover/progress:bg-cyan-300"></div>
+</div>
+</div>
+<div class="group/progress">
+<div class="mb-1.5 flex justify-between text-[10px] text-slate-400 group-hover/progress:text-slate-300 transition-colors">
+<span class="font-geist">Build</span><span class="text-emerald-200 font-geist">82%</span>
+</div>
+<div class="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+<div class="h-full w-5/6 rounded-full bg-emerald-300/60 transition-all duration-1000 group-hover/progress:bg-emerald-300"></div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="p-5">
+<div class="grid gap-3 sm:grid-cols-3">
+<div class="group/stat rounded-2xl border border-cyan-200/20 bg-cyan-400/[0.05] p-4 transition-all hover:bg-cyan-400/[0.08] hover:border-cyan-200/30 cursor-pointer">
+<p class="text-[10px] uppercase tracking-[0.16em] text-cyan-200/80 font-semibold font-geist">Tarefas abertas</p>
+<p class="mt-2 text-2xl text-white tracking-tighter transition-transform group-hover/stat:-translate-y-0.5 font-jakarta font-medium">24</p>
+<p class="mt-1 text-xs text-slate-400 font-geist">6 vencem em breve</p>
+</div>
+<div class="group/stat rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 transition-all hover:bg-white/[0.05] cursor-pointer">
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Concluídas</p>
+<p class="mt-2 text-2xl text-white tracking-tighter transition-transform group-hover/stat:-translate-y-0.5 font-jakarta font-medium">38</p>
+<p class="mt-1 text-xs text-emerald-300/80 font-geist">+12 esta semana</p>
+</div>
+<div class="group/stat rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 transition-all hover:bg-white/[0.05] cursor-pointer">
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Progresso</p>
+<p class="mt-2 text-2xl text-white tracking-tighter transition-transform group-hover/stat:-translate-y-0.5 font-jakarta font-medium">74%</p>
+<p class="mt-1 text-xs text-cyan-200/80 font-geist">No prazo</p>
+</div>
+</div>
+<div class="mt-4 grid gap-3 lg:grid-cols-[1fr_0.42fr]">
+<div class="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4">
+<div class="mb-4 flex items-center justify-between">
+<div>
+<p class="text-xs font-medium text-white font-geist">Prioridades de hoje</p>
+<p class="mt-1 text-[11px] text-slate-400 font-geist">Tarefas que precisam de atenção primeiro</p>
+</div>
+<span class="rounded-full bg-white/[0.08] px-2.5 py-1 text-[10px] text-slate-300 font-medium font-geist">4 tarefas</span>
+</div>
+<div class="space-y-2.5">
+<div class="group/task rounded-xl border border-cyan-200/15 bg-cyan-400/[0.05] p-3 transition-colors hover:bg-cyan-400/[0.08] cursor-pointer">
+<div class="flex items-center justify-between gap-3">
+<div>
+<p class="text-xs font-medium text-white group-hover/task:text-cyan-100 transition-colors font-geist">Finalizar fluxo de onboarding</p>
+<p class="mt-1 text-[10px] text-slate-400 font-geist">Revisão de design · Hoje</p>
+</div>
+<span class="rounded-full bg-cyan-400/[0.15] px-2 py-1 text-[10px] font-semibold text-cyan-200 shadow-[0_0_10px_rgba(34,211,238,0.15)] font-geist">Alta</span>
+</div>
+</div>
+<div class="group/task rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 transition-colors hover:bg-white/[0.06] cursor-pointer">
+<div class="flex items-center justify-between gap-3">
+<div>
+<p class="text-xs font-medium text-slate-200 group-hover/task:text-white transition-colors font-geist">Atualizar cards do painel</p>
+<p class="mt-1 text-[10px] text-slate-500 font-geist">Produto · Amanhã</p>
+</div>
+<span class="rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Normal</span>
+</div>
+</div>
+<div class="group/task rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 transition-colors hover:bg-white/[0.06] cursor-pointer">
+<div class="flex items-center justify-between gap-3">
+<div>
+<p class="text-xs font-medium text-slate-200 group-hover/task:text-white transition-colors font-geist">Preparar checklist de lançamento</p>
+<p class="mt-1 text-[10px] text-slate-500 font-geist">Marketing · Sexta</p>
+</div>
+<span class="rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Pronta</span>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 lg:flex lg:flex-col lg:justify-between">
+<div>
+<div class="mb-4 flex items-center justify-between">
+<p class="text-xs font-medium text-white font-geist">Saúde do sprint</p>
+<p class="text-xs font-semibold text-cyan-300 font-geist">74%</p>
+</div>
+<div class="flex h-24 items-end gap-1.5">
+<span class="h-8 flex-1 rounded-t-md bg-cyan-400/20 transition-all hover:bg-cyan-400/40 cursor-crosshair"></span>
+<span class="h-12 flex-1 rounded-t-md bg-cyan-400/30 transition-all hover:bg-cyan-400/50 cursor-crosshair"></span>
+<span class="h-10 flex-1 rounded-t-md bg-cyan-400/25 transition-all hover:bg-cyan-400/45 cursor-crosshair"></span>
+<span class="h-16 flex-1 rounded-t-md bg-cyan-400/50 transition-all hover:bg-cyan-400/70 cursor-crosshair shadow-[0_0_15px_rgba(34,211,238,0.2)]"></span>
+<span class="h-14 flex-1 rounded-t-md bg-emerald-400/40 transition-all hover:bg-emerald-400/60 cursor-crosshair"></span>
+<span class="h-20 flex-1 rounded-t-md bg-cyan-400/60 transition-all hover:bg-cyan-400/80 cursor-crosshair"></span>
+</div>
+</div>
+<div class="mt-4 space-y-2">
+<div class="flex items-center justify-between text-[10px] text-slate-400">
+<span class="font-geist">Planejamento</span><span class="font-geist">Concluído</span>
+</div>
+<div class="h-1.5 overflow-hidden rounded-full bg-white/[0.08]">
+<div class="h-full w-3/4 rounded-full bg-cyan-300/80"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</div>
+</div>
+<div class="animate-float-3d absolute right-[2%] top-[10%] hidden w-44 rounded-2xl border border-cyan-200/20 bg-[#0b1220]/80 p-4 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] backdrop-blur-xl sm:block transition-transform hover:-translate-y-2 cursor-pointer" style="animation-delay: -1s;">
+<div class="flex items-center justify-between">
+<p class="text-[10px] font-medium uppercase tracking-[0.16em] text-cyan-200/80 font-geist">Foco</p>
+<span class="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(103,232,249,0.8)] animate-pulse"></span>
+</div>
+<p class="mt-3 text-2xl tracking-tighter text-white font-jakarta font-medium">92%</p>
+<div class="mt-3 h-1.5 overflow-hidden rounded-full bg-white/[0.08]">
+<div class="h-full w-11/12 rounded-full bg-cyan-300/80 shadow-[0_0_10px_rgba(103,232,249,0.5)]"></div>
+</div>
+</div>
+<div class="animate-float-3d absolute left-[-2%] bottom-[10%] hidden w-52 rounded-2xl border border-emerald-300/20 bg-[#0b1220]/80 p-4 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] backdrop-blur-xl md:block transition-transform hover:-translate-y-2 cursor-pointer" style="animation-delay: -3s;">
+<div class="flex items-center gap-3">
+<span class="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-300/20 bg-emerald-400/[0.1] text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.15)]">
+<svg fill="none" height="17" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24" width="17" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5"></path></svg>
+</span>
+<div>
+<p class="text-xs font-medium text-white font-geist">Checklist de lançamento</p>
+<p class="mt-0.5 text-[10px] text-slate-400 font-geist">3 tarefas concluídas</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="border-white/[0.06] sm:px-8 lg:px-10 border-t pt-24 pr-5 pb-24 pl-5" id="tipografia">
+<div class="w-full max-w-[1280px] mr-auto ml-auto">
+<p class="text-sm font-medium text-cyan-100 font-geist">01 · Tipografia</p>
+<h2 class="mt-4 text-4xl text-white sm:text-5xl lg:text-6xl tracking-tighter leading-[0.95] font-jakarta font-medium">Escala que já existe na página.</h2>
+<div class="mt-12 border-t border-white/[0.06]">
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Heading 1</p>
+<h1 class="sm:text-6xl lg:text-7xl text-5xl font-medium text-white tracking-tighter font-jakarta">Sistema visual</h1>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">48px / 48px</span>
+</div>
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Heading 2</p>
+<h2 class="text-4xl text-white tracking-tighter leading-[0.95] font-jakarta font-medium">Um espaço tranquilo</h2>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">36px / 34px</span>
+</div>
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Heading 3</p>
+<h3 class="text-2xl text-white tracking-tight font-jakarta font-medium">Recursos demais</h3>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">24px / 32px</span>
+</div>
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Heading 4</p>
+<h4 class="text-sm font-medium text-white font-geist">Bem-vindo ao seu workspace</h4>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">14px / 20px</span>
+</div>
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Bold L</p>
+<p class="text-lg font-semibold text-white font-geist">Capture a tarefa</p>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">18px / 28px</span>
+</div>
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Bold M</p>
+<p class="text-base font-semibold text-white tracking-[-0.035em] font-geist">Pulsedesk</p>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">16px / 24px</span>
+</div>
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Bold S</p>
+<p class="text-xs font-medium text-white font-geist">Prioridades de hoje</p>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">12px / 16px</span>
+</div>
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Paragraph</p>
+<p class="max-w-2xl text-base leading-7 text-slate-400 sm:text-lg font-geist">O Pulsedesk ajuda times pequenos a organizar tarefas em um espaço tranquilo.</p>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">16px / 28px</span>
+</div>
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Regular L</p>
+<p class="max-w-2xl text-base leading-7 text-slate-400 font-geist">Veja como o painel reúne prioridades, responsáveis e prazos num relance.</p>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">16px / 28px</span>
+</div>
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Regular M</p>
+<p class="text-sm leading-6 text-slate-500 font-geist">Um espaço de projeto simples para times pequenos.</p>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">14px / 24px</span>
+</div>
+<div class="flex items-baseline justify-between gap-8 border-b border-white/[0.06] py-6">
+<div>
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Regular S</p>
+<p class="text-xs text-slate-400 font-geist">6 vencem em breve</p>
+</div>
+<span class="shrink-0 text-xs text-slate-500 font-geist">12px / 16px</span>
+</div>
+</div>
+</div>
+</section>
+
+<section class="border-white/[0.06] sm:px-8 lg:px-10 border-t pt-24 pr-5 pb-24 pl-5" id="cores">
+<div class="w-full max-w-[1280px] mr-auto ml-auto">
+<p class="text-sm font-medium text-cyan-100 font-geist">02 · Cores e superfícies</p>
+<h2 class="mt-4 text-4xl text-white sm:text-5xl lg:text-6xl tracking-tighter leading-[0.95] font-jakarta font-medium">Fundos, bordas e brilho.</h2>
+<div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+<div>
+<div class="h-28 rounded-2xl border border-white/[0.06] bg-[#080c14]"></div>
+<p class="mt-3 text-xs font-medium text-white font-geist">Página</p>
+<p class="mt-1 text-xs text-slate-500 font-geist">bg-[#080c14]</p>
+</div>
+<div>
+<div class="h-28 rounded-2xl border border-white/[0.06]" style="background: radial-gradient(circle at 50% -10%, rgba(88, 166, 255, 0.16), transparent 36%), radial-gradient(circle at 82% 18%, rgba(103, 232, 249, 0.08), transparent 28%), linear-gradient(180deg, #0b1020 0%, #080c14 42%, #0a0d13 100%);"></div>
+<p class="mt-3 text-xs font-medium text-white font-geist">Lavagem da página</p>
+<p class="mt-1 text-xs text-slate-500 font-geist">radial-gradient ciano</p>
+</div>
+<div>
+<div class="relative h-28 overflow-hidden rounded-2xl border border-white/[0.06] bg-[#080c14]">
+<div class="absolute inset-0 opacity-[0.035]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilterSwatch%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.75%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilterSwatch)%22/%3E%3C/svg%3E');"></div>
+</div>
+<p class="mt-3 text-xs font-medium text-white font-geist">Ruído</p>
+<p class="mt-1 text-xs text-slate-500 font-geist">opacity-[0.035]</p>
+</div>
+<div>
+<div class="h-28 rounded-3xl border border-white/[0.08] bg-white/[0.035] shadow-2xl shadow-black/50 backdrop-blur-xl"></div>
+<p class="mt-3 text-xs font-medium text-white font-geist">Card</p>
+<p class="mt-1 text-xs text-slate-500 font-geist">bg-white/[0.035] backdrop-blur-xl</p>
+</div>
+<div>
+<div class="h-28 rounded-[2rem] border border-white/[0.15] bg-slate-950/70 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-3xl"></div>
+<p class="mt-3 text-xs font-medium text-white font-geist">Vidro</p>
+<p class="mt-1 text-xs text-slate-500 font-geist">bg-slate-950/70 backdrop-blur-3xl</p>
+</div>
+<div>
+<div class="relative h-28 overflow-hidden rounded-2xl border border-white/[0.06] bg-[#080c14]">
+<div class="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-200/10 blur-3xl"></div>
+</div>
+<p class="mt-3 text-xs font-medium text-white font-geist">Brilho</p>
+<p class="mt-1 text-xs text-slate-500 font-geist">bg-cyan-200/10 blur-3xl</p>
+</div>
+<div>
+<div class="h-28 rounded-2xl border border-white/[0.08] bg-[#080c14]"></div>
+<p class="mt-3 text-xs font-medium text-white font-geist">Borda de card</p>
+<p class="mt-1 text-xs text-slate-500 font-geist">border-white/[0.08]</p>
+</div>
+<div>
+<div class="border-t border-white/[0.06] pt-6">
+<p class="text-xs font-medium text-white font-geist">Divisor</p>
+<p class="mt-1 text-xs text-slate-500 font-geist">border-t border-white/[0.06]</p>
+</div>
+</div>
+<div>
+<p class="inline bg-cyan-300/20 text-cyan-100 font-geist">Seleção de texto</p>
+<p class="mt-3 text-xs font-medium text-white font-geist">Seleção</p>
+<p class="mt-1 text-xs text-slate-500 font-geist">selection:bg-cyan-300/20</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="border-white/[0.06] sm:px-8 lg:px-10 border-t pt-24 pr-5 pb-24 pl-5" id="componentes">
+<div class="w-full max-w-[1280px] mr-auto ml-auto">
+<p class="text-sm font-medium text-cyan-100 font-geist">03 · Componentes</p>
+<h2 class="mt-4 text-4xl text-white sm:text-5xl lg:text-6xl tracking-tighter leading-[0.95] font-jakarta font-medium">Estados lado a lado.</h2>
+<div class="mt-12 grid gap-8 lg:grid-cols-2">
+<div class="rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Pílula primária</p>
+<div class="mt-6 flex flex-wrap items-center gap-3">
+<a class="inline-flex items-center justify-center gap-2 text-sm font-semibold text-slate-950 bg-cyan-100 rounded-full pt-3 pr-5 pb-3 pl-5 shadow-2xl shadow-cyan-950/30 font-geist" href="#componentes">Padrão</a>
+<a class="inline-flex scale-[1.03] items-center justify-center gap-2 text-sm font-semibold text-slate-950 bg-cyan-50 rounded-full pt-3 pr-5 pb-3 pl-5 shadow-2xl shadow-cyan-300/10 font-geist" href="#componentes">Hover</a>
+</div>
+</div>
+<div class="rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Pílula vidro</p>
+<div class="mt-6 flex flex-wrap items-center gap-3">
+<a class="inline-flex items-center justify-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.04] px-5 py-3 text-sm font-medium text-slate-200 shadow-2xl shadow-black/20 backdrop-blur-xl font-geist" href="#componentes">Padrão</a>
+<a class="inline-flex scale-[1.02] items-center justify-center gap-2 rounded-full border border-white/[0.18] bg-white/[0.07] px-5 py-3 text-sm font-medium text-slate-200 shadow-2xl shadow-black/20 backdrop-blur-xl font-geist" href="#componentes">Hover</a>
+</div>
+</div>
+<div class="rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Botão ciano</p>
+<div class="mt-6 flex flex-wrap items-center gap-3">
+<button class="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-400/10 px-3 py-2 text-xs font-medium text-cyan-50 shadow-[0_0_15px_rgba(34,211,238,0.15)] font-geist" type="button">Padrão</button>
+<button class="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-400/20 px-3 py-2 text-xs font-medium text-cyan-50 shadow-[0_0_15px_rgba(34,211,238,0.15)] font-geist" type="button">Hover</button>
+</div>
+</div>
+<div class="rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Botão azul</p>
+<div class="mt-6">
+<button class="flex w-full items-center justify-between rounded-xl bg-blue-500 px-3 py-2 text-xs font-medium text-white shadow-lg shadow-blue-500/20 font-geist" type="button">Adicionar tarefa<span class="text-base leading-none font-geist">+</span></button>
+</div>
+</div>
+<div class="rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Alternância</p>
+<div class="mt-6 inline-flex rounded-full border border-white/[0.12] bg-white/[0.04] p-1 backdrop-blur-xl">
+<button class="h-10 rounded-full bg-cyan-100 px-5 text-sm font-medium text-slate-950 shadow-[0_12px_35px_rgba(0,0,0,0.28)] font-geist" type="button">Mensal</button>
+<button class="h-10 rounded-full px-5 text-sm font-medium text-slate-300 font-geist" type="button">Anual</button>
+</div>
+<p class="mt-4 text-xs text-slate-500 font-geist">Selecionado e em repouso</p>
+</div>
+<div class="rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Busca</p>
+<div class="mt-6 flex w-48 items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-500 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>Buscar...
+</div>
+</div>
+</div>
+<div class="mt-8 grid gap-6 lg:grid-cols-2">
+<article class="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 shadow-2xl shadow-black/50 backdrop-blur-xl">
+<p class="text-xs font-medium text-white font-geist">Card padrão</p>
+<p class="mt-3 text-sm leading-6 text-slate-500 font-geist">Superfície em repouso, antes do hover.</p>
+</article>
+<article class="relative -translate-y-1 overflow-hidden rounded-3xl border border-blue-400/30 bg-white/[0.055] p-8 shadow-2xl shadow-black/50 backdrop-blur-xl">
+<p class="text-xs font-medium text-white font-geist">Card hover</p>
+<p class="mt-3 text-sm leading-6 text-slate-500 font-geist">hover:-translate-y-1 hover:border-blue-400/30 hover:bg-white/[0.055]</p>
+</article>
+</div>
+</div>
+</section>
+
+<section class="border-white/[0.06] sm:px-8 lg:px-10 border-t pt-24 pr-5 pb-24 pl-5" id="layout">
+<div class="w-full max-w-[1280px] mr-auto ml-auto">
+<p class="text-sm font-medium text-cyan-100 font-geist">04 · Layout</p>
+<h2 class="mt-4 text-4xl text-white sm:text-5xl lg:text-6xl tracking-tighter leading-[0.95] font-jakarta font-medium">Três grades da página.</h2>
+<p class="mt-8 text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Hero · lg:grid-cols-[0.95fr_1.05fr]</p>
+<div class="mt-4 grid gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
+<div class="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-6 backdrop-blur-xl">
+<p class="text-sm font-medium text-white font-geist">Coluna de texto</p>
+</div>
+<div class="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-6 backdrop-blur-xl">
+<p class="text-sm font-medium text-white font-geist">Coluna do painel</p>
+</div>
+</div>
+<p class="mt-12 text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Seção · lg:grid-cols-[1fr_0.72fr]</p>
+<div class="mt-4 grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-end">
+<div class="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-6 backdrop-blur-xl">
+<p class="text-sm font-medium text-white font-geist">Título da seção</p>
+</div>
+<div class="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-6 backdrop-blur-xl">
+<p class="text-sm font-medium text-white font-geist">Texto de apoio</p>
+</div>
+</div>
+<p class="mt-12 text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">Container · max-w-[1280px] px-5 sm:px-8 lg:px-10 pt-24 pb-24</p>
+<div class="mt-4 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-5 py-6 sm:px-8 lg:px-10">
+<p class="text-sm leading-6 text-slate-400 font-geist">A seção usa o mesmo respiro horizontal e vertical das seções da página de referência.</p>
+</div>
+</div>
+</section>
+
+<section class="border-white/[0.06] sm:px-8 lg:px-10 border-t pt-24 pr-5 pb-24 pl-5" id="movimento">
+<div class="w-full max-w-[1280px] mr-auto ml-auto">
+<p class="text-sm font-medium text-cyan-100 font-geist">05 · Movimento</p>
+<h2 class="mt-4 text-4xl text-white sm:text-5xl lg:text-6xl tracking-tighter leading-[0.95] font-jakarta font-medium">Galeria de movimento.</h2>
+<div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+<div class="[animation:animationIn_0.8s_ease-out_0.1s_both] rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium text-white font-geist">animationIn</p>
+<p class="mt-2 text-xs text-slate-500 font-geist">0.8s ease-out 0.1s both</p>
+</div>
+<div class="reveal rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium text-white font-geist">reveal</p>
+<p class="mt-2 text-xs text-slate-500 font-geist">IntersectionObserver</p>
+</div>
+<div class="rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium text-white font-geist">progress-shimmer</p>
+<div class="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+<div class="relative h-full w-2/3 overflow-hidden rounded-full bg-cyan-300">
+<div class="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/50 to-transparent" style="animation: progress-shimmer 2s infinite linear;"></div>
+</div>
+</div>
+</div>
+<a class="inline-flex items-center justify-center rounded-full bg-cyan-100 px-5 py-3 text-sm font-semibold text-slate-950 shadow-2xl shadow-cyan-950/30 transition duration-300 ease-out hover:scale-[1.03] hover:bg-cyan-50 font-geist" href="#movimento">hover:scale-[1.03]</a>
+<article class="rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 shadow-2xl shadow-black/50 backdrop-blur-xl transition duration-300 ease-out hover:-translate-y-1 hover:border-blue-400/30">
+<p class="text-xs font-medium text-white font-geist">hover:-translate-y-1</p>
+</article>
+<div class="w-44 cursor-pointer rounded-2xl border border-cyan-200/20 bg-[#0b1220]/80 p-4 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] backdrop-blur-xl transition-transform hover:-translate-y-2">
+<p class="text-xs font-medium text-white font-geist">hover:-translate-y-2</p>
+</div>
+<div class="flex items-center gap-3 rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+<p class="text-xs font-medium text-white font-geist">animate-pulse</p>
+</div>
+<a class="group inline-flex items-center justify-center gap-2 rounded-full bg-cyan-100 px-5 py-3 text-sm font-semibold text-slate-950 font-geist" href="#movimento">
+Ícone
+<iconify-icon class="transition duration-300 ease-out group-hover:translate-x-0.5" height="18" icon="solar:arrow-right-linear" width="18"></iconify-icon>
+</a>
+</div>
+</div>
+</section>
+
+<section class="border-white/[0.06] sm:px-8 lg:px-10 border-t pt-24 pr-5 pb-24 pl-5" id="icones">
+<div class="w-full max-w-[1280px] mr-auto ml-auto">
+<p class="text-sm font-medium text-cyan-100 font-geist">06 · Ícones</p>
+<h2 class="mt-4 text-4xl text-white sm:text-5xl lg:text-6xl tracking-tighter leading-[0.95] font-jakarta font-medium">Solar e traço herdado.</h2>
+<div class="mt-12 grid gap-6 sm:grid-cols-2">
+<div class="rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">iconify-icon · Solar</p>
+<div class="mt-6 flex items-end gap-6 text-slate-200">
+<iconify-icon height="18" icon="solar:arrow-right-linear" width="18"></iconify-icon>
+<iconify-icon height="20" icon="solar:hamburger-menu-linear" width="20"></iconify-icon>
+<iconify-icon height="18" icon="solar:checklist-minimalistic-linear" width="18"></iconify-icon>
+</div>
+<p class="mt-4 text-xs text-slate-500 font-geist">18px e 20px</p>
+</div>
+<div class="rounded-3xl border border-white/[0.08] bg-white/[0.035] p-8 backdrop-blur-xl">
+<p class="text-xs font-medium uppercase tracking-[0.16em] text-slate-500 font-geist">SVG · currentColor</p>
+<div class="mt-6 flex items-end gap-6">
+<svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+<svg class="h-4 w-4 text-cyan-100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+<svg class="h-5 w-5 text-cyan-100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 7h16"></path><path d="M4 12h10"></path><path d="M4 17h7"></path></svg>
+<svg class="h-5 w-5 text-emerald-300" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 6 9 17l-5-5"></path></svg>
+</div>
+<p class="mt-4 text-xs text-slate-500 font-geist">h-4 w-4 e h-5 w-5</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="border-white/[0.06] sm:px-8 lg:px-10 border-t pt-24 pr-5 pb-24 pl-5" id="telas">
+<div class="w-full max-w-[1280px] mr-auto ml-auto">
+<p class="text-sm font-medium text-cyan-100 font-geist">07 · Telas privadas</p>
+<h2 class="mt-4 text-4xl text-white sm:text-5xl lg:text-6xl tracking-tighter leading-[0.95] font-jakarta font-medium">Área do cliente e do salão.</h2>
+
+<p class="mt-14 text-sm font-medium text-cyan-100 font-geist">Área do usuário · Início</p>
+<p class="mt-2 text-sm leading-6 text-slate-500 font-geist">GET /api/salon/:slug/bookings/my</p>
+<div class="relative mt-6 origin-center rounded-[2rem] border border-cyan-100/20 bg-slate-950/65 p-3 shadow-2xl shadow-black/60 backdrop-blur-2xl">
+<div class="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#08111f]/95">
+<div class="grid grid-cols-1 sm:grid-cols-[0.23fr_1fr]">
+<aside class="hidden border-r border-white/10 bg-white/[0.025] p-4 sm:block">
+<div class="mb-6 flex items-center gap-2">
+<span class="text-sm font-medium text-white font-geist">Pulsedesk</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 rounded-xl bg-cyan-300/10 px-3 py-2 text-xs font-medium text-cyan-100 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="9" rx="1" width="7" x="3" y="3"></rect><rect height="5" rx="1" width="7" x="14" y="3"></rect><rect height="9" rx="1" width="7" x="14" y="12"></rect><rect height="5" rx="1" width="7" x="3" y="16"></rect></svg>Início
+</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>Agendamentos
+</div>
+</div>
+</aside>
+<div class="overflow-hidden p-5">
+<div class="mb-5 flex items-start justify-between gap-5">
+<div>
+<h2 class="text-xl text-white tracking-tighter font-jakarta font-medium">Seus agendamentos</h2>
+<p class="mt-1 text-xs text-slate-500 font-geist">Horários confirmados e pendentes da sua conta.</p>
+</div>
+<div class="hidden items-center gap-3 md:flex">
+<div class="flex w-48 items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-500 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>Buscar...
+</div>
+</div>
+</div>
+<div class="space-y-2.5">
+<div class="rounded-xl border border-cyan-200/15 bg-cyan-400/[0.05] p-3">
+<div class="flex items-center justify-between gap-3">
+<div>
+<p class="text-xs font-medium text-white font-geist">Social + Barba.</p>
+<p class="mt-1 text-[10px] text-slate-400 font-geist">Unidade 1 · Michel · 20 de agosto, 15:40</p>
+</div>
+<span class="rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Confirmado · R$ 85,00</span>
+</div>
+</div>
+<div class="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+<div class="flex items-center justify-between gap-3">
+<div>
+<p class="text-xs font-medium text-slate-200 font-geist">Social (so na tesoura ou com uma maquina)</p>
+<p class="mt-1 text-[10px] text-slate-500 font-geist">Unidade 2 · Luiz · 21 de agosto, 10:40</p>
+</div>
+<span class="rounded-full bg-cyan-400/[0.15] px-2 py-1 text-[10px] font-semibold text-cyan-200 font-geist">Pendente · R$ 40,00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<p class="mt-14 text-sm font-medium text-cyan-100 font-geist">Área do usuário · Agendamentos</p>
+<p class="mt-2 text-sm leading-6 text-slate-500 font-geist">POST /api/salon/:slug/bookings · GET /api/salon/:slug/availability</p>
+<div class="relative mt-6 origin-center rounded-[2rem] border border-cyan-100/20 bg-slate-950/65 p-3 shadow-2xl shadow-black/60 backdrop-blur-2xl">
+<div class="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#08111f]/95">
+<div class="grid grid-cols-1 sm:grid-cols-[0.23fr_1fr]">
+<aside class="hidden border-r border-white/10 bg-white/[0.025] p-4 sm:block">
+<div class="mb-6 flex items-center gap-2">
+<span class="text-sm font-medium text-white font-geist">Pulsedesk</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="9" rx="1" width="7" x="3" y="3"></rect><rect height="5" rx="1" width="7" x="14" y="3"></rect><rect height="9" rx="1" width="7" x="14" y="12"></rect><rect height="5" rx="1" width="7" x="3" y="16"></rect></svg>Início
+</div>
+<div class="flex items-center gap-2 rounded-xl bg-cyan-300/10 px-3 py-2 text-xs font-medium text-cyan-100 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>Agendamentos
+</div>
+</div>
+</aside>
+<div class="overflow-hidden p-5">
+<div class="mb-5">
+<h2 class="text-xl text-white tracking-tighter font-jakarta font-medium">Agendar um serviço</h2>
+<p class="mt-1 text-xs text-slate-500 font-geist">Filial, profissional, serviços e horário.</p>
+</div>
+<div class="space-y-2.5">
+<div class="rounded-xl border border-cyan-200/15 bg-cyan-400/[0.05] p-3">
+<p class="text-xs font-medium text-white font-geist">Unidade 1</p>
+<p class="mt-1 text-[10px] text-slate-400 font-geist">Avenida Mário Pedro Vercellino, 98</p>
+</div>
+<div class="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+<p class="text-xs font-medium text-slate-200 font-geist">Michel</p>
+<p class="mt-1 text-[10px] text-slate-500 font-geist">Luiz · Dario · Calegare · Andreo Bini · Sem preferência</p>
+</div>
+<div class="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+<p class="text-xs font-medium text-slate-200 font-geist">Social + Barba.</p>
+<p class="mt-1 text-[10px] text-slate-500 font-geist">R$ 85,00 · Sobrancelha R$ 15,00 · Raspar tudo uma maquina R$ 25,00</p>
+</div>
+<div class="rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+<p class="text-xs font-medium text-slate-200 font-geist">20 de agosto, 15:40</p>
+<div class="mt-3 flex flex-wrap gap-2">
+<span class="rounded-full bg-white/[0.08] px-2.5 py-1 text-[10px] text-slate-300 font-medium font-geist">09:00</span>
+<span class="rounded-full bg-white/[0.08] px-2.5 py-1 text-[10px] text-slate-300 font-medium font-geist">09:50</span>
+<span class="rounded-full bg-white/[0.08] px-2.5 py-1 text-[10px] text-slate-300 font-medium font-geist">10:40</span>
+<span class="rounded-full bg-cyan-400/[0.15] px-2.5 py-1 text-[10px] font-semibold text-cyan-200 font-geist">15:40</span>
+<span class="rounded-full bg-white/[0.08] px-2.5 py-1 text-[10px] text-slate-300 font-medium font-geist">16:30</span>
+</div>
+</div>
+</div>
+<div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+<p class="text-sm font-medium text-white font-geist">Total a pagar: R$ 85,00</p>
+<a class="inline-flex items-center justify-center gap-2 text-sm font-semibold text-slate-950 bg-cyan-100 rounded-full pt-3 pr-5 pb-3 pl-5 shadow-2xl shadow-cyan-950/30 transition duration-300 ease-out hover:scale-[1.03] hover:bg-cyan-50 font-geist" href="#telas">Agendar</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<p class="mt-14 text-sm font-medium text-cyan-100 font-geist">Área do salão · Início</p>
+<p class="mt-2 text-sm leading-6 text-slate-500 font-geist">GET /api/salon/:slug/bookings · título, filtros, selos ativos e tabela</p>
+<div class="relative mt-6 origin-center rounded-[2rem] border border-cyan-100/20 bg-slate-950/65 p-3 shadow-2xl shadow-black/60 backdrop-blur-2xl">
+<div class="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#08111f]/95">
+<div class="grid grid-cols-1 sm:grid-cols-[0.23fr_1fr]">
+<aside class="hidden border-r border-white/10 bg-white/[0.025] p-4 sm:block">
+<div class="mb-6 flex items-center gap-2">
+<span class="text-sm font-medium text-white font-geist">Pulsedesk</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 rounded-xl bg-cyan-300/10 px-3 py-2 text-xs font-medium text-cyan-100 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="9" rx="1" width="7" x="3" y="3"></rect><rect height="5" rx="1" width="7" x="14" y="3"></rect><rect height="9" rx="1" width="7" x="14" y="12"></rect><rect height="5" rx="1" width="7" x="3" y="16"></rect></svg>Início
+</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Filiais
+</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>Serviços
+</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="16" rx="2" width="20" x="2" y="4"></rect><path d="m22 7-10 6L2 7"></path></svg>Profissionais
+</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect height="18" rx="2" width="18" x="3" y="4"></rect><path d="M3 10h18"></path></svg>Disponibilidade
+</div>
+</div>
+</aside>
+<div class="overflow-hidden p-5">
+<div class="mb-5 flex items-start justify-between gap-5">
+<div>
+<h2 class="text-xl text-white tracking-tighter font-jakarta font-medium">Próximos agendamentos</h2>
+<p class="mt-1 text-xs text-slate-500 font-geist">Lista do salão com data, filial e profissional.</p>
+</div>
+<a class="inline-flex items-center justify-center text-sm font-semibold text-slate-950 bg-cyan-100 rounded-full px-5 py-2 shadow-2xl shadow-cyan-950/30 font-geist" href="#telas">Novo</a>
+</div>
+<div class="mb-4 grid gap-3 sm:grid-cols-2">
+<div class="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+<p class="text-xs font-medium uppercase tracking-[0.14rem] text-slate-500 font-geist">Receita confirmada</p>
+<p class="mt-2 text-2xl text-white tracking-tighter font-jakarta font-medium">R$ 85,00</p>
+<p class="mt-1 text-xs text-emerald-300 font-geist">Confirmado</p>
+</div>
+<div class="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+<p class="text-xs font-medium uppercase tracking-[0.14rem] text-slate-500 font-geist">A receber</p>
+<p class="mt-2 text-2xl text-white tracking-tighter font-jakarta font-medium">R$ 40,00</p>
+<p class="mt-1 text-xs text-cyan-200 font-geist">Pendente</p>
+</div>
+</div>
+<div class="mb-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+<div class="flex flex-wrap items-center gap-2">
+<div class="flex w-48 items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-500 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>Buscar...
+</div>
+<span class="rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 font-geist">20/08/2025</span>
+<span class="rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 font-geist">Unidade 1</span>
+<span class="rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 font-geist">Michel</span>
+</div>
+</div>
+<div class="mb-4 flex flex-wrap gap-2">
+<span class="rounded-full bg-cyan-400/[0.15] px-2 py-1 text-[10px] font-semibold text-cyan-200 font-geist">Data · 20/08/2025</span>
+<span class="rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Filial · Unidade 1</span>
+<span class="rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Profissional · Michel</span>
+</div>
+<div class="overflow-hidden rounded-2xl border border-white/10">
+<div class="grid grid-cols-[1.3fr_0.8fr_0.8fr_0.7fr_0.7fr] border-b border-white/10 bg-white/[0.02] px-3 py-2">
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Serviço</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Filial</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Profissional</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Status</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Valor</p>
+</div>
+<div class="grid grid-cols-[1.3fr_0.8fr_0.8fr_0.7fr_0.7fr] items-center border-b border-white/[0.06] px-3 py-3">
+<div>
+<p class="text-xs font-medium text-white font-geist">Social + Barba.</p>
+<p class="mt-1 text-[10px] text-slate-400 font-geist">20 de agosto, 15:40</p>
+</div>
+<p class="text-xs text-slate-300 font-geist">Unidade 1</p>
+<p class="text-xs text-slate-300 font-geist">Michel</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Confirmado</span>
+<p class="text-xs text-slate-300 font-geist">R$ 85,00</p>
+</div>
+<div class="grid grid-cols-[1.3fr_0.8fr_0.8fr_0.7fr_0.7fr] items-center px-3 py-3">
+<div>
+<p class="text-xs font-medium text-white font-geist">Social (tesoura ou máquina)</p>
+<p class="mt-1 text-[10px] text-slate-400 font-geist">21 de agosto, 10:40</p>
+</div>
+<p class="text-xs text-slate-300 font-geist">Unidade 2</p>
+<p class="text-xs text-slate-300 font-geist">Luiz</p>
+<span class="w-fit rounded-full bg-cyan-400/[0.15] px-2 py-1 text-[10px] font-semibold text-cyan-200 font-geist">Pendente</span>
+<p class="text-xs text-slate-300 font-geist">R$ 40,00</p>
+</div>
+</div>
+<p class="mt-3 text-xs text-slate-500 font-geist">1–2 de 2</p>
+</div>
+</div>
+</div>
+</div>
+
+<p class="mt-14 text-sm font-medium text-cyan-100 font-geist">Área do salão · Filiais</p>
+<p class="mt-2 text-sm leading-6 text-slate-500 font-geist">GET /api/salon/:slug/branches · título e tabela</p>
+<div class="relative mt-6 origin-center rounded-[2rem] border border-cyan-100/20 bg-slate-950/65 p-3 shadow-2xl shadow-black/60 backdrop-blur-2xl">
+<div class="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#08111f]/95">
+<div class="grid grid-cols-1 sm:grid-cols-[0.23fr_1fr]">
+<aside class="hidden border-r border-white/10 bg-white/[0.025] p-4 sm:block">
+<div class="mb-6 flex items-center gap-2"><span class="text-sm font-medium text-white font-geist">Pulsedesk</span></div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="9" rx="1" width="7" x="3" y="3"></rect><rect height="5" rx="1" width="7" x="14" y="3"></rect><rect height="9" rx="1" width="7" x="14" y="12"></rect><rect height="5" rx="1" width="7" x="3" y="16"></rect></svg>Início</div>
+<div class="flex items-center gap-2 rounded-xl bg-cyan-300/10 px-3 py-2 text-xs font-medium text-cyan-100 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Filiais</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>Serviços</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="16" rx="2" width="20" x="2" y="4"></rect><path d="m22 7-10 6L2 7"></path></svg>Profissionais</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect height="18" rx="2" width="18" x="3" y="4"></rect><path d="M3 10h18"></path></svg>Disponibilidade</div>
+</div>
+</aside>
+<div class="overflow-hidden p-5">
+<div class="mb-5 flex items-start justify-between gap-5">
+<div>
+<h2 class="text-xl text-white tracking-tighter font-jakarta font-medium">Filiais</h2>
+<p class="mt-1 text-xs text-slate-500 font-geist">Unidades do salão.</p>
+</div>
+<a class="inline-flex items-center justify-center text-sm font-semibold text-slate-950 bg-cyan-100 rounded-full px-5 py-2 shadow-2xl shadow-cyan-950/30 font-geist" href="#telas">Novo</a>
+</div>
+<div class="mb-4 flex w-48 items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-500 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>Buscar...
+</div>
+<div class="overflow-hidden rounded-2xl border border-white/10">
+<div class="grid grid-cols-[0.4fr_1.2fr_1.6fr_0.5fr] border-b border-white/10 bg-white/[0.02] px-3 py-2">
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist"></p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Nome</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Endereço</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Status</p>
+</div>
+<div class="grid grid-cols-[0.4fr_1.2fr_1.6fr_0.5fr] items-center border-b border-white/[0.06] px-3 py-3">
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Editar</span>
+<p class="text-xs font-medium text-white font-geist">Unidade 1</p>
+<p class="text-xs text-slate-300 font-geist">Avenida Mário Pedro Vercellino, 98</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ativa</span>
+</div>
+<div class="grid grid-cols-[0.4fr_1.2fr_1.6fr_0.5fr] items-center px-3 py-3">
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Editar</span>
+<p class="text-xs font-medium text-white font-geist">Unidade 2</p>
+<p class="text-xs text-slate-300 font-geist">Rua Professor José Assad Atalia Júnior, 152</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ativa</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<p class="mt-14 text-sm font-medium text-cyan-100 font-geist">Área do salão · Serviços</p>
+<p class="mt-2 text-sm leading-6 text-slate-500 font-geist">GET /api/salon/:slug/branches/:branchId/services</p>
+<div class="relative mt-6 origin-center rounded-[2rem] border border-cyan-100/20 bg-slate-950/65 p-3 shadow-2xl shadow-black/60 backdrop-blur-2xl">
+<div class="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#08111f]/95">
+<div class="grid grid-cols-1 sm:grid-cols-[0.23fr_1fr]">
+<aside class="hidden border-r border-white/10 bg-white/[0.025] p-4 sm:block">
+<div class="mb-6 flex items-center gap-2"><span class="text-sm font-medium text-white font-geist">Pulsedesk</span></div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="9" rx="1" width="7" x="3" y="3"></rect><rect height="5" rx="1" width="7" x="14" y="3"></rect><rect height="9" rx="1" width="7" x="14" y="12"></rect><rect height="5" rx="1" width="7" x="3" y="16"></rect></svg>Início</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Filiais</div>
+<div class="flex items-center gap-2 rounded-xl bg-cyan-300/10 px-3 py-2 text-xs font-medium text-cyan-100 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>Serviços</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="16" rx="2" width="20" x="2" y="4"></rect><path d="m22 7-10 6L2 7"></path></svg>Profissionais</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect height="18" rx="2" width="18" x="3" y="4"></rect><path d="M3 10h18"></path></svg>Disponibilidade</div>
+</div>
+</aside>
+<div class="overflow-hidden p-5">
+<div class="mb-5 flex items-start justify-between gap-5">
+<div>
+<h2 class="text-xl text-white tracking-tighter font-jakarta font-medium">Serviços</h2>
+<p class="mt-1 text-xs text-slate-500 font-geist">Preço por filial, Unidade 1.</p>
+</div>
+<a class="inline-flex items-center justify-center text-sm font-semibold text-slate-950 bg-cyan-100 rounded-full px-5 py-2 shadow-2xl shadow-cyan-950/30 font-geist" href="#telas">Novo</a>
+</div>
+<div class="mb-4 flex flex-wrap items-center gap-2">
+<div class="flex w-48 items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-500 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>Buscar...
+</div>
+<span class="rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Filial · Unidade 1</span>
+</div>
+<div class="overflow-hidden rounded-2xl border border-white/10">
+<div class="grid grid-cols-[0.4fr_1.6fr_0.6fr_0.5fr] border-b border-white/10 bg-white/[0.02] px-3 py-2">
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist"></p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Serviço</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Preço</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Status</p>
+</div>
+<div class="grid grid-cols-[0.4fr_1.6fr_0.6fr_0.5fr] items-center border-b border-white/[0.06] px-3 py-3">
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Editar</span>
+<p class="text-xs font-medium text-white font-geist">Social + Barba</p>
+<p class="text-xs text-slate-300 font-geist">R$ 85,00</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ativo</span>
+</div>
+<div class="grid grid-cols-[0.4fr_1.6fr_0.6fr_0.5fr] items-center border-b border-white/[0.06] px-3 py-3">
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Editar</span>
+<p class="text-xs font-medium text-white font-geist">Social (tesoura ou máquina)</p>
+<p class="text-xs text-slate-300 font-geist">R$ 40,00</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ativo</span>
+</div>
+<div class="grid grid-cols-[0.4fr_1.6fr_0.6fr_0.5fr] items-center border-b border-white/[0.06] px-3 py-3">
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Editar</span>
+<p class="text-xs font-medium text-white font-geist">Sobrancelha</p>
+<p class="text-xs text-slate-300 font-geist">R$ 15,00</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ativo</span>
+</div>
+<div class="grid grid-cols-[0.4fr_1.6fr_0.6fr_0.5fr] items-center px-3 py-3">
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Editar</span>
+<p class="text-xs font-medium text-white font-geist">Navalhado + Barba</p>
+<p class="text-xs text-slate-300 font-geist">R$ 59,00</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ativo</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<p class="mt-14 text-sm font-medium text-cyan-100 font-geist">Área do salão · Profissionais</p>
+<p class="mt-2 text-sm leading-6 text-slate-500 font-geist">GET /api/salon/:slug/professionals</p>
+<div class="relative mt-6 origin-center rounded-[2rem] border border-cyan-100/20 bg-slate-950/65 p-3 shadow-2xl shadow-black/60 backdrop-blur-2xl">
+<div class="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#08111f]/95">
+<div class="grid grid-cols-1 sm:grid-cols-[0.23fr_1fr]">
+<aside class="hidden border-r border-white/10 bg-white/[0.025] p-4 sm:block">
+<div class="mb-6 flex items-center gap-2"><span class="text-sm font-medium text-white font-geist">Pulsedesk</span></div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="9" rx="1" width="7" x="3" y="3"></rect><rect height="5" rx="1" width="7" x="14" y="3"></rect><rect height="9" rx="1" width="7" x="14" y="12"></rect><rect height="5" rx="1" width="7" x="3" y="16"></rect></svg>Início</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Filiais</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>Serviços</div>
+<div class="flex items-center gap-2 rounded-xl bg-cyan-300/10 px-3 py-2 text-xs font-medium text-cyan-100 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="16" rx="2" width="20" x="2" y="4"></rect><path d="m22 7-10 6L2 7"></path></svg>Profissionais</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect height="18" rx="2" width="18" x="3" y="4"></rect><path d="M3 10h18"></path></svg>Disponibilidade</div>
+</div>
+</aside>
+<div class="overflow-hidden p-5">
+<div class="mb-5 flex items-start justify-between gap-5">
+<div>
+<h2 class="text-xl text-white tracking-tighter font-jakarta font-medium">Profissionais</h2>
+<p class="mt-1 text-xs text-slate-500 font-geist">Equipe vinculada às filiais.</p>
+</div>
+<a class="inline-flex items-center justify-center text-sm font-semibold text-slate-950 bg-cyan-100 rounded-full px-5 py-2 shadow-2xl shadow-cyan-950/30 font-geist" href="#telas">Novo</a>
+</div>
+<div class="mb-4 flex w-48 items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-500 font-geist">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>Buscar...
+</div>
+<div class="overflow-hidden rounded-2xl border border-white/10">
+<div class="grid grid-cols-[0.4fr_1.2fr_1fr_0.5fr] border-b border-white/10 bg-white/[0.02] px-3 py-2">
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist"></p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Nome</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Filial</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Status</p>
+</div>
+<div class="grid grid-cols-[0.4fr_1.2fr_1fr_0.5fr] items-center border-b border-white/[0.06] px-3 py-3">
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Editar</span>
+<p class="text-xs font-medium text-white font-geist">Michel</p>
+<p class="text-xs text-slate-300 font-geist">Unidade 1</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ativo</span>
+</div>
+<div class="grid grid-cols-[0.4fr_1.2fr_1fr_0.5fr] items-center border-b border-white/[0.06] px-3 py-3">
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Editar</span>
+<p class="text-xs font-medium text-white font-geist">Luiz</p>
+<p class="text-xs text-slate-300 font-geist">Unidade 2</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ativo</span>
+</div>
+<div class="grid grid-cols-[0.4fr_1.2fr_1fr_0.5fr] items-center border-b border-white/[0.06] px-3 py-3">
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Editar</span>
+<p class="text-xs font-medium text-white font-geist">Dario</p>
+<p class="text-xs text-slate-300 font-geist">Unidade 1</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ativo</span>
+</div>
+<div class="grid grid-cols-[0.4fr_1.2fr_1fr_0.5fr] items-center px-3 py-3">
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Editar</span>
+<p class="text-xs font-medium text-white font-geist">Calegare</p>
+<p class="text-xs text-slate-300 font-geist">Unidade 1</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ativo</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<p class="mt-14 text-sm font-medium text-cyan-100 font-geist">Área do salão · Disponibilidade</p>
+<p class="mt-2 text-sm leading-6 text-slate-500 font-geist">GET /api/salon/:slug/availability · filtros e grade do dia</p>
+<div class="relative mt-6 origin-center rounded-[2rem] border border-cyan-100/20 bg-slate-950/65 p-3 shadow-2xl shadow-black/60 backdrop-blur-2xl">
+<div class="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#08111f]/95">
+<div class="grid grid-cols-1 sm:grid-cols-[0.23fr_1fr]">
+<aside class="hidden border-r border-white/10 bg-white/[0.025] p-4 sm:block">
+<div class="mb-6 flex items-center gap-2"><span class="text-sm font-medium text-white font-geist">Pulsedesk</span></div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="9" rx="1" width="7" x="3" y="3"></rect><rect height="5" rx="1" width="7" x="14" y="3"></rect><rect height="9" rx="1" width="7" x="14" y="12"></rect><rect height="5" rx="1" width="7" x="3" y="16"></rect></svg>Início</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>Filiais</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>Serviços</div>
+<div class="flex items-center gap-2 rounded-xl px-3 py-2 text-xs text-slate-400 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect height="16" rx="2" width="20" x="2" y="4"></rect><path d="m22 7-10 6L2 7"></path></svg>Profissionais</div>
+<div class="flex items-center gap-2 rounded-xl bg-cyan-300/10 px-3 py-2 text-xs font-medium text-cyan-100 font-geist"><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect height="18" rx="2" width="18" x="3" y="4"></rect><path d="M3 10h18"></path></svg>Disponibilidade</div>
+</div>
+</aside>
+<div class="overflow-hidden p-5">
+<div class="mb-5">
+<h2 class="text-xl text-white tracking-tighter font-jakarta font-medium">Disponibilidade</h2>
+<p class="mt-1 text-xs text-slate-500 font-geist">Horários da Unidade 1 com Michel em 20 de agosto.</p>
+</div>
+<div class="mb-3 flex flex-wrap items-center gap-2">
+<span class="rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 font-geist">20/08/2025</span>
+<span class="rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 font-geist">Unidade 1</span>
+<span class="rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 font-geist">Michel</span>
+</div>
+<div class="mb-4 flex flex-wrap gap-2">
+<span class="rounded-full bg-cyan-400/[0.15] px-2 py-1 text-[10px] font-semibold text-cyan-200 font-geist">Data · 20/08/2025</span>
+<span class="rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Filial · Unidade 1</span>
+<span class="rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Profissional · Michel</span>
+</div>
+<div class="overflow-hidden rounded-2xl border border-white/10">
+<div class="grid grid-cols-[0.6fr_1fr_0.6fr] border-b border-white/10 bg-white/[0.02] px-3 py-2">
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Horário</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Profissional</p>
+<p class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold font-geist">Status</p>
+</div>
+<div class="grid grid-cols-[0.6fr_1fr_0.6fr] items-center border-b border-white/[0.06] px-3 py-3">
+<p class="text-xs font-medium text-white font-geist">09:00</p>
+<p class="text-xs text-slate-300 font-geist">Michel</p>
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Livre</span>
+</div>
+<div class="grid grid-cols-[0.6fr_1fr_0.6fr] items-center border-b border-white/[0.06] px-3 py-3">
+<p class="text-xs font-medium text-white font-geist">10:40</p>
+<p class="text-xs text-slate-300 font-geist">Michel</p>
+<span class="w-fit rounded-full bg-white/[0.08] px-2 py-1 text-[10px] text-slate-300 font-geist">Livre</span>
+</div>
+<div class="grid grid-cols-[0.6fr_1fr_0.6fr] items-center px-3 py-3">
+<p class="text-xs font-medium text-white font-geist">15:40</p>
+<p class="text-xs text-slate-300 font-geist">Michel</p>
+<span class="w-fit rounded-full bg-emerald-400/[0.12] px-2 py-1 text-[10px] font-semibold text-emerald-300 font-geist">Ocupado</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+</div>
+
+<script src="../../../../style-sync_refs_booking-flow/ds/pulsedesk-saas.aura.build/assets/js/reveal-and-parallax.js"></script>
+<script type="module" src="../../../../style-sync_refs_booking-flow/ds/pulsedesk-saas.aura.build/assets/js/webgl-background.js"></script>
+</body>
+</html>

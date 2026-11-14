@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { createRootRoute, Outlet } from '@tanstack/react-router';
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { useTranslation } from 'react-i18next';
 
 import { restoreSession } from '~/hooks/utils/restoreSession';
 
-export const Route = createRootRoute({
+import type { RouterContext } from '~/router-context';
+
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
 });
 

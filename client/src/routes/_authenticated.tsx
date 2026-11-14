@@ -1,13 +1,16 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+
 import { useAuthStore } from '~/store';
+import { getLoginPath, withRedirectQuery } from '~/utils/session-paths.util';
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ location }) => {
-    if (!useAuthStore.getState().isAuthenticated) {
+    const session = useAuthStore.getState();
+
+    if (!session.isAuthenticated) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw redirect({
-        to: '/login',
-        search: { redirect: location.href },
+        href: withRedirectQuery(getLoginPath(session), location.href),
       });
     }
   },

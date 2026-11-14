@@ -1,0 +1,17 @@
+import { IconProvider } from '../IconProvider';
+
+type IconProps = {
+  className?: string;
+  onClick?: () => void;
+};
+
+export function LayoutGrid({ className, onClick }: IconProps) {
+  return (
+    <IconProvider className={className} onClick={onClick}>
+      <rect height="9" rx="1" width="7" x="3" y="3" />
+      <rect height="5" rx="1" width="7" x="14" y="3" />
+      <rect height="9" rx="1" width="7" x="14" y="12" />
+      <rect height="5" rx="1" width="7" x="3" y="16" />
+    </IconProvider>
+  );
+}

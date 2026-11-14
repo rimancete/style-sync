@@ -1,20 +1,17 @@
-import { QueryClientProvider } from '@tanstack/react-query';
-import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { Toaster } from '~/components/ui/toaster';
 import { createMockAuthResponse } from '~/mocks/auth';
 import { server } from '~/mocks/server';
-import { routeTree } from '~/routeTree.gen';
 import { useAuthStore } from '~/store/authStore';
-import { createTestQueryClient, render, screen, waitFor } from '~/test/utils';
+import { renderApp } from '~/test/renderApp';
+import { screen, waitFor } from '~/test/utils';
 
 import '~/i18n/config';
 
 const API_ORIGIN = 'http://localhost:3001';
-const REGISTER_PATH = '/salon/stylesync/register';
+const REGISTER_PATH = '/salon/acme/register';
 const VALID_PASSWORD = '123456';
 
 type RegisterBody = {
@@ -29,25 +26,6 @@ function resetSession() {
   useAuthStore.getState().clearAuth();
   useAuthStore.persist.clearStorage();
   window.localStorage.clear();
-}
-
-async function renderApp(initialPath: string) {
-  const queryClient = createTestQueryClient();
-  const router = createRouter({
-    routeTree,
-    history: createMemoryHistory({ initialEntries: [initialPath] }),
-  });
-
-  render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster />
-    </QueryClientProvider>
-  );
-
-  await waitFor(() => {
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
-  });
 }
 
 async function waitForRegisterForm() {
@@ -118,7 +96,7 @@ describe('Register screen', () => {
     await submitRegister({ phone: '2025550123' });
 
     expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
-    expect(url).toBe(`${API_ORIGIN}/api/salon/stylesync/auth/register`);
+    expect(url).toBe(`${API_ORIGIN}/api/salon/acme/auth/register`);
     expect(body).toEqual({
       name: 'Ada Lovelace',
       email: 'ada@example.com',

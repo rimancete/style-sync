@@ -5,10 +5,13 @@ import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 
 import { useLogin } from '~/api/auth';
+import { ThemeModeToggle } from '~/components/theme-mode-toggle';
 
 import { Banner, LoginFormView } from './components';
 import { createLoginSchema, LOGIN_DEFAULT_VALUES, type LoginFormSchema } from './constants';
 
+const HTTP_FORBIDDEN = 403;
+const HTTP_NOT_FOUND = 404;
 const HTTP_UNPROCESSABLE_ENTITY = 422;
 const HTTP_TOO_MANY_REQUESTS = 429;
 
@@ -18,11 +21,13 @@ type LoginFieldName = (typeof LOGIN_FIELD_NAMES)[number];
 
 type LoginScreenProps = {
   redirect?: string;
+  /** Salon CLIENT login when set; neutral ADMIN and STAFF login otherwise. */
+  slug?: string;
 };
 
-export function LoginScreen({ redirect }: LoginScreenProps) {
+export function LoginScreen({ redirect, slug }: LoginScreenProps) {
   const { t } = useTranslation('auth');
-  const { mutate: login, isPending, error } = useLogin(redirect);
+  const { mutate: login, isPending, error } = useLogin({ slug, redirect });
 
   const schema = useMemo(() => createLoginSchema(t), [t]);
   const methods = useForm<LoginFormSchema>({
@@ -43,12 +48,14 @@ export function LoginScreen({ redirect }: LoginScreenProps) {
       <Banner />
 
       <div className="relative flex h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)] min-h-0 w-full min-w-0 flex-col justify-center">
+        <ThemeModeToggle className="absolute right-0 top-0 z-20" />
         <div className="mx-auto flex w-full max-w-md flex-col items-stretch justify-center gap-3">
           <LoginFormView
             methods={methods}
             onSubmit={onSubmit}
             isPending={isPending}
-            errorMessage={getLoginAlertMessage(error, t)}
+            errorMessage={getLoginAlertMessage(error, t, Boolean(slug))}
+            registerSlug={slug}
           />
         </div>
       </div>
@@ -94,9 +101,21 @@ function applyLoginFieldErrors(
   }
 }
 
-function getLoginAlertMessage(error: APIError | null, t: TFunction<'auth'>): string | undefined {
+function getLoginAlertMessage(
+  error: APIError | null,
+  t: TFunction<'auth'>,
+  isSalonLogin: boolean
+): string | undefined {
   if (!error) {
     return undefined;
+  }
+
+  if (error.status === HTTP_FORBIDDEN) {
+    return isSalonLogin ? t('errors.notSalonClient') : t('errors.clientMustUseSalonLink');
+  }
+
+  if (error.status === HTTP_NOT_FOUND && isSalonLogin) {
+    return t('errors.salonUnavailable');
   }
 
   if (error.status === HTTP_UNPROCESSABLE_ENTITY) {

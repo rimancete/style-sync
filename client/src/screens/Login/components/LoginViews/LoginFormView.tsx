@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { FormElements } from '~/components/form-elements';
@@ -16,9 +17,17 @@ type LoginFormViewProps = {
   onSubmit: (data: LoginFormSchema) => void;
   isPending: boolean;
   errorMessage?: string;
+  /** Only salon logins offer registration; the neutral login has no salon to join. */
+  registerSlug?: string;
 };
 
-export function LoginFormView({ methods, onSubmit, isPending, errorMessage }: LoginFormViewProps) {
+export function LoginFormView({
+  methods,
+  onSubmit,
+  isPending,
+  errorMessage,
+  registerSlug,
+}: LoginFormViewProps) {
   const { t } = useTranslation('auth');
   const { handleSubmit, control } = methods;
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -76,6 +85,19 @@ export function LoginFormView({ methods, onSubmit, isPending, errorMessage }: Lo
           </Button>
         </form>
       </Form>
+
+      {registerSlug ? (
+        <p className="text-center text-sm text-muted-foreground">
+          {t('login.noAccount')}{' '}
+          <Link
+            to="/salon/$slug/register"
+            params={{ slug: registerSlug }}
+            className="font-medium text-primary hover:underline"
+          >
+            {t('login.signUp')}
+          </Link>
+        </p>
+      ) : null}
     </ViewTransition>
   );
 }
