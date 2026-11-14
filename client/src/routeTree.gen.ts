@@ -8,195 +8,200 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root';
-import { Route as PublicRouteImport } from './routes/_public';
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated';
-import { Route as UserRouteRouteImport } from './routes/user/route';
-import { Route as IndexRouteImport } from './routes/index';
-import { Route as UserIndexRouteImport } from './routes/user/index';
-import { Route as UserProfileRouteImport } from './routes/user/profile';
-import { Route as PublicLoginRouteImport } from './routes/_public/login';
-import { Route as AuthenticatedSelectCompanyRouteImport } from './routes/_authenticated/select-company';
-import { Route as SalonSlugRouteRouteImport } from './routes/salon/$slug/route';
-import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route';
-import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index';
-import { Route as SalonSlugRegisterRouteImport } from './routes/salon/$slug/register';
-import { Route as SalonSlugLoginRouteImport } from './routes/salon/$slug/login';
-import { Route as SalonSlugClientRouteImport } from './routes/salon/$slug/_client';
-import { Route as AuthenticatedAdminProfileRouteImport } from './routes/_authenticated/admin/profile';
-import { Route as AuthenticatedAdminPlanRouteImport } from './routes/_authenticated/admin/plan';
-import { Route as AuthenticatedAdminClubRouteImport } from './routes/_authenticated/admin/club';
-import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authenticated/admin/bookings';
-import { Route as SalonSlugClientIndexRouteImport } from './routes/salon/$slug/_client/index';
-import { Route as SalonSlugClientUserIndexRouteImport } from './routes/salon/$slug/_client/user/index';
-import { Route as SalonSlugClientUserProfileRouteImport } from './routes/salon/$slug/_client/user/profile';
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as PublicRouteImport } from './routes/_public'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as UserRouteRouteImport } from './routes/user/route'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as UserIndexRouteImport } from './routes/user/index'
+import { Route as UserProfileRouteImport } from './routes/user/profile'
+import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as AuthenticatedSelectCompanyRouteImport } from './routes/_authenticated/select-company'
+import { Route as SalonSlugRouteRouteImport } from './routes/salon/$slug/route'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as SalonSlugRegisterRouteImport } from './routes/salon/$slug/register'
+import { Route as SalonSlugLoginRouteImport } from './routes/salon/$slug/login'
+import { Route as SalonSlugClientRouteImport } from './routes/salon/$slug/_client'
+import { Route as AuthenticatedAdminProfileRouteImport } from './routes/_authenticated/admin/profile'
+import { Route as AuthenticatedAdminPlanRouteImport } from './routes/_authenticated/admin/plan'
+import { Route as AuthenticatedAdminClubRouteImport } from './routes/_authenticated/admin/club'
+import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authenticated/admin/bookings'
+import { Route as SalonSlugClientIndexRouteImport } from './routes/salon/$slug/_client/index'
+import { Route as SalonSlugClientUserIndexRouteImport } from './routes/salon/$slug/_client/user/index'
+import { Route as SalonSlugClientUserProfileRouteImport } from './routes/salon/$slug/_client/user/profile'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const UserRouteRoute = UserRouteRouteImport.update({
   id: '/user',
   path: '/user',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const UserIndexRoute = UserIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => UserRouteRoute,
-} as any);
+} as any)
 const UserProfileRoute = UserProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
   getParentRoute: () => UserRouteRoute,
-} as any);
+} as any)
 const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => PublicRoute,
-} as any);
-const AuthenticatedSelectCompanyRoute = AuthenticatedSelectCompanyRouteImport.update({
-  id: '/select-company',
-  path: '/select-company',
-  getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
+const AuthenticatedSelectCompanyRoute =
+  AuthenticatedSelectCompanyRouteImport.update({
+    id: '/select-company',
+    path: '/select-company',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const SalonSlugRouteRoute = SalonSlugRouteRouteImport.update({
   id: '/salon/$slug',
   path: '/salon/$slug',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
-} as any);
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any);
+} as any)
 const SalonSlugRegisterRoute = SalonSlugRegisterRouteImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => SalonSlugRouteRoute,
-} as any);
+} as any)
 const SalonSlugLoginRoute = SalonSlugLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => SalonSlugRouteRoute,
-} as any);
+} as any)
 const SalonSlugClientRoute = SalonSlugClientRouteImport.update({
   id: '/_client',
   getParentRoute: () => SalonSlugRouteRoute,
-} as any);
-const AuthenticatedAdminProfileRoute = AuthenticatedAdminProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any);
+} as any)
+const AuthenticatedAdminProfileRoute =
+  AuthenticatedAdminProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminPlanRoute = AuthenticatedAdminPlanRouteImport.update({
   id: '/plan',
   path: '/plan',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any);
+} as any)
 const AuthenticatedAdminClubRoute = AuthenticatedAdminClubRouteImport.update({
   id: '/club',
   path: '/club',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any);
-const AuthenticatedAdminBookingsRoute = AuthenticatedAdminBookingsRouteImport.update({
-  id: '/bookings',
-  path: '/bookings',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any);
+} as any)
+const AuthenticatedAdminBookingsRoute =
+  AuthenticatedAdminBookingsRouteImport.update({
+    id: '/bookings',
+    path: '/bookings',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const SalonSlugClientIndexRoute = SalonSlugClientIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SalonSlugClientRoute,
-} as any);
-const SalonSlugClientUserIndexRoute = SalonSlugClientUserIndexRouteImport.update({
-  id: '/user/',
-  path: '/user/',
-  getParentRoute: () => SalonSlugClientRoute,
-} as any);
-const SalonSlugClientUserProfileRoute = SalonSlugClientUserProfileRouteImport.update({
-  id: '/user/profile',
-  path: '/user/profile',
-  getParentRoute: () => SalonSlugClientRoute,
-} as any);
+} as any)
+const SalonSlugClientUserIndexRoute =
+  SalonSlugClientUserIndexRouteImport.update({
+    id: '/user/',
+    path: '/user/',
+    getParentRoute: () => SalonSlugClientRoute,
+  } as any)
+const SalonSlugClientUserProfileRoute =
+  SalonSlugClientUserProfileRouteImport.update({
+    id: '/user/profile',
+    path: '/user/profile',
+    getParentRoute: () => SalonSlugClientRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute;
-  '/user': typeof UserRouteRouteWithChildren;
-  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren;
-  '/salon/$slug': typeof SalonSlugClientRouteWithChildren;
-  '/select-company': typeof AuthenticatedSelectCompanyRoute;
-  '/login': typeof PublicLoginRoute;
-  '/user/profile': typeof UserProfileRoute;
-  '/user/': typeof UserIndexRoute;
-  '/admin/bookings': typeof AuthenticatedAdminBookingsRoute;
-  '/admin/club': typeof AuthenticatedAdminClubRoute;
-  '/admin/plan': typeof AuthenticatedAdminPlanRoute;
-  '/admin/profile': typeof AuthenticatedAdminProfileRoute;
-  '/salon/$slug/login': typeof SalonSlugLoginRoute;
-  '/salon/$slug/register': typeof SalonSlugRegisterRoute;
-  '/admin/': typeof AuthenticatedAdminIndexRoute;
-  '/salon/$slug/': typeof SalonSlugClientIndexRoute;
-  '/salon/$slug/user/profile': typeof SalonSlugClientUserProfileRoute;
-  '/salon/$slug/user/': typeof SalonSlugClientUserIndexRoute;
+  '/': typeof IndexRoute
+  '/user': typeof UserRouteRouteWithChildren
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/salon/$slug': typeof SalonSlugClientRouteWithChildren
+  '/select-company': typeof AuthenticatedSelectCompanyRoute
+  '/login': typeof PublicLoginRoute
+  '/user/profile': typeof UserProfileRoute
+  '/user/': typeof UserIndexRoute
+  '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
+  '/admin/club': typeof AuthenticatedAdminClubRoute
+  '/admin/plan': typeof AuthenticatedAdminPlanRoute
+  '/admin/profile': typeof AuthenticatedAdminProfileRoute
+  '/salon/$slug/login': typeof SalonSlugLoginRoute
+  '/salon/$slug/register': typeof SalonSlugRegisterRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/salon/$slug/': typeof SalonSlugClientIndexRoute
+  '/salon/$slug/user/profile': typeof SalonSlugClientUserProfileRoute
+  '/salon/$slug/user/': typeof SalonSlugClientUserIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute;
-  '/salon/$slug': typeof SalonSlugClientIndexRoute;
-  '/select-company': typeof AuthenticatedSelectCompanyRoute;
-  '/login': typeof PublicLoginRoute;
-  '/user/profile': typeof UserProfileRoute;
-  '/user': typeof UserIndexRoute;
-  '/admin/bookings': typeof AuthenticatedAdminBookingsRoute;
-  '/admin/club': typeof AuthenticatedAdminClubRoute;
-  '/admin/plan': typeof AuthenticatedAdminPlanRoute;
-  '/admin/profile': typeof AuthenticatedAdminProfileRoute;
-  '/salon/$slug/login': typeof SalonSlugLoginRoute;
-  '/salon/$slug/register': typeof SalonSlugRegisterRoute;
-  '/admin': typeof AuthenticatedAdminIndexRoute;
-  '/salon/$slug/user/profile': typeof SalonSlugClientUserProfileRoute;
-  '/salon/$slug/user': typeof SalonSlugClientUserIndexRoute;
+  '/': typeof IndexRoute
+  '/salon/$slug': typeof SalonSlugClientIndexRoute
+  '/select-company': typeof AuthenticatedSelectCompanyRoute
+  '/login': typeof PublicLoginRoute
+  '/user/profile': typeof UserProfileRoute
+  '/user': typeof UserIndexRoute
+  '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
+  '/admin/club': typeof AuthenticatedAdminClubRoute
+  '/admin/plan': typeof AuthenticatedAdminPlanRoute
+  '/admin/profile': typeof AuthenticatedAdminProfileRoute
+  '/salon/$slug/login': typeof SalonSlugLoginRoute
+  '/salon/$slug/register': typeof SalonSlugRegisterRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/salon/$slug/user/profile': typeof SalonSlugClientUserProfileRoute
+  '/salon/$slug/user': typeof SalonSlugClientUserIndexRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  '/': typeof IndexRoute;
-  '/user': typeof UserRouteRouteWithChildren;
-  '/_authenticated': typeof AuthenticatedRouteWithChildren;
-  '/_public': typeof PublicRouteWithChildren;
-  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren;
-  '/salon/$slug': typeof SalonSlugRouteRouteWithChildren;
-  '/_authenticated/select-company': typeof AuthenticatedSelectCompanyRoute;
-  '/_public/login': typeof PublicLoginRoute;
-  '/user/profile': typeof UserProfileRoute;
-  '/user/': typeof UserIndexRoute;
-  '/_authenticated/admin/bookings': typeof AuthenticatedAdminBookingsRoute;
-  '/_authenticated/admin/club': typeof AuthenticatedAdminClubRoute;
-  '/_authenticated/admin/plan': typeof AuthenticatedAdminPlanRoute;
-  '/_authenticated/admin/profile': typeof AuthenticatedAdminProfileRoute;
-  '/salon/$slug/_client': typeof SalonSlugClientRouteWithChildren;
-  '/salon/$slug/login': typeof SalonSlugLoginRoute;
-  '/salon/$slug/register': typeof SalonSlugRegisterRoute;
-  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute;
-  '/salon/$slug/_client/': typeof SalonSlugClientIndexRoute;
-  '/salon/$slug/_client/user/profile': typeof SalonSlugClientUserProfileRoute;
-  '/salon/$slug/_client/user/': typeof SalonSlugClientUserIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/user': typeof UserRouteRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_public': typeof PublicRouteWithChildren
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/salon/$slug': typeof SalonSlugRouteRouteWithChildren
+  '/_authenticated/select-company': typeof AuthenticatedSelectCompanyRoute
+  '/_public/login': typeof PublicLoginRoute
+  '/user/profile': typeof UserProfileRoute
+  '/user/': typeof UserIndexRoute
+  '/_authenticated/admin/bookings': typeof AuthenticatedAdminBookingsRoute
+  '/_authenticated/admin/club': typeof AuthenticatedAdminClubRoute
+  '/_authenticated/admin/plan': typeof AuthenticatedAdminPlanRoute
+  '/_authenticated/admin/profile': typeof AuthenticatedAdminProfileRoute
+  '/salon/$slug/_client': typeof SalonSlugClientRouteWithChildren
+  '/salon/$slug/login': typeof SalonSlugLoginRoute
+  '/salon/$slug/register': typeof SalonSlugRegisterRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/salon/$slug/_client/': typeof SalonSlugClientIndexRoute
+  '/salon/$slug/_client/user/profile': typeof SalonSlugClientUserProfileRoute
+  '/salon/$slug/_client/user/': typeof SalonSlugClientUserIndexRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/user'
@@ -215,8 +220,8 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/salon/$slug/'
     | '/salon/$slug/user/profile'
-    | '/salon/$slug/user/';
-  fileRoutesByTo: FileRoutesByTo;
+    | '/salon/$slug/user/'
+  fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/salon/$slug'
@@ -232,7 +237,7 @@ export interface FileRouteTypes {
     | '/salon/$slug/register'
     | '/admin'
     | '/salon/$slug/user/profile'
-    | '/salon/$slug/user';
+    | '/salon/$slug/user'
   id:
     | '__root__'
     | '/'
@@ -255,256 +260,261 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/salon/$slug/_client/'
     | '/salon/$slug/_client/user/profile'
-    | '/salon/$slug/_client/user/';
-  fileRoutesById: FileRoutesById;
+    | '/salon/$slug/_client/user/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  UserRouteRoute: typeof UserRouteRouteWithChildren;
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren;
-  PublicRoute: typeof PublicRouteWithChildren;
-  SalonSlugRouteRoute: typeof SalonSlugRouteRouteWithChildren;
+  IndexRoute: typeof IndexRoute
+  UserRouteRoute: typeof UserRouteRouteWithChildren
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  PublicRoute: typeof PublicRouteWithChildren
+  SalonSlugRouteRoute: typeof SalonSlugRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_public': {
-      id: '/_public';
-      path: '';
-      fullPath: '/';
-      preLoaderRoute: typeof PublicRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/_public'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof PublicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
-      id: '/_authenticated';
-      path: '';
-      fullPath: '/';
-      preLoaderRoute: typeof AuthenticatedRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/user': {
-      id: '/user';
-      path: '/user';
-      fullPath: '/user';
-      preLoaderRoute: typeof UserRouteRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/user'
+      path: '/user'
+      fullPath: '/user'
+      preLoaderRoute: typeof UserRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/user/': {
-      id: '/user/';
-      path: '/';
-      fullPath: '/user/';
-      preLoaderRoute: typeof UserIndexRouteImport;
-      parentRoute: typeof UserRouteRoute;
-    };
+      id: '/user/'
+      path: '/'
+      fullPath: '/user/'
+      preLoaderRoute: typeof UserIndexRouteImport
+      parentRoute: typeof UserRouteRoute
+    }
     '/user/profile': {
-      id: '/user/profile';
-      path: '/profile';
-      fullPath: '/user/profile';
-      preLoaderRoute: typeof UserProfileRouteImport;
-      parentRoute: typeof UserRouteRoute;
-    };
+      id: '/user/profile'
+      path: '/profile'
+      fullPath: '/user/profile'
+      preLoaderRoute: typeof UserProfileRouteImport
+      parentRoute: typeof UserRouteRoute
+    }
     '/_public/login': {
-      id: '/_public/login';
-      path: '/login';
-      fullPath: '/login';
-      preLoaderRoute: typeof PublicLoginRouteImport;
-      parentRoute: typeof PublicRoute;
-    };
+      id: '/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublicLoginRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_authenticated/select-company': {
-      id: '/_authenticated/select-company';
-      path: '/select-company';
-      fullPath: '/select-company';
-      preLoaderRoute: typeof AuthenticatedSelectCompanyRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/select-company'
+      path: '/select-company'
+      fullPath: '/select-company'
+      preLoaderRoute: typeof AuthenticatedSelectCompanyRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/salon/$slug': {
-      id: '/salon/$slug';
-      path: '/salon/$slug';
-      fullPath: '/salon/$slug';
-      preLoaderRoute: typeof SalonSlugRouteRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/salon/$slug'
+      path: '/salon/$slug'
+      fullPath: '/salon/$slug'
+      preLoaderRoute: typeof SalonSlugRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
-      id: '/_authenticated/admin';
-      path: '/admin';
-      fullPath: '/admin';
-      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport;
-      parentRoute: typeof AuthenticatedRoute;
-    };
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/': {
-      id: '/_authenticated/admin/';
-      path: '/';
-      fullPath: '/admin/';
-      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport;
-      parentRoute: typeof AuthenticatedAdminRouteRoute;
-    };
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/salon/$slug/register': {
-      id: '/salon/$slug/register';
-      path: '/register';
-      fullPath: '/salon/$slug/register';
-      preLoaderRoute: typeof SalonSlugRegisterRouteImport;
-      parentRoute: typeof SalonSlugRouteRoute;
-    };
+      id: '/salon/$slug/register'
+      path: '/register'
+      fullPath: '/salon/$slug/register'
+      preLoaderRoute: typeof SalonSlugRegisterRouteImport
+      parentRoute: typeof SalonSlugRouteRoute
+    }
     '/salon/$slug/login': {
-      id: '/salon/$slug/login';
-      path: '/login';
-      fullPath: '/salon/$slug/login';
-      preLoaderRoute: typeof SalonSlugLoginRouteImport;
-      parentRoute: typeof SalonSlugRouteRoute;
-    };
+      id: '/salon/$slug/login'
+      path: '/login'
+      fullPath: '/salon/$slug/login'
+      preLoaderRoute: typeof SalonSlugLoginRouteImport
+      parentRoute: typeof SalonSlugRouteRoute
+    }
     '/salon/$slug/_client': {
-      id: '/salon/$slug/_client';
-      path: '';
-      fullPath: '/salon/$slug';
-      preLoaderRoute: typeof SalonSlugClientRouteImport;
-      parentRoute: typeof SalonSlugRouteRoute;
-    };
+      id: '/salon/$slug/_client'
+      path: ''
+      fullPath: '/salon/$slug'
+      preLoaderRoute: typeof SalonSlugClientRouteImport
+      parentRoute: typeof SalonSlugRouteRoute
+    }
     '/_authenticated/admin/profile': {
-      id: '/_authenticated/admin/profile';
-      path: '/profile';
-      fullPath: '/admin/profile';
-      preLoaderRoute: typeof AuthenticatedAdminProfileRouteImport;
-      parentRoute: typeof AuthenticatedAdminRouteRoute;
-    };
+      id: '/_authenticated/admin/profile'
+      path: '/profile'
+      fullPath: '/admin/profile'
+      preLoaderRoute: typeof AuthenticatedAdminProfileRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/plan': {
-      id: '/_authenticated/admin/plan';
-      path: '/plan';
-      fullPath: '/admin/plan';
-      preLoaderRoute: typeof AuthenticatedAdminPlanRouteImport;
-      parentRoute: typeof AuthenticatedAdminRouteRoute;
-    };
+      id: '/_authenticated/admin/plan'
+      path: '/plan'
+      fullPath: '/admin/plan'
+      preLoaderRoute: typeof AuthenticatedAdminPlanRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/club': {
-      id: '/_authenticated/admin/club';
-      path: '/club';
-      fullPath: '/admin/club';
-      preLoaderRoute: typeof AuthenticatedAdminClubRouteImport;
-      parentRoute: typeof AuthenticatedAdminRouteRoute;
-    };
+      id: '/_authenticated/admin/club'
+      path: '/club'
+      fullPath: '/admin/club'
+      preLoaderRoute: typeof AuthenticatedAdminClubRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/bookings': {
-      id: '/_authenticated/admin/bookings';
-      path: '/bookings';
-      fullPath: '/admin/bookings';
-      preLoaderRoute: typeof AuthenticatedAdminBookingsRouteImport;
-      parentRoute: typeof AuthenticatedAdminRouteRoute;
-    };
+      id: '/_authenticated/admin/bookings'
+      path: '/bookings'
+      fullPath: '/admin/bookings'
+      preLoaderRoute: typeof AuthenticatedAdminBookingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/salon/$slug/_client/': {
-      id: '/salon/$slug/_client/';
-      path: '/';
-      fullPath: '/salon/$slug/';
-      preLoaderRoute: typeof SalonSlugClientIndexRouteImport;
-      parentRoute: typeof SalonSlugClientRoute;
-    };
+      id: '/salon/$slug/_client/'
+      path: '/'
+      fullPath: '/salon/$slug/'
+      preLoaderRoute: typeof SalonSlugClientIndexRouteImport
+      parentRoute: typeof SalonSlugClientRoute
+    }
     '/salon/$slug/_client/user/': {
-      id: '/salon/$slug/_client/user/';
-      path: '/user';
-      fullPath: '/salon/$slug/user/';
-      preLoaderRoute: typeof SalonSlugClientUserIndexRouteImport;
-      parentRoute: typeof SalonSlugClientRoute;
-    };
+      id: '/salon/$slug/_client/user/'
+      path: '/user'
+      fullPath: '/salon/$slug/user/'
+      preLoaderRoute: typeof SalonSlugClientUserIndexRouteImport
+      parentRoute: typeof SalonSlugClientRoute
+    }
     '/salon/$slug/_client/user/profile': {
-      id: '/salon/$slug/_client/user/profile';
-      path: '/user/profile';
-      fullPath: '/salon/$slug/user/profile';
-      preLoaderRoute: typeof SalonSlugClientUserProfileRouteImport;
-      parentRoute: typeof SalonSlugClientRoute;
-    };
+      id: '/salon/$slug/_client/user/profile'
+      path: '/user/profile'
+      fullPath: '/salon/$slug/user/profile'
+      preLoaderRoute: typeof SalonSlugClientUserProfileRouteImport
+      parentRoute: typeof SalonSlugClientRoute
+    }
   }
 }
 
 interface UserRouteRouteChildren {
-  UserProfileRoute: typeof UserProfileRoute;
-  UserIndexRoute: typeof UserIndexRoute;
+  UserProfileRoute: typeof UserProfileRoute
+  UserIndexRoute: typeof UserIndexRoute
 }
 
 const UserRouteRouteChildren: UserRouteRouteChildren = {
   UserProfileRoute: UserProfileRoute,
   UserIndexRoute: UserIndexRoute,
-};
-
-const UserRouteRouteWithChildren = UserRouteRoute._addFileChildren(UserRouteRouteChildren);
-
-interface AuthenticatedAdminRouteRouteChildren {
-  AuthenticatedAdminBookingsRoute: typeof AuthenticatedAdminBookingsRoute;
-  AuthenticatedAdminClubRoute: typeof AuthenticatedAdminClubRoute;
-  AuthenticatedAdminPlanRoute: typeof AuthenticatedAdminPlanRoute;
-  AuthenticatedAdminProfileRoute: typeof AuthenticatedAdminProfileRoute;
-  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute;
 }
 
-const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren = {
-  AuthenticatedAdminBookingsRoute: AuthenticatedAdminBookingsRoute,
-  AuthenticatedAdminClubRoute: AuthenticatedAdminClubRoute,
-  AuthenticatedAdminPlanRoute: AuthenticatedAdminPlanRoute,
-  AuthenticatedAdminProfileRoute: AuthenticatedAdminProfileRoute,
-  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
-};
+const UserRouteRouteWithChildren = UserRouteRoute._addFileChildren(
+  UserRouteRouteChildren,
+)
 
-const AuthenticatedAdminRouteRouteWithChildren = AuthenticatedAdminRouteRoute._addFileChildren(
-  AuthenticatedAdminRouteRouteChildren
-);
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminBookingsRoute: typeof AuthenticatedAdminBookingsRoute
+  AuthenticatedAdminClubRoute: typeof AuthenticatedAdminClubRoute
+  AuthenticatedAdminPlanRoute: typeof AuthenticatedAdminPlanRoute
+  AuthenticatedAdminProfileRoute: typeof AuthenticatedAdminProfileRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminBookingsRoute: AuthenticatedAdminBookingsRoute,
+    AuthenticatedAdminClubRoute: AuthenticatedAdminClubRoute,
+    AuthenticatedAdminPlanRoute: AuthenticatedAdminPlanRoute,
+    AuthenticatedAdminProfileRoute: AuthenticatedAdminProfileRoute,
+    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren;
-  AuthenticatedSelectCompanyRoute: typeof AuthenticatedSelectCompanyRoute;
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedSelectCompanyRoute: typeof AuthenticatedSelectCompanyRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedSelectCompanyRoute: AuthenticatedSelectCompanyRoute,
-};
+}
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
-  AuthenticatedRouteChildren
-);
+  AuthenticatedRouteChildren,
+)
 
 interface PublicRouteChildren {
-  PublicLoginRoute: typeof PublicLoginRoute;
+  PublicLoginRoute: typeof PublicLoginRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
   PublicLoginRoute: PublicLoginRoute,
-};
+}
 
-const PublicRouteWithChildren = PublicRoute._addFileChildren(PublicRouteChildren);
+const PublicRouteWithChildren =
+  PublicRoute._addFileChildren(PublicRouteChildren)
 
 interface SalonSlugClientRouteChildren {
-  SalonSlugClientIndexRoute: typeof SalonSlugClientIndexRoute;
-  SalonSlugClientUserProfileRoute: typeof SalonSlugClientUserProfileRoute;
-  SalonSlugClientUserIndexRoute: typeof SalonSlugClientUserIndexRoute;
+  SalonSlugClientIndexRoute: typeof SalonSlugClientIndexRoute
+  SalonSlugClientUserProfileRoute: typeof SalonSlugClientUserProfileRoute
+  SalonSlugClientUserIndexRoute: typeof SalonSlugClientUserIndexRoute
 }
 
 const SalonSlugClientRouteChildren: SalonSlugClientRouteChildren = {
   SalonSlugClientIndexRoute: SalonSlugClientIndexRoute,
   SalonSlugClientUserProfileRoute: SalonSlugClientUserProfileRoute,
   SalonSlugClientUserIndexRoute: SalonSlugClientUserIndexRoute,
-};
+}
 
 const SalonSlugClientRouteWithChildren = SalonSlugClientRoute._addFileChildren(
-  SalonSlugClientRouteChildren
-);
+  SalonSlugClientRouteChildren,
+)
 
 interface SalonSlugRouteRouteChildren {
-  SalonSlugClientRoute: typeof SalonSlugClientRouteWithChildren;
-  SalonSlugLoginRoute: typeof SalonSlugLoginRoute;
-  SalonSlugRegisterRoute: typeof SalonSlugRegisterRoute;
+  SalonSlugClientRoute: typeof SalonSlugClientRouteWithChildren
+  SalonSlugLoginRoute: typeof SalonSlugLoginRoute
+  SalonSlugRegisterRoute: typeof SalonSlugRegisterRoute
 }
 
 const SalonSlugRouteRouteChildren: SalonSlugRouteRouteChildren = {
   SalonSlugClientRoute: SalonSlugClientRouteWithChildren,
   SalonSlugLoginRoute: SalonSlugLoginRoute,
   SalonSlugRegisterRoute: SalonSlugRegisterRoute,
-};
+}
 
 const SalonSlugRouteRouteWithChildren = SalonSlugRouteRoute._addFileChildren(
-  SalonSlugRouteRouteChildren
-);
+  SalonSlugRouteRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -512,7 +522,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
   SalonSlugRouteRoute: SalonSlugRouteRouteWithChildren,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()

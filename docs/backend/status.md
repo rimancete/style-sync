@@ -40,7 +40,7 @@
 - [X] `POST /api/salon/:customerSlug/auth/login` for linked CLIENTs (401 / 403 / 404)
 - [X] `POST /api/auth/login` rejects CLIENT with 403
 - [X] `customers[].logoUrl` in auth and `my-customers` responses resolved to absolute URLs
-- [X] Seed: Acme and Elite palettes, logos and favicons copied from `prisma/seed-assets/`; `admin@stylesync.com` → Acme + Elite, `staff@stylesync.com` → Acme
+- [X] Seed: Acme gold/cream and Elite pink palettes, logos and favicons copied from `prisma/seed-assets/`; `admin@stylesync.com` → Acme + Elite, `staff@stylesync.com` → Acme
 - [X] Contract tests for salon login, neutral login and both palettes
 
 ### Phase 4 (Advanced Business Features)
