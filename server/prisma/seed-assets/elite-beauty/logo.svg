@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="480" viewBox="0 0 480 480" role="img" aria-labelledby="title desc">
+  <title id="title">Elite Beauty Salon</title>
+  <desc id="desc">Elegant beauty salon emblem with a prominent Elite wordmark, flowing hair silhouette, and a high-contrast New York establishment label.</desc>
+  <defs>
+    <linearGradient id="pink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff6b98"/>
+      <stop offset=".52" stop-color="#ff0a54"/>
+      <stop offset="1" stop-color="#c90043"/>
+    </linearGradient>
+    <linearGradient id="blush" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffafb"/>
+      <stop offset="1" stop-color="#fae0e4"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="480" height="480" fill="#fff9fa"/>
+  <circle cx="240" cy="240" r="220" fill="url(#blush)" stroke="#ff0a54" stroke-width="4"/>
+  <circle cx="240" cy="240" r="207" fill="none" stroke="#f4a4b8" stroke-width="1.5"/>
+  <circle cx="240" cy="240" r="194" fill="none" stroke="#ff0a54" stroke-width="1" stroke-dasharray="2 7"/>
+
+  <!-- Delicate botanical ornaments -->
+  <g fill="none" stroke="#ff0a54" stroke-width="2.2" stroke-linecap="round">
+    <path d="M112 250 C82 215 87 173 119 151 C127 187 125 219 112 250Z"/>
+    <path d="M112 250 C144 223 151 187 133 157"/>
+    <path d="M368 250 C398 215 393 173 361 151 C353 187 355 219 368 250Z"/>
+    <path d="M368 250 C336 223 329 187 347 157"/>
+    <path d="M111 251 Q143 270 153 304 M369 251 Q337 270 327 304"/>
+  </g>
+  <g fill="#ff0a54">
+    <circle cx="118" cy="145" r="5"/>
+    <circle cx="362" cy="145" r="5"/>
+    <path d="M100 290 Q82 278 78 260 Q98 263 107 280Z"/>
+    <path d="M380 290 Q398 278 402 260 Q382 263 373 280Z"/>
+  </g>
+
+  <!-- Center medallion -->
+  <circle cx="240" cy="221" r="116" fill="#fffafb" stroke="#ff0a54" stroke-width="3"/>
+  <circle cx="240" cy="221" r="106" fill="none" stroke="#f5b3c3" stroke-width="1.5"/>
+
+  <!-- Hair-only silhouette: broad, flowing outer contour; no face/profile -->
+  <path d="M176 267
+           C158 237 157 194 171 164
+           C185 133 212 116 244 116
+           C283 116 310 139 321 174
+           C332 210 321 246 303 273
+           C294 287 286 302 284 319
+           C266 310 254 294 249 276
+           C238 293 219 308 196 315
+           C202 294 197 278 185 267
+           C181 264 178 264 176 267Z"
+        fill="url(#pink)" stroke="#c90043" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Flowing hair strands -->
+  <g fill="none" stroke="#fae0e4" stroke-width="4" stroke-linecap="round" opacity=".95">
+    <path d="M190 159 C170 197 184 238 202 265 C211 279 211 293 205 304"/>
+    <path d="M222 133 C198 171 205 214 224 244 C236 264 235 285 225 299"/>
+    <path d="M252 128 C234 166 240 205 258 235 C270 255 270 280 260 298"/>
+    <path d="M282 145 C267 179 276 214 294 241 C301 253 302 266 296 279"/>
+  </g>
+  <path d="M181 189 C191 149 219 129 247 129" fill="none" stroke="#fff7f8" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+
+  <!-- Strong, prominent Elite wordmark -->
+  <text x="240" y="76" text-anchor="middle" fill="#c90043"
+        font-family="Georgia, 'Times New Roman', serif" font-size="31"
+        font-weight="bold" letter-spacing="8">ELITE</text>
+  <path d="M136 341 Q240 357 344 341" fill="none" stroke="#ff0a54" stroke-width="2"/>
+  <text x="240" y="382" text-anchor="middle" fill="#c90043"
+        font-family="Georgia, 'Times New Roman', serif" font-size="35"
+        letter-spacing="2">BEAUTY</text>
+  <text x="240" y="411" text-anchor="middle" fill="#ff0a54"
+        font-family="Arial, sans-serif" font-size="16" letter-spacing="5">SALON</text>
+
+  <!-- High-contrast location ribbon -->
+  <rect x="143" y="423" width="194" height="22" rx="11" fill="#c90043"/>
+  <text x="240" y="438" text-anchor="middle" fill="#fffafb"
+        font-family="Arial, sans-serif" font-size="9.5"
+        font-weight="bold" letter-spacing="1.5">NEW YORK • EST. 2005</text>
+
+  <g fill="#ff0a54">
+    <path d="M104 365 l6 -4 6 4 -6 4Z"/>
+    <path d="M364 365 l6 -4 6 4 -6 4Z"/>
+  </g>
+</svg>
