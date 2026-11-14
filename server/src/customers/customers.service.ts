@@ -15,6 +15,7 @@ import { CreateCustomerBrandingConfigDto } from './dto/create-customer-branding.
 import { CustomerSummary } from '../common/interfaces/api-response.interface';
 import { FileService, UploadedFileInfo } from '../common/services/file.service';
 import { Prisma } from '@prisma/client';
+import { resolveFileUrl } from '../common/config/multer.config';
 
 @Injectable()
 export class CustomersService {
@@ -136,7 +137,9 @@ export class CustomersService {
         displayId: uc.customer.displayId,
         name: uc.customer.name,
         urlSlug: uc.customer.urlSlug,
-        logoUrl: uc.customer.logoUrl || undefined,
+        logoUrl: uc.customer.logoUrl
+          ? resolveFileUrl(uc.customer.logoUrl, uc.customer.id)
+          : undefined,
       }));
   }
 
