@@ -1,0 +1,116 @@
+{
+  "acme": {
+    "id": "customer-acme",
+    "displayId": 1,
+    "name": "Acme Barbershop",
+    "urlSlug": "acme",
+    "isActive": true,
+    "branding": {
+      "favicon32x32": null,
+      "favicon16x16": null,
+      "appleTouch": null,
+      "documentTitle": "Acme Barbershop - Professional Haircuts",
+      "theme": {
+        "light": {
+          "logoUrl": null,
+          "logoAlt": "Acme Barbershop",
+          "primary": {
+            "main": "#0E7490",
+            "light": "#CFFAFE",
+            "dark": "#155E75",
+            "contrast": "#FFFFFF"
+          },
+          "secondary": {
+            "main": "#CFFAFE",
+            "light": "#ECFEFF",
+            "dark": "#A5F3FC",
+            "contrast": "#155E75"
+          },
+          "background": "#F8FAFC",
+          "foreground": "#0F172A",
+          "surface": "#FFFFFF",
+          "border": "#E2E8F0",
+          "mutedForeground": "#475569"
+        },
+        "dark": {
+          "logoUrl": null,
+          "logoAlt": "Acme Barbershop",
+          "primary": {
+            "main": "#CFFAFE",
+            "light": "#ECFEFF",
+            "dark": "#A5F3FC",
+            "contrast": "#020617"
+          },
+          "secondary": {
+            "main": "#22D3EE",
+            "light": "#67E8F9",
+            "dark": "#0891B2",
+            "contrast": "#020617"
+          },
+          "background": "#080C14",
+          "foreground": "#F1F5F9",
+          "surface": "#0B1220",
+          "border": "#1C1F27",
+          "mutedForeground": "#94A3B8"
+        }
+      }
+    }
+  },
+  "elite-beauty": {
+    "id": "customer-elite",
+    "displayId": 2,
+    "name": "Elite Beauty Salon",
+    "urlSlug": "elite-beauty",
+    "isActive": true,
+    "branding": {
+      "favicon32x32": null,
+      "favicon16x16": null,
+      "appleTouch": null,
+      "documentTitle": "Elite Beauty Salon - Premium Beauty Services",
+      "theme": {
+        "light": {
+          "logoUrl": null,
+          "logoAlt": "Elite Beauty Salon",
+          "primary": {
+            "main": "#B92777",
+            "light": "#D94C98",
+            "dark": "#8E1B5A",
+            "contrast": "#FFFFFF"
+          },
+          "secondary": {
+            "main": "#D6FDFF",
+            "light": "#EEFEFF",
+            "dark": "#9EEFF3",
+            "contrast": "#8E1B5A"
+          },
+          "background": "#FFF7FA",
+          "foreground": "#2B0A1C",
+          "surface": "#FFFFFF",
+          "border": "#F3D3E1",
+          "mutedForeground": "#7A4A60"
+        },
+        "dark": {
+          "logoUrl": null,
+          "logoAlt": "Elite Beauty Salon",
+          "primary": {
+            "main": "#F472B6",
+            "light": "#F9A8D4",
+            "dark": "#DB2777",
+            "contrast": "#2B0A1C"
+          },
+          "secondary": {
+            "main": "#164E63",
+            "light": "#1E6A80",
+            "dark": "#0E3A4A",
+            "contrast": "#D6FDFF"
+          },
+          "background": "#1A0811",
+          "foreground": "#FCE7F3",
+          "surface": "#26101B",
+          "border": "#3D1A2C",
+          "mutedForeground": "#D4A5BC"
+        }
+      }
+    }
+  }
+}
