@@ -1,13 +1,13 @@
-import { Card, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import { Panel, PanelDescription, PanelHeader, PanelTitle } from '~/components/ui/panel';
 
 function UserProfileScreen() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle as="h1">Profile</CardTitle>
-        <CardDescription>Manage your personal account.</CardDescription>
-      </CardHeader>
-    </Card>
+    <Panel>
+      <PanelHeader>
+        <PanelTitle as="h1">Profile</PanelTitle>
+        <PanelDescription>Manage your personal account.</PanelDescription>
+      </PanelHeader>
+    </Panel>
   );
 }
 

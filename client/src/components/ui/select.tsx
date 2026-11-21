@@ -4,11 +4,24 @@ import * as SelectPrimitive from '@radix-ui/react-select';
 import { Icon } from '~/components/Icon';
 import { cn } from '~/lib/utils';
 
-const Select = SelectPrimitive.Root;
+export type SelectItemOption = {
+  value: string;
+  label: React.ReactNode;
+  disabled?: boolean;
+};
 
-const SelectGroup = SelectPrimitive.Group;
-
-const SelectValue = SelectPrimitive.Value;
+type SelectProps = {
+  items: SelectItemOption[];
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
+  name?: string;
+  required?: boolean;
+  triggerClassName?: string;
+  'aria-label'?: string;
+};
 
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
@@ -82,4 +95,27 @@ const SelectItem = React.forwardRef<
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
-export { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue };
+function Select({
+  items,
+  placeholder,
+  triggerClassName,
+  'aria-label': ariaLabel,
+  ...rootProps
+}: SelectProps) {
+  return (
+    <SelectPrimitive.Root {...rootProps}>
+      <SelectTrigger aria-label={ariaLabel} className={triggerClassName}>
+        <SelectPrimitive.Value placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {items.map((item) => (
+          <SelectItem key={item.value} value={item.value} disabled={item.disabled}>
+            {item.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </SelectPrimitive.Root>
+  );
+}
+
+export { Select };

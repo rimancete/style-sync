@@ -3,7 +3,13 @@ import { useTranslation } from 'react-i18next';
 
 import { ThemeModeToggle } from '~/components/theme-mode-toggle';
 import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Panel,
+  PanelContent,
+  PanelDescription,
+  PanelHeader,
+  PanelTitle,
+} from '~/components/ui/panel';
 import { useAuthStore } from '~/store/authStore';
 import { resolvePostLoginPath } from '~/utils/session-paths.util';
 
@@ -25,12 +31,12 @@ export function SelectCompanyScreen({ redirect }: SelectCompanyScreenProps) {
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background px-5">
       <ThemeModeToggle className="absolute right-4 top-4" />
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle as="h1">{t('selectCompany.title')}</CardTitle>
-          <CardDescription>{t('selectCompany.subtitle')}</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Panel className="w-full max-w-md">
+        <PanelHeader>
+          <PanelTitle as="h1">{t('selectCompany.title')}</PanelTitle>
+          <PanelDescription>{t('selectCompany.subtitle')}</PanelDescription>
+        </PanelHeader>
+        <PanelContent>
           <ul className="space-y-2">
             {customers.map((customer) => (
               <li key={customer.id}>
@@ -45,8 +51,8 @@ export function SelectCompanyScreen({ redirect }: SelectCompanyScreenProps) {
               </li>
             ))}
           </ul>
-        </CardContent>
-      </Card>
+        </PanelContent>
+      </Panel>
     </div>
   );
 }

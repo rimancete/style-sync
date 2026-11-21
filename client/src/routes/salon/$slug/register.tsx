@@ -1,17 +1,11 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 
 import { RegisterScreen } from '~/screens/Register';
-import { useAuthStore } from '~/store/authStore';
-import { getHomePath } from '~/utils/session-paths.util';
+import { redirectIfAuthenticated } from '~/utils/route-guards';
 
 export const Route = createFileRoute('/salon/$slug/register')({
   beforeLoad: () => {
-    const session = useAuthStore.getState();
-
-    if (session.isAuthenticated) {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error
-      throw redirect({ href: getHomePath(session) });
-    }
+    redirectIfAuthenticated();
   },
   component: SalonRegisterRoute,
 });

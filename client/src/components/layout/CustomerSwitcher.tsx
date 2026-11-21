@@ -1,10 +1,4 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '~/components/ui/select';
+import { Select } from '~/components/ui/select';
 import type { CustomerSummary } from '~/store/authStore';
 
 type CustomerSwitcherProps = {
@@ -34,17 +28,13 @@ export function CustomerSwitcher({
   }
 
   return (
-    <Select value={activeCustomerId ?? undefined} onValueChange={handleValueChange}>
-      <SelectTrigger aria-label={label} className="h-9 w-40 sm:w-52">
-        <SelectValue placeholder={label} />
-      </SelectTrigger>
-      <SelectContent>
-        {customers.map((customer) => (
-          <SelectItem key={customer.id} value={customer.id}>
-            {customer.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <Select
+      items={customers.map((customer) => ({ value: customer.id, label: customer.name }))}
+      value={activeCustomerId ?? undefined}
+      onValueChange={handleValueChange}
+      placeholder={label}
+      aria-label={label}
+      triggerClassName="h-9 w-40 sm:w-52"
+    />
   );
 }

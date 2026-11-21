@@ -14,7 +14,7 @@ This document tracks the progress of the frontend implementation.
 
 ## 2. Core Components
 - [x] Layout (Header, Footer, Sidebar)
-- [x] UI Library (Button, Input, Card, Modal, etc.)
+- [x] UI Library (Button, Input, Panel, Modal, etc.)
 - [x] Icon System (Custom SVG)
 - [x] Form Components (Controlled with React Hook Form)
 - [x] shadcn primitives used by Login and Register (`button`, `input`, `label`, `form`, `alert`, `checkbox`, `alert-dialog`)
@@ -56,4 +56,4 @@ This document tracks the progress of the frontend implementation.
 
 ## 5. Current Focus
 
-Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: [#19](https://github.com/rimancete/style-sync/issues/19) Tenant context & branding on branch `19-tenant-context-branding`. Smooth tests signed off; Acme uses gold/cream branding, Elite stays pink, the design-system cyan stays on `/login` and the admin shell. Next: draft PR.
+Sequencing of upcoming work is in [`docs/roadmap.md`](../roadmap.md). Current slice: [#19](https://github.com/rimancete/style-sync/issues/19) Tenant context & branding on branch `19-tenant-context-branding` (PR [#20](https://github.com/rimancete/style-sync/pull/20)). Smooth tests signed off and the playbook was removed. Acme uses gold/cream branding, Elite stays pink, the design-system cyan stays on `/login` and the admin shell.

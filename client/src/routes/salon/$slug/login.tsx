@@ -1,8 +1,7 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 
 import { LoginScreen } from '~/screens/Login';
-import { useAuthStore } from '~/store/authStore';
-import { getHomePath } from '~/utils/session-paths.util';
+import { redirectIfAuthenticated } from '~/utils/route-guards';
 
 type LoginSearch = {
   redirect?: string;
@@ -13,12 +12,7 @@ export const Route = createFileRoute('/salon/$slug/login')({
     redirect: typeof search.redirect === 'string' ? search.redirect : undefined,
   }),
   beforeLoad: () => {
-    const session = useAuthStore.getState();
-
-    if (session.isAuthenticated) {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error
-      throw redirect({ href: getHomePath(session) });
-    }
+    redirectIfAuthenticated();
   },
   component: SalonLoginRoute,
 });

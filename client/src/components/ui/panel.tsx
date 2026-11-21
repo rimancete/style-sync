@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { cn } from '~/lib/utils';
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+const Panel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
@@ -11,20 +11,20 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
     />
   )
 );
-Card.displayName = 'Card';
+Panel.displayName = 'Panel';
 
-const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+const PanelHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cn('flex flex-col space-y-1.5 p-6', className)} {...props} />
   )
 );
-CardHeader.displayName = 'CardHeader';
+PanelHeader.displayName = 'PanelHeader';
 
-type CardTitleProps = React.HTMLAttributes<HTMLHeadingElement> & {
+type PanelTitleProps = React.HTMLAttributes<HTMLHeadingElement> & {
   as?: 'h1' | 'h2' | 'h3';
 };
 
-const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
+const PanelTitle = React.forwardRef<HTMLHeadingElement, PanelTitleProps>(
   ({ className, as: Heading = 'h3', ...props }, ref) => (
     <Heading
       ref={ref}
@@ -33,21 +33,21 @@ const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
     />
   )
 );
-CardTitle.displayName = 'CardTitle';
+PanelTitle.displayName = 'PanelTitle';
 
-const CardDescription = React.forwardRef<
+const PanelDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
   <p ref={ref} className={cn('text-sm text-muted-foreground', className)} {...props} />
 ));
-CardDescription.displayName = 'CardDescription';
+PanelDescription.displayName = 'PanelDescription';
 
-const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+const PanelContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
   )
 );
-CardContent.displayName = 'CardContent';
+PanelContent.displayName = 'PanelContent';
 
-export { Card, CardContent, CardDescription, CardHeader, CardTitle };
+export { Panel, PanelContent, PanelDescription, PanelHeader, PanelTitle };

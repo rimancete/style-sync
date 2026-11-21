@@ -60,5 +60,6 @@ A chronological log of significant implementation milestones for the StyleSync f
 - **Session**: `authStore` v3 keeps `activeCustomerId` / `activeCustomerSlug`. Query keys and expiry redirects use the active salon. Neutral login is ADMIN/STAFF only; CLIENT uses `POST /api/salon/:slug/auth/login`.
 - **Routes**: `/salon/$slug` loads branding before paint (404/inactive → `SalonNotFound`). Client area lives under `/salon/$slug/_client` with `ClientShell`. `/login` stays system-themed. ADMIN/STAFF share `AdminShell`; several companies go through `/select-company`. `/` and `/user` redirect a CLIENT to the active slug.
 - **Shells**: sidebar + header + `max-w-[1280px]` card container, tokens only. Salon switcher (CLIENT, 2+ links) replaces the slug in the URL. Company switcher (ADMIN/STAFF) updates the active id and invalidates scoped queries.
-- **Tests**: Login/Register screens use `test/renderApp.tsx`. `tenant-routes.test.tsx` covers not-found, unlinked redirect, salon switch, company picker, and post-login return URLs.
+- **Tests**: Login/Register screens use `test/renderApp.tsx`. `tenant-routes.test.tsx` covers not-found, unlinked redirect, salon switch, company picker, and post-login return URLs. Manual playbook signed off and removed.
+
 
