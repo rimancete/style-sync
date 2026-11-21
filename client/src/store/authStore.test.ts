@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createMockAuthResponse } from '~/mocks/auth';
+import { createMockAuthResponse, MOCK_ACME, MOCK_ELITE } from '~/mocks/auth';
 import { createUnsignedJwt } from '~/mocks/jwt';
 import { useAuthStore } from '~/store/authStore';
 import { getAuthStorageKey } from '~/utils/env';
@@ -64,6 +64,110 @@ describe('authStore', () => {
     expect(session.role).toBeNull();
     expect(session.customers).toEqual([]);
     expect(session.isAuthenticated).toBe(false);
+  });
+
+  it('activates the salon a CLIENT signed in through', () => {
+    useAuthStore.getState().setSession(
+      createMockAuthResponse({
+        email: 'client2@multi.com',
+        role: 'CLIENT',
+        customers: [MOCK_ACME, MOCK_ELITE],
+        defaultCustomerId: MOCK_ELITE.id,
+      })
+    );
+
+    expect(useAuthStore.getState().activeCustomerId).toBe(MOCK_ELITE.id);
+    expect(useAuthStore.getState().activeCustomerSlug).toBe('elite-beauty');
+  });
+
+  it('activates the only company of an ADMIN', () => {
+    useAuthStore
+      .getState()
+      .setSession(createMockAuthResponse({ email: 'admin@acme.com', role: 'ADMIN' }));
+
+    expect(useAuthStore.getState().activeCustomerId).toBe(MOCK_ACME.id);
+  });
+
+  it('leaves an ADMIN with several companies without an active one', () => {
+    useAuthStore.getState().setSession(
+      createMockAuthResponse({
+        email: 'admin@stylesync.com',
+        role: 'ADMIN',
+        customers: [MOCK_ACME, MOCK_ELITE],
+      })
+    );
+
+    expect(useAuthStore.getState().activeCustomerId).toBeNull();
+    expect(useAuthStore.getState().activeCustomerSlug).toBeNull();
+  });
+
+  it('switches only to a linked customer', () => {
+    useAuthStore.getState().setSession(
+      createMockAuthResponse({
+        email: 'admin@stylesync.com',
+        role: 'ADMIN',
+        customers: [MOCK_ACME, MOCK_ELITE],
+      })
+    );
+
+    useAuthStore.getState().setActiveCustomer(MOCK_ELITE.id);
+    useAuthStore.getState().setActiveCustomer('customer-unknown');
+
+    expect(useAuthStore.getState().activeCustomerId).toBe(MOCK_ELITE.id);
+    expect(useAuthStore.getState().activeCustomerSlug).toBe('elite-beauty');
+  });
+
+  it('keeps the active customer when a token refresh returns another default', () => {
+    const customers = [MOCK_ACME, MOCK_ELITE];
+    useAuthStore.getState().setSession(
+      createMockAuthResponse({
+        email: 'client2@multi.com',
+        role: 'CLIENT',
+        customers,
+        defaultCustomerId: MOCK_ELITE.id,
+      })
+    );
+    useAuthStore.getState().setActiveCustomer(MOCK_ACME.id);
+
+    useAuthStore.getState().setSession(
+      createMockAuthResponse({
+        email: 'client2@multi.com',
+        role: 'CLIENT',
+        customers,
+        defaultCustomerId: MOCK_ELITE.id,
+      })
+    );
+
+    expect(useAuthStore.getState().activeCustomerSlug).toBe('acme');
+  });
+
+  it('migrates a v2 session and derives the active customer', async () => {
+    const auth = createMockAuthResponse({ email: 'client@test.com', role: 'CLIENT' });
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        state: {
+          token: auth.token,
+          refreshToken: auth.refreshToken,
+          userId: auth.userId,
+          userName: auth.userName,
+          phone: null,
+          email: 'client@test.com',
+          role: 'CLIENT',
+          customers: auth.customers,
+          defaultCustomerId: auth.defaultCustomerId,
+          isAuthenticated: true,
+        },
+        version: 2,
+      })
+    );
+
+    await useAuthStore.persist.rehydrate();
+
+    const session = useAuthStore.getState();
+    expect(session.isAuthenticated).toBe(true);
+    expect(session.activeCustomerId).toBe(MOCK_ACME.id);
+    expect(session.activeCustomerSlug).toBe('acme');
   });
 
   it('discards a persisted session in the previous { user, token } shape', async () => {

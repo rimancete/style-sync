@@ -1,0 +1,1 @@
+export { SalonNotFoundScreen } from './SalonNotFound';

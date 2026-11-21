@@ -1,6 +1,6 @@
 <!-- spec-kit: architecture -->
-<!-- version: 1.1 -->
-<!-- last-updated: 2026-08-22 -->
+<!-- version: 1.2 -->
+<!-- last-updated: 2026-11-14 -->
 <!-- updated-by: agent -->
 
 # Architecture
@@ -120,21 +120,20 @@ Browser
 
 | Route | Screen | Auth | Role |
 |-------|--------|------|------|
-| `/` | redirect | — | — |
-| `/_public/login` | `screens/Login/Login.tsx` | none | — |
-| `/_public/register` | `screens/Register/Register.tsx` | none | — |
-| `/_authenticated/admin/bookings` | `screens/Admin/Bookings/Bookings.tsx` | JWT | ADMIN |
-| `/_authenticated/admin/club` | `screens/Admin/Club/Club.tsx` | JWT | ADMIN |
-| `/_authenticated/admin/plan` | `screens/Admin/Plan/Plan.tsx` | JWT | ADMIN |
-| `/_authenticated/admin/profile` | `screens/Admin/Profile/Profile.tsx` | JWT | ADMIN |
-| `/_authenticated/user/profile` | `screens/User/Profile/Profile.tsx` | JWT | CLIENT |
+| `/` | redirect to salon or admin home | — | — |
+| `/login` | `screens/Login/Login.tsx` | none | ADMIN, STAFF |
+| `/select-company` | `screens/SelectCompany/SelectCompany.tsx` | JWT | ADMIN, STAFF |
+| `/admin/*` | `AdminShell` + admin screens | JWT | ADMIN, STAFF |
+| `/salon/$slug/login` | `screens/Login/Login.tsx` | none | CLIENT |
+| `/salon/$slug/register` | `screens/Register/Register.tsx` | none | CLIENT |
+| `/salon/$slug/*` | `ClientShell` + client screens | JWT + link | CLIENT |
 
 ### State Stores (Zustand)
 
 | Store | File | Persisted | Purpose |
 |-------|------|-----------|---------|
-| `useAuthStore` | `store/authStore.ts` | localStorage (`StyleSync_Auth_Dev` via `VITE_AUTH_STORAGE_KEY`, v2) | session tokens, user profile, `role`/`email` from JWT, customers |
-| `useThemeStore` | `store/themeStore.ts` | localStorage (`StyleSync_Theme_Dev` via `VITE_THEME_STORAGE_KEY`) | mode (light/dark), dynamic CSS vars from branding API |
+| `useAuthStore` | `store/authStore.ts` | localStorage (`StyleSync_Auth_Dev` via `VITE_AUTH_STORAGE_KEY`, v3) | session tokens, user profile, `role`/`email` from JWT, customers, active salon/company |
+| `useThemeStore` | `store/themeStore.ts` | localStorage (`StyleSync_Theme_Dev` via `VITE_THEME_STORAGE_KEY`) | light/dark preference (OS default when unset) |
 | `useBookingStore` | `store/bookingStore.ts` | no | multi-step booking funnel: branch → service → professional → dateTime |
 
 ### API Facade
@@ -142,24 +141,24 @@ Browser
 `src/api/api.ts` is the single import point for all API operations:
 
 ```typescript
-api.auth.login       // useLogin mutation
+api.auth.login       // useLogin mutation (neutral or salon)
 api.auth.register    // useRegister mutation
 api.customers.mine   // useGetMyCustomers query
+api.customers.brandingQueryOptions // public branding for loaders
 api.branches.list    // useGetBranches query
 api.services.list    // useGetServices query
 api.professionals.list // useGetProfessionals query
 api.bookings.create  // useCreateBooking mutation
-api.theme.get        // useGetTheme query
 ```
 
 Every hook accepts `mockData`. MSW and the `mockData` short-circuit run only when `VITE_ENABLE_MOCKS=true` (off by default).
 
 ### Multi-Tenancy / Theming on the Frontend
 
-1. `useCustomerUrl` parses the current hostname or URL param to identify the tenant slug
-2. `api.theme.get` (`GET /api/customers/branding/:slug`) fetches colors, logo, favicon
-3. `themeStore.setConfig(config)` applies them as CSS variables to `:root`
-4. All subsequent renders use the tenant's brand
+1. `/salon/$slug` loaders call `ensureQueryData(api.customers.brandingQueryOptions(slug))`
+2. Unknown or inactive slugs render `SalonNotFoundScreen` on the system theme
+3. `applyCustomerBranding` writes one `<style id="tenant-theme">` (`:root` + `:root.dark`) plus title/favicons; leaving the salon tree resets them
+4. `themeStore` only owns light/dark preference; the OS scheme is the default until the user toggles
 
 ---
 

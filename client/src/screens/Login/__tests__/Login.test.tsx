@@ -1,14 +1,12 @@
-import { QueryClientProvider } from '@tanstack/react-query';
-import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { createMockAuthResponse } from '~/mocks/auth';
 import { server } from '~/mocks/server';
-import { routeTree } from '~/routeTree.gen';
 import { useAuthStore } from '~/store/authStore';
-import { createTestQueryClient, render, screen, waitFor } from '~/test/utils';
+import { renderApp } from '~/test/renderApp';
+import { screen, waitFor } from '~/test/utils';
 
 import '~/i18n/config';
 
@@ -19,24 +17,6 @@ function resetSession() {
   useAuthStore.getState().clearAuth();
   useAuthStore.persist.clearStorage();
   window.localStorage.clear();
-}
-
-async function renderApp(initialPath: string) {
-  const queryClient = createTestQueryClient();
-  const router = createRouter({
-    routeTree,
-    history: createMemoryHistory({ initialEntries: [initialPath] }),
-  });
-
-  render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
-
-  await waitFor(() => {
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
-  });
 }
 
 function passwordInput(): HTMLInputElement {
@@ -66,28 +46,39 @@ describe('Login screen', () => {
     resetSession();
   });
 
-  it('sends ADMIN to the admin home after a successful login', async () => {
+  it('sends ADMIN with one company to the admin home after a successful login', async () => {
     await renderApp('/login');
-    await submitLogin('admin@stylesync.com');
+    await submitLogin('admin@acme.com');
 
     expect(await screen.findByRole('heading', { name: 'Dashboard' })).toBeInTheDocument();
     expect(useAuthStore.getState().isAuthenticated).toBe(true);
     expect(useAuthStore.getState().role).toBe('ADMIN');
+    expect(useAuthStore.getState().activeCustomerSlug).toBe('acme');
   });
 
-  it('sends CLIENT to the user home after a successful login', async () => {
+  it('asks an ADMIN with several companies to pick one first', async () => {
+    await renderApp('/login');
+    await submitLogin('admin@stylesync.com');
+
+    expect(await screen.findByRole('heading', { name: 'Choose a company' })).toBeInTheDocument();
+    expect(useAuthStore.getState().activeCustomerId).toBeNull();
+  });
+
+  it('keeps a CLIENT on the login screen with an inline error', async () => {
     await renderApp('/login');
     await submitLogin('client@test.com');
 
-    expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
-    expect(useAuthStore.getState().role).toBe('CLIENT');
+    expect(
+      await screen.findByText('Clients must sign in through their salon link.')
+    ).toBeInTheDocument();
+    expect(useAuthStore.getState().isAuthenticated).toBe(false);
   });
 
-  it('sends STAFF to the user home after a successful login', async () => {
+  it('sends STAFF to the admin home after a successful login', async () => {
     await renderApp('/login');
     await submitLogin('staff@stylesync.com');
 
-    expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Dashboard' })).toBeInTheDocument();
     expect(useAuthStore.getState().role).toBe('STAFF');
   });
 
@@ -164,16 +155,16 @@ describe('Login screen', () => {
       expect(screen.getByRole('heading', { name: 'Sign In' })).toBeInTheDocument();
     });
 
-    await submitLogin('admin@stylesync.com');
+    await submitLogin('admin@acme.com');
 
     expect(await screen.findByText('Coming soon')).toBeInTheDocument();
   });
 
   it('ignores a malicious redirect and uses the role home', async () => {
     await renderApp('/login?redirect=javascript:alert(1)');
-    await submitLogin('client@test.com');
+    await submitLogin('admin@acme.com');
 
-    expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Dashboard' })).toBeInTheDocument();
   });
 
   it('does not offer a link to registration', async () => {
@@ -200,9 +191,9 @@ describe('Login screen', () => {
     await user.click(screen.getByRole('button', { name: 'Hide password' }));
     expect(input).toHaveAttribute('type', 'password');
 
-    await user.type(screen.getByLabelText(/email/i), 'client@test.com');
+    await user.type(screen.getByLabelText(/email/i), 'admin@acme.com');
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
-    expect(await screen.findByRole('heading', { name: 'My Bookings' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Dashboard' })).toBeInTheDocument();
   });
 });

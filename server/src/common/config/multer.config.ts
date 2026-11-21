@@ -135,6 +135,19 @@ export function generateFileUrl(
 }
 
 /**
+ * Resolve a stored file reference (filename or absolute URL) to a public URL
+ */
+export function resolveFileUrl(
+  reference: string,
+  customerId: string,
+  baseUrl?: string,
+): string {
+  return reference.startsWith('http')
+    ? reference
+    : generateFileUrl(reference, customerId, baseUrl);
+}
+
+/**
  * Extract filename from file path
  */
 export function extractFilename(filePath: string): string {

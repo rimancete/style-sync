@@ -13,6 +13,16 @@ class ResizeObserverStub {
 
 globalThis.ResizeObserver = ResizeObserverStub;
 
+if (!Element.prototype.hasPointerCapture) {
+  Element.prototype.hasPointerCapture = () => false;
+  Element.prototype.setPointerCapture = () => undefined;
+  Element.prototype.releasePointerCapture = () => undefined;
+}
+
+if (!Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = () => undefined;
+}
+
 beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' });
 });

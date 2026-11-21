@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="480" viewBox="0 0 480 480" role="img" aria-labelledby="title desc">
+  <title id="title">Acme Barber Shop</title>
+  <desc id="desc">Vintage barber emblem in charcoal, antique gold, red and blue, with crossed barber tools.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#242629"/><stop offset="1" stop-color="#090a0c"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0.9" y2="1"><stop stop-color="#fff0b0"/><stop offset=".38" stop-color="#c89b45"/><stop offset="1" stop-color="#80551e"/></linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f7f0df"/><stop offset=".5" stop-color="#8e9295"/><stop offset="1" stop-color="#e6d7b5"/></linearGradient>
+    <clipPath id="poleL"><rect x="48" y="142" width="34" height="176" rx="16"/></clipPath>
+    <clipPath id="poleR"><rect x="398" y="142" width="34" height="176" rx="16"/></clipPath>
+  </defs>
+  <rect width="480" height="480" fill="#0b0c0e"/>
+  <circle cx="240" cy="240" r="222" fill="url(#bg)" stroke="url(#gold)" stroke-width="5"/>
+  <circle cx="240" cy="240" r="209" fill="none" stroke="#6f552b" stroke-width="1.5"/>
+  <circle cx="240" cy="240" r="194" fill="none" stroke="#b78b3c" stroke-width="1" stroke-dasharray="3 7"/>
+  <!-- barber poles -->
+  <g stroke="url(#gold)" stroke-width="3">
+    <rect x="48" y="142" width="34" height="176" rx="16" fill="#17191b"/>
+    <rect x="398" y="142" width="34" height="176" rx="16" fill="#17191b"/>
+  </g>
+  <g clip-path="url(#poleL)">
+    <path d="M35 170 L90 115 M35 215 L100 150 M35 260 L100 195 M35 305 L100 240 M35 350 L100 285" stroke="#c92e37" stroke-width="13"/>
+    <path d="M35 190 L90 135 M35 235 L100 170 M35 280 L100 215 M35 325 L100 260" stroke="#e9e5d9" stroke-width="13"/>
+  </g>
+  <g clip-path="url(#poleR)">
+    <path d="M385 170 L440 115 M385 215 L450 150 M385 260 L450 195 M385 305 L450 240 M385 350 L450 285" stroke="#276a9a" stroke-width="13"/>
+    <path d="M385 190 L440 135 M385 235 L450 170 M385 280 L450 215 M385 325 L450 260" stroke="#e9e5d9" stroke-width="13"/>
+  </g>
+  <g fill="#17191b" stroke="url(#gold)" stroke-width="2.5">
+    <ellipse cx="65" cy="139" rx="21" ry="8"/><ellipse cx="415" cy="139" rx="21" ry="8"/>
+    <ellipse cx="65" cy="321" rx="21" ry="8"/><ellipse cx="415" cy="321" rx="21" ry="8"/>
+  </g>
+  <!-- central medallion -->
+  <path d="M240 88 C295 88 343 110 365 153 L365 268 C365 333 314 374 240 397 C166 374 115 333 115 268 L115 153 C137 110 185 88 240 88Z" fill="#101214" stroke="url(#gold)" stroke-width="4"/>
+  <path d="M240 99 C290 99 332 120 353 158 L353 266 C353 324 306 360 240 382 C174 360 127 324 127 266 L127 158 C148 120 190 99 240 99Z" fill="none" stroke="#6d552d" stroke-width="1.5"/>
+  <!-- crossed straight razors -->
+  <g stroke-linejoin="round">
+    <path d="M174 178 L298 286 L315 270 L190 162Z" fill="url(#steel)" stroke="#25282a" stroke-width="3"/>
+    <path d="M306 178 L182 286 L165 270 L290 162Z" fill="url(#steel)" stroke="#25282a" stroke-width="3"/>
+    <path d="M190 162 L165 143 Q153 134 145 144 Q139 153 150 161 L174 178Z" fill="#9b7130" stroke="url(#gold)" stroke-width="2"/>
+    <path d="M290 162 L315 143 Q327 134 335 144 Q341 153 330 161 L306 178Z" fill="#9b7130" stroke="url(#gold)" stroke-width="2"/>
+    <circle cx="240" cy="225" r="9" fill="#c99b48" stroke="#f5dda0" stroke-width="2"/>
+  </g>
+  <!-- comb -->
+  <path d="M187 292 Q240 274 293 292 L286 311 Q240 297 194 311Z" fill="#b98b3d" stroke="#f0d18a" stroke-width="2"/>
+  <path d="M199 300 L197 316 M211 297 L210 317 M223 294 L223 318 M235 293 L236 319 M247 293 L249 318 M259 295 L262 317 M271 298 L275 315" stroke="#17191b" stroke-width="3"/>
+  <!-- typography -->
+  <text x="240" y="133" text-anchor="middle" fill="#e8c77d" font-family="Georgia,serif" font-size="17" letter-spacing="5">ACME</text>
+  <path d="M155 332 Q240 348 325 332" fill="none" stroke="url(#gold)" stroke-width="2"/>
+  <text x="240" y="357" text-anchor="middle" fill="#f4e4bd" font-family="Georgia,serif" font-size="25" font-weight="bold" letter-spacing="2">BARBER SHOP</text>
+  <text x="240" y="424" text-anchor="middle" fill="#d6b46b" font-family="Arial,sans-serif" font-size="11" letter-spacing="3">SÃO PAULO • BRASIL</text>
+  <g fill="#d6b46b"><path d="M104 238 l8 -5 8 5 -8 5Z"/><path d="M360 238 l8 -5 8 5 -8 5Z"/></g>
+</svg>

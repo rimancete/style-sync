@@ -1,34 +1,33 @@
-import { useRouter } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { api } from '~/api';
-import { useAuthStore } from '~/store/authStore';
+import {
+  Panel,
+  PanelContent,
+  PanelDescription,
+  PanelHeader,
+  PanelTitle,
+} from '~/components/ui/panel';
 
 export function AdminHomeScreen() {
   const { t } = useTranslation();
-  const { navigate } = useRouter();
   const { data: customers } = api.customers.mine();
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">{t('home.admin.title')}</h1>
-      <p className="text-muted-foreground mt-2">{t('home.admin.subtitle')}</p>
+    <Panel>
+      <PanelHeader>
+        <PanelTitle as="h1">{t('home.admin.title')}</PanelTitle>
+        <PanelDescription>{t('home.admin.subtitle')}</PanelDescription>
+      </PanelHeader>
       {customers && customers.length > 0 ? (
-        <ul className="mt-4 list-disc pl-5">
-          {customers.map((customer) => (
-            <li key={customer.id}>{customer.name}</li>
-          ))}
-        </ul>
+        <PanelContent>
+          <ul className="list-disc pl-5">
+            {customers.map((customer) => (
+              <li key={customer.id}>{customer.name}</li>
+            ))}
+          </ul>
+        </PanelContent>
       ) : null}
-      <button
-        className="bg-red-500 text-white px-4 py-2 rounded-md"
-        onClick={() => {
-          useAuthStore.getState().clearAuth();
-          navigate({ to: '/login' });
-        }}
-      >
-        {t('actions.logout')}
-      </button>
-    </div>
+    </Panel>
   );
 }

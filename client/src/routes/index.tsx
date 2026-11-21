@@ -1,22 +1,10 @@
-import { createFileRoute, Navigate } from '@tanstack/react-router';
-import { useAuthStore } from '~/store';
-import { AdminHomeScreen } from '~/screens/Admin/Home';
-import { UserHomeScreen } from '~/screens/User/Home';
+import { createFileRoute } from '@tanstack/react-router';
+
+import { redirectRoot } from '~/utils/route-guards';
 
 export const Route = createFileRoute('/')({
-  component: IndexPage,
+  beforeLoad: ({ location }) => {
+    redirectRoot(location);
+  },
+  component: () => null,
 });
-
-function IndexPage() {
-  const { isAuthenticated, role } = useAuthStore();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-
-  if (role === 'ADMIN') {
-    return <AdminHomeScreen />;
-  }
-
-  return <UserHomeScreen />;
-}

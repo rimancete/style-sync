@@ -1,4 +1,14 @@
+export { Calendar } from './Calendar';
 export { Check } from './Check';
+export { ChevronDown } from './ChevronDown';
+export { CreditCard } from './CreditCard';
 export { Eye } from './Eye';
 export { EyeOff } from './EyeOff';
+export { LayoutGrid } from './LayoutGrid';
+export { LogOut } from './LogOut';
+export { Menu } from './Menu';
+export { Moon } from './Moon';
+export { Star } from './Star';
+export { Sun } from './Sun';
+export { User } from './User';
 export { X } from './X';

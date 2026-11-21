@@ -1,6 +1,6 @@
 <!-- spec-kit: endpoints -->
-<!-- version: 1.1 -->
-<!-- last-updated: 2026-08-15 -->
+<!-- version: 1.2 -->
+<!-- last-updated: 2026-11-14 -->
 <!-- updated-by: agent -->
 
 # Endpoints
@@ -16,10 +16,11 @@ Global prefix: `/api`. All responses wrapped in `{ "data": ... }` except `/healt
 | GET | `/api/health` | Basic liveness check |
 | GET | `/api/health/database` | Database connectivity |
 | GET | `/api/health/detailed` | Full system status |
-| POST | `/api/auth/login` | User login → access + refresh tokens |
+| POST | `/api/auth/login` | Neutral login for ADMIN and STAFF → access + refresh tokens. CLIENT → 403 (`Clients must sign in through their salon link`); bad credentials → 401 |
 | POST | `/api/auth/refresh` | Refresh access token |
+| POST | `/api/salon/:customerSlug/auth/login` | Salon login for a CLIENT linked to the salon; that salon becomes `defaultCustomerId`. 401 bad credentials, 403 non-CLIENT or not linked, 404 unknown/inactive salon |
 | POST | `/api/salon/:customerSlug/auth/register` | Customer-scoped user registration (creates or links user) |
-| GET | `/api/customers/branding/:slug` | Get tenant branding config (logo, colors, favicons) |
+| GET | `/api/customers/branding/:slug` | Get tenant branding: favicons, `documentTitle`, `theme.light` and `theme.dark` (see below) |
 | GET | `/api/salon/:customerSlug/availability` | Public availability check for a branch+service+date |
 
 ### Admin Endpoints (JWT + ADMIN role)
@@ -88,6 +89,23 @@ Guards: `JwtAuthGuard` → `CustomerContextGuard` (resolves slug → injects `ac
 | POST | `/api/customers/:customerId/branding` | ADMIN | Initial branding setup (files + config) |
 | POST | `/api/customers/:customerId/branding/upload` | ADMIN | Update branding files |
 
+Branding payload (`CustomerBrandingResponseDto`, mapped by `server/src/customers/branding-theme.mapper.ts`):
+
+```ts
+branding: {
+  favicon32x32: string | null; favicon16x16: string | null; appleTouch: string | null; // absolute URLs
+  documentTitle: string;
+  theme: { light: BrandingPalette; dark: BrandingPalette };
+}
+BrandingPalette = {
+  logoUrl: string | null; logoAlt: string; // same logo in both palettes
+  primary: { main; light; dark; contrast }; secondary: { main; light; dark; contrast };
+  background; foreground; surface; border; mutedForeground;
+}
+```
+
+`PUT …/branding/config` and the multipart `config` field accept partial `theme.light` / `theme.dark`. Every color must be hex (`#RGB`, `#RRGGBB`, `#RRGGBBAA`), otherwise 422.
+
 #### Branches
 
 | Method | Path | Auth | Purpose |
@@ -144,18 +162,20 @@ Guards: `JwtAuthGuard` → `CustomerContextGuard` (resolves slug → injects `ac
 
 | Path | Component | Auth Guard | Purpose |
 |------|-----------|------------|---------|
-| `/` | `routes/index.tsx` | — | Redirect (to login or dashboard) |
-| `/_public/login` | `screens/Login/Login.tsx` | none | Login form |
-| `/_public/register` | `screens/Register/Register.tsx` | none | Registration form |
-| `/_authenticated/admin` | `routes/_authenticated/admin/route.tsx` | JWT + ADMIN | Admin layout |
-| `/_authenticated/admin/bookings` | `screens/Admin/Bookings/Bookings.tsx` | JWT + ADMIN | Booking management |
-| `/_authenticated/admin/club` | `screens/Admin/Club/Club.tsx` | JWT + ADMIN | Club/customer config |
-| `/_authenticated/admin/plan` | `screens/Admin/Plan/Plan.tsx` | JWT + ADMIN | Plan/subscription |
-| `/_authenticated/admin/profile` | `screens/Admin/Profile/Profile.tsx` | JWT + ADMIN | Admin profile |
-| `/_authenticated/user` | `routes/_authenticated/user/route.tsx` | JWT | User layout |
-| `/_authenticated/user/profile` | `screens/User/Profile/Profile.tsx` | JWT | User profile |
-| `/_authenticated/admin/home` | `screens/Admin/Home/Home.tsx` | JWT + ADMIN | Admin home |
-| `/_authenticated/user/home` | `screens/User/Home/Home.tsx` | JWT | User home / booking flow |
+| `/` | `routes/index.tsx` | — | Redirect to salon or admin home |
+| `/login` | `screens/Login/Login.tsx` | none | Neutral ADMIN / STAFF login |
+| `/select-company` | `screens/SelectCompany/SelectCompany.tsx` | JWT + ADMIN/STAFF | Pick active company |
+| `/admin` | `screens/Admin/Home/Home.tsx` | JWT + ADMIN/STAFF | Admin home (system theme) |
+| `/admin/bookings` | `screens/Admin/Bookings/Bookings.tsx` | JWT + ADMIN/STAFF | Booking management |
+| `/admin/club` | `screens/Admin/Club/Club.tsx` | JWT + ADMIN/STAFF | Club/customer config |
+| `/admin/plan` | `screens/Admin/Plan/Plan.tsx` | JWT + ADMIN/STAFF | Plan/subscription |
+| `/admin/profile` | `screens/Admin/Profile/Profile.tsx` | JWT + ADMIN/STAFF | Admin profile |
+| `/salon/$slug/login` | `screens/Login/Login.tsx` | none | CLIENT salon login + branding |
+| `/salon/$slug/register` | `screens/Register/Register.tsx` | none | CLIENT salon registration |
+| `/salon/$slug` | `screens/User/Home/Home.tsx` | JWT + CLIENT + link | Client home (salon theme) |
+| `/salon/$slug/user` | `screens/User/Home/Home.tsx` | JWT + CLIENT + link | Client bookings placeholder |
+| `/salon/$slug/user/profile` | `screens/User/Profile/Profile.tsx` | JWT + CLIENT + link | Client profile |
+| `/user`, `/user/profile` | redirects | — | Legacy paths → active salon |
 
 > Note: Booking confirmation page (`/salon/:slug/bookings/confirm?token=...`) is not yet routed in the frontend. <!-- inferred — confirm with tech lead -->
 

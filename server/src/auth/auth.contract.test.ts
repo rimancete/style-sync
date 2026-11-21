@@ -1,4 +1,5 @@
 import * as request from 'supertest';
+import * as bcrypt from 'bcrypt';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthModule } from './auth.module';
@@ -10,23 +11,22 @@ import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
 
 describe('Auth API Contracts', () => {
   let app: INestApplication;
+  const users: Array<{
+    id: string;
+    email: string;
+    password: string;
+    name: string;
+    phone: string | null;
+    role: 'CLIENT' | 'STAFF' | 'ADMIN';
+  }> = [];
+
+  const userCustomers: Array<{
+    id: string;
+    userId: string;
+    customerId: string;
+  }> = [];
 
   beforeAll(async () => {
-    const users: Array<{
-      id: string;
-      email: string;
-      password: string;
-      name: string;
-      phone: string | null;
-      role: 'CLIENT' | 'STAFF' | 'ADMIN';
-    }> = [];
-
-    const userCustomers: Array<{
-      id: string;
-      userId: string;
-      customerId: string;
-    }> = [];
-
     const customers = [
       {
         id: 'customer_acme',
@@ -354,52 +354,214 @@ describe('Auth API Contracts', () => {
   });
 
   describe('Authentication Endpoints', () => {
+    const PASSWORD = '123456';
+
+    function server() {
+      return app.getHttpServer() as Parameters<typeof request>[0];
+    }
+
     beforeAll(async () => {
-      // Create a user for login tests
-      await request(app.getHttpServer() as Parameters<typeof request>[0])
-        .post('/salon/acme/auth/register')
-        .send({
-          email: 'loginuser@test.com',
-          password: '123456',
-          name: 'Login User',
-        });
-    });
+      const password = await bcrypt.hash(PASSWORD, 4);
+      users.push(
+        {
+          id: 'user_admin',
+          email: 'admin@test.com',
+          password,
+          name: 'Admin User',
+          phone: null,
+          role: 'ADMIN',
+        },
+        {
+          id: 'user_staff',
+          email: 'staff@test.com',
+          password,
+          name: 'Staff User',
+          phone: null,
+          role: 'STAFF',
+        },
+      );
+      userCustomers.push(
+        {
+          id: 'uc_admin_acme',
+          userId: 'user_admin',
+          customerId: 'customer_acme',
+        },
+        {
+          id: 'uc_admin_elite',
+          userId: 'user_admin',
+          customerId: 'customer_elite',
+        },
+      );
 
-    it('POST /auth/login should return tokens for valid credentials', async () => {
-      const res = await request(
-        app.getHttpServer() as Parameters<typeof request>[0],
-      )
-        .post('/auth/login')
-        .send({ email: 'loginuser@test.com', password: '123456' })
-        .expect(200);
-
-      expect(res.body).toEqual({
-        data: expect.objectContaining({
-          token: expect.any(String),
-          refreshToken: expect.any(String),
-          userId: expect.any(String),
-          userName: 'Login User',
-          customers: expect.arrayContaining([
-            expect.objectContaining({
-              id: 'customer_acme',
-              urlSlug: 'acme',
-            }),
-          ]),
-        }),
+      await request(server()).post('/salon/acme/auth/register').send({
+        email: 'loginuser@test.com',
+        password: PASSWORD,
+        name: 'Login User',
       });
     });
 
+    describe('POST /auth/login (neutral)', () => {
+      it('returns tokens and every linked company for an ADMIN', async () => {
+        const res = await request(server())
+          .post('/auth/login')
+          .send({ email: 'admin@test.com', password: PASSWORD })
+          .expect(200);
+
+        expect(res.body).toEqual({
+          data: expect.objectContaining({
+            token: expect.any(String),
+            refreshToken: expect.any(String),
+            userId: 'user_admin',
+            userName: 'Admin User',
+            customers: [
+              expect.objectContaining({
+                id: 'customer_acme',
+                urlSlug: 'acme',
+                logoUrl: 'https://example.com/acme-logo.png',
+              }),
+              expect.objectContaining({ id: 'customer_elite' }),
+            ],
+            defaultCustomerId: 'customer_acme',
+          }),
+        });
+      });
+
+      it('accepts a STAFF user without companies', async () => {
+        const res = await request(server())
+          .post('/auth/login')
+          .send({ email: 'staff@test.com', password: PASSWORD })
+          .expect(200);
+
+        expect(res.body.data.customers).toEqual([]);
+        expect(res.body.data.defaultCustomerId).toBeUndefined();
+      });
+
+      it('rejects a CLIENT with 403 pointing to the salon link', async () => {
+        const res = await request(server())
+          .post('/auth/login')
+          .send({ email: 'loginuser@test.com', password: PASSWORD })
+          .expect(403);
+
+        expect(res.body).toEqual({
+          status: 403,
+          message: 'Clients must sign in through their salon link',
+        });
+      });
+
+      it('returns 401 for a CLIENT with a wrong password without revealing the role', async () => {
+        const res = await request(server())
+          .post('/auth/login')
+          .send({ email: 'loginuser@test.com', password: 'wrong-password' })
+          .expect(401);
+
+        expect(res.body).toEqual({
+          status: 401,
+          message: 'Invalid credentials',
+        });
+      });
+    });
+
+    describe('POST /salon/:customerSlug/auth/login', () => {
+      it('logs a linked CLIENT in with the salon as default customer', async () => {
+        const res = await request(server())
+          .post('/salon/acme/auth/login')
+          .send({ email: 'loginuser@test.com', password: PASSWORD })
+          .expect(200);
+
+        expect(res.body).toEqual({
+          data: expect.objectContaining({
+            token: expect.any(String),
+            refreshToken: expect.any(String),
+            userName: 'Login User',
+            customers: [expect.objectContaining({ id: 'customer_acme' })],
+            defaultCustomerId: 'customer_acme',
+          }),
+        });
+      });
+
+      it('uses the requested salon as default for a CLIENT with several links', async () => {
+        await request(server())
+          .post('/salon/acme/auth/register')
+          .send({ email: 'multi@test.com', password: PASSWORD, name: 'Multi' })
+          .expect(201);
+        await request(server())
+          .post('/salon/elite-cuts/auth/register')
+          .send({
+            email: 'multi@test.com',
+            password: PASSWORD,
+            name: 'Multi',
+            confirmLink: true,
+          })
+          .expect(201);
+
+        const res = await request(server())
+          .post('/salon/elite-cuts/auth/login')
+          .send({ email: 'multi@test.com', password: PASSWORD })
+          .expect(200);
+
+        expect(res.body.data.defaultCustomerId).toBe('customer_elite');
+        expect(res.body.data.customers).toHaveLength(2);
+      });
+
+      it('returns 401 for invalid credentials', async () => {
+        const res = await request(server())
+          .post('/salon/acme/auth/login')
+          .send({ email: 'loginuser@test.com', password: 'wrong-password' })
+          .expect(401);
+
+        expect(res.body).toEqual({
+          status: 401,
+          message: 'Invalid credentials',
+        });
+      });
+
+      it('returns 403 when the CLIENT is not linked to the salon', async () => {
+        const res = await request(server())
+          .post('/salon/elite-cuts/auth/login')
+          .send({ email: 'loginuser@test.com', password: PASSWORD })
+          .expect(403);
+
+        expect(res.body).toEqual({
+          status: 403,
+          message: 'This account is not registered with this salon',
+        });
+      });
+
+      it('returns 403 for a non-CLIENT role even when linked', async () => {
+        const res = await request(server())
+          .post('/salon/acme/auth/login')
+          .send({ email: 'admin@test.com', password: PASSWORD })
+          .expect(403);
+
+        expect(res.body).toEqual({
+          status: 403,
+          message: 'Only clients can sign in through a salon link',
+        });
+      });
+
+      it.each(['nonexistent', 'inactive'])(
+        'returns 404 for the %s salon',
+        async slug => {
+          const res = await request(server())
+            .post(`/salon/${slug}/auth/login`)
+            .send({ email: 'loginuser@test.com', password: PASSWORD })
+            .expect(404);
+
+          expect(res.body).toEqual({
+            status: 404,
+            message: 'Customer not found or inactive',
+          });
+        },
+      );
+    });
+
     it('POST /auth/refresh should return fresh tokens', async () => {
-      const login = await request(
-        app.getHttpServer() as Parameters<typeof request>[0],
-      )
-        .post('/auth/login')
-        .send({ email: 'loginuser@test.com', password: '123456' })
+      const login = await request(server())
+        .post('/salon/acme/auth/login')
+        .send({ email: 'loginuser@test.com', password: PASSWORD })
         .expect(200);
 
-      const refresh = await request(
-        app.getHttpServer() as Parameters<typeof request>[0],
-      )
+      const refresh = await request(server())
         .post('/auth/refresh')
         .set('Authorization', `Bearer ${login.body.data.refreshToken}`)
         .expect(200);
@@ -415,9 +577,7 @@ describe('Auth API Contracts', () => {
     });
 
     it('POST /auth/refresh should return 401 when Authorization header is missing', async () => {
-      await request(app.getHttpServer() as Parameters<typeof request>[0])
-        .post('/auth/refresh')
-        .expect(401);
+      await request(server()).post('/auth/refresh').expect(401);
     });
   });
 });

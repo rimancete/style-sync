@@ -48,6 +48,27 @@ model Customer {
   secondaryContrast String @default("#1B1B1BFF")
 
   backgroundColor String @default("#F7F7F7FF")
+  foregroundColor      String @default("#1B1B1BFF")
+  surfaceColor         String @default("#FFFFFFFF")
+  borderColor          String @default("#E7E7E6FF")
+  mutedForegroundColor String @default("#706E6DFF")
+
+  // Theme Colors (Dark theme)
+  darkPrimaryMain     String @default("#ECE8E6FF")
+  darkPrimaryLight    String @default("#FFFFFFFF")
+  darkPrimaryDark     String @default("#B5B2B0FF")
+  darkPrimaryContrast String @default("#1B1B1BFF")
+
+  darkSecondaryMain     String @default("#3B3B3BFF")
+  darkSecondaryLight    String @default("#706E6DFF")
+  darkSecondaryDark     String @default("#272726FF")
+  darkSecondaryContrast String @default("#ECE8E6FF")
+
+  darkBackgroundColor      String @default("#1B1B1BFF")
+  darkForegroundColor      String @default("#ECE8E6FF")
+  darkSurfaceColor         String @default("#272726FF")
+  darkBorderColor          String @default("#3B3B3BFF")
+  darkMutedForegroundColor String @default("#B5B2B0FF")
 
   currency    String  @default("USD") // ISO 4217 currency code (USD, BRL, EUR, etc.)
   defaultTimezone String @default("UTC") // IANA timezone (e.g., "America/Sao_Paulo", "America/New_York")

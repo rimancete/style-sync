@@ -1,5 +1,29 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+export type BrandingColorScale = {
+  main: string;
+  light: string;
+  dark: string;
+  contrast: string;
+};
+
+export type BrandingPalette = {
+  logoUrl: string | null;
+  logoAlt: string;
+  primary: BrandingColorScale;
+  secondary: BrandingColorScale;
+  background: string;
+  foreground: string;
+  surface: string;
+  border: string;
+  mutedForeground: string;
+};
+
+export type BrandingTheme = {
+  light: BrandingPalette;
+  dark: BrandingPalette;
+};
+
 export class CustomerBrandingResponseDto {
   @ApiProperty()
   id: string;
@@ -19,25 +43,7 @@ export class CustomerBrandingResponseDto {
     favicon16x16: string | null;
     appleTouch: string | null;
     documentTitle: string;
-    theme: {
-      light: {
-        logoUrl: string | null;
-        logoAlt: string;
-        primary: {
-          main: string;
-          light: string;
-          dark: string;
-          contrast: string;
-        };
-        secondary: {
-          main: string;
-          light: string;
-          dark: string;
-          contrast: string;
-        };
-        background: string;
-      };
-    };
+    theme: BrandingTheme;
   };
 
   @ApiProperty()

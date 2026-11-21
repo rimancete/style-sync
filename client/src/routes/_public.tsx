@@ -1,12 +1,10 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import { useAuthStore } from '~/store';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+
+import { redirectIfAuthenticated } from '~/utils/route-guards';
 
 export const Route = createFileRoute('/_public')({
   beforeLoad: () => {
-    if (useAuthStore.getState().isAuthenticated) {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error
-      throw redirect({ to: '/' });
-    }
+    redirectIfAuthenticated();
   },
   component: () => <Outlet />,
 });

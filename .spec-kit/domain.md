@@ -1,6 +1,6 @@
 <!-- spec-kit: domain -->
-<!-- version: 1.1 -->
-<!-- last-updated: 2026-08-22 -->
+<!-- version: 1.2 -->
+<!-- last-updated: 2026-11-14 -->
 <!-- updated-by: agent -->
 
 # Domain
@@ -51,9 +51,13 @@ displayId: Int (auto-increment, unique)
 name: String
 urlSlug: String (unique) ← tenant identifier in URLs
 documentTitle, logoUrl, logoAlt, favicon32x32, favicon16x16, appleTouch: branding assets
-primaryMain, primaryLight, primaryDark, primaryContrast: hex colors
-secondaryMain, secondaryLight, secondaryDark, secondaryContrast: hex colors
-backgroundColor: hex color
+  (stored as filenames under uploads/customers/<id>/; URLs resolved at read time)
+Light palette (one column per token):
+  primaryMain, primaryLight, primaryDark, primaryContrast
+  secondaryMain, secondaryLight, secondaryDark, secondaryContrast
+  backgroundColor, foregroundColor, surfaceColor, borderColor, mutedForegroundColor
+Dark palette: same tokens with the `dark` prefix
+  (darkPrimaryMain … darkMutedForegroundColor)
 currency: ISO 4217 (default "USD")
 defaultTimezone: IANA (default "UTC")
 isActive: Boolean
@@ -200,6 +204,8 @@ addressFormat: Json ← JSON schema for address validation per country
 8. **Cancellation**: Currently sets `status: CANCELLED`. No full cancellation policy implemented yet.
 9. **Operating hours**: Availability slots are derived from `BranchSchedule` and `ProfessionalSchedule` in the database, in 30-minute intervals. There is no hardcoded 09:00–18:00 window.
 10. **Reserved slugs**: `admin`, `api`, `health`, `auth`, `docs`, `swagger`, `about`, `pricing`, `contact`, `terms`, `privacy`, `login`, `register`, `salon` cannot be used as `urlSlug`.
+11. **Login entry by audience**: `POST /api/auth/login` accepts ADMIN and STAFF only. A CLIENT signs in through `POST /api/salon/:slug/auth/login` and must have a `UserCustomer` link to that salon; that salon becomes the session default. Role stays global on `User`.
+12. **Seeded branding**: Acme (`acme`) uses the system design system palette; Elite Beauty (`elite-beauty`) uses the pink palette. Both ship light and dark palettes plus logo and favicons from `server/prisma/seed-assets/<slug>/`.
 
 ---
 
@@ -227,19 +233,17 @@ type AuthState = {
   role: Role | null;             // decoded from JWT
   customers: CustomerSummary[];
   defaultCustomerId: string | null;
+  activeCustomerId: string | null;
+  activeCustomerSlug: string | null;
   isAuthenticated: boolean;
 };
 ```
 
 // themeStore
-interface ThemeConfig {
-  colors?: Record<string, string>;
-  fonts?: Record<string, string>;
-  spacing?: Record<string, string>;
-}
 interface ThemeState {
-  mode: 'light' | 'dark';
-  config: ThemeConfig | null;
+  preference: 'light' | 'dark' | null;
+  systemMode: 'light' | 'dark';
+  mode: 'light' | 'dark'; // preference ?? systemMode
 }
 
 // bookingStore (multi-step funnel, NOT persisted)
@@ -251,7 +255,7 @@ interface BookingState {
 }
 ```
 
-> Note: `role` and `email` are decoded from the JWT on the client for navigation and presentation only. Authorisation is always enforced on the server. STAFF currently lands on the user Home (no staff area yet).
+> Note: `role` and `email` are decoded from the JWT on the client for navigation and presentation only. Authorisation is always enforced on the server. STAFF uses the admin shell. A CLIENT's active salon comes from the URL slug.
 
 ### Form Schemas (Zod — pattern)
 

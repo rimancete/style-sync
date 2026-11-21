@@ -38,7 +38,7 @@ export function useMutation<TData = unknown, TVariables = unknown>({
   mutationOptions,
 }: UseMutationParams<TData, TVariables>) {
   const queryClient = useQueryClient();
-  const activeCustomerId = useAuthStore((state) => state.defaultCustomerId);
+  const activeCustomerId = useAuthStore((state) => state.activeCustomerId);
 
   return useTanstackMutation<TData, APIError, TVariables>({
     ...mutationOptions,

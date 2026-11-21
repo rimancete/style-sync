@@ -1,10 +1,9 @@
 import { useLogin, useRegister } from './auth';
 import { useGetBranches } from './branches';
-import { useGetMyCustomers } from './customers';
+import { customerBrandingQueryOptions, useGetMyCustomers } from './customers';
 import { useGetServices } from './services';
 import { useGetProfessionals } from './professionals';
 import { useCreateBooking } from './bookings';
-import { useGetTheme } from './theme';
 
 export const api = {
   auth: {
@@ -13,6 +12,7 @@ export const api = {
   },
   customers: {
     mine: useGetMyCustomers,
+    brandingQueryOptions: customerBrandingQueryOptions,
   },
   branches: {
     list: useGetBranches,
@@ -25,8 +25,5 @@ export const api = {
   },
   bookings: {
     create: useCreateBooking,
-  },
-  theme: {
-    get: useGetTheme,
   },
 };

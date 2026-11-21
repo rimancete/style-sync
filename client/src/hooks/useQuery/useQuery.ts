@@ -38,7 +38,7 @@ export function useQuery<T>({
   mockDelay = DEFAULT_MOCK_DELAY,
   queryOptions,
 }: UseQueryParams<T>) {
-  const activeCustomerId = useAuthStore((state) => state.defaultCustomerId);
+  const activeCustomerId = useAuthStore((state) => state.activeCustomerId);
   const scopedQueryKey = scopeQueryKey(queryKey, activeCustomerId);
 
   const query = useTanstackQuery<T, APIError, T, QueryKey>({

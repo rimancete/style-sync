@@ -1,10 +1,20 @@
 import { PrismaClient, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import {
+  ACME_PALETTE,
+  ELITE_PALETTE,
+  removeCustomerUploads,
+  seedCustomerBrandingFiles,
+} from './seed-branding';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Starting database seeding...');
+
+  const previousCustomers = await prisma.customer.findMany({
+    select: { id: true },
+  });
 
   // Clean up existing data
   await prisma.booking.deleteMany({});
@@ -18,6 +28,7 @@ async function main() {
   await prisma.branch.deleteMany({});
   await prisma.customer.deleteMany({});
   await prisma.country.deleteMany({});
+  await removeCustomerUploads(previousCustomers.map(c => c.id));
 
   // Create countries
   const countries = await Promise.all([
@@ -161,6 +172,7 @@ async function main() {
       urlSlug: 'acme',
       documentTitle: 'Acme Barbershop - Professional Haircuts',
       logoAlt: 'Acme Barbershop Logo',
+      ...ACME_PALETTE,
       currency: 'BRL',
       defaultTimezone: 'America/Sao_Paulo', // Brazil timezone
       isActive: true,
@@ -173,13 +185,17 @@ async function main() {
       urlSlug: 'elite-beauty',
       documentTitle: 'Elite Beauty Salon - Premium Beauty Services',
       logoAlt: 'Elite Beauty Salon Logo',
+      ...ELITE_PALETTE,
       currency: 'USD',
       defaultTimezone: 'America/New_York', // US East timezone
       isActive: true,
     },
   });
 
-  console.log('✅ Created customers');
+  await seedCustomerBrandingFiles(prisma, customer1);
+  await seedCustomerBrandingFiles(prisma, customer2);
+
+  console.log('✅ Created customers with branding files');
 
   // Create branches
   const branch1 = await prisma.branch.create({
@@ -638,6 +654,26 @@ async function main() {
         customerId: customer2.id, // Elite Beauty
       },
     }),
+    // Platform admin with several companies -> Acme and Elite Beauty
+    prisma.userCustomer.create({
+      data: {
+        userId: users[0].id, // admin@stylesync.com
+        customerId: customer1.id, // Acme Barbershop
+      },
+    }),
+    prisma.userCustomer.create({
+      data: {
+        userId: users[0].id, // admin@stylesync.com
+        customerId: customer2.id, // Elite Beauty
+      },
+    }),
+    // Staff -> Acme
+    prisma.userCustomer.create({
+      data: {
+        userId: users[2].id, // staff@stylesync.com
+        customerId: customer1.id, // Acme Barbershop
+      },
+    }),
   ]);
 
   console.log('✅ Created user-customer associations');
@@ -713,9 +749,9 @@ async function main() {
 - Sample Bookings: ${sampleBookings.length}
 
 👥 Test accounts:
-- Platform Admin: admin@stylesync.com / 123456
+- Platform Admin: admin@stylesync.com / 123456 (Acme + Elite Beauty - company picker)
 - Acme Client: client@test.com / 123456 (Acme customer - READ ONLY)
-- Staff: staff@stylesync.com / 123456
+- Staff: staff@stylesync.com / 123456 (Acme)
 - Acme Admin: admin@acme.com / 123456 (Acme customer - FULL ACCESS)
 - Elite Beauty Admin: admin@elitebeauty.com / 123456 (Elite Beauty - FULL ACCESS)
 - Elite Beauty Client: client@elitebeauty.com / 123456 (Elite Beauty - READ ONLY)
